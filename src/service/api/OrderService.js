@@ -57,7 +57,4 @@ export default class OrderService {
         const response = await axios.get(`${this.BASE_URL}/api/v1/orders/${orderId}/order-lines`);
         return response.data;
     }
-
-    
-
 }
