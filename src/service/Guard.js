@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import ApiService from "./ApiService";
 
-export const ProtectedRoutes = ({element: Component}) => {
+export const ProtectedRoute = ({element: Component}) => {
     const location = useLocation();
     return ApiService.isAuthenticated() ? (
         Component
@@ -11,7 +11,7 @@ export const ProtectedRoutes = ({element: Component}) => {
     );
 };
 
-export const AdminRoutes = ({element: Component}) => {
+export const AdminRoute = ({element: Component}) => {
     const location = useLocation();
     return ApiService.isAdmin() ? (
         Component

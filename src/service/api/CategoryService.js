@@ -1,13 +1,17 @@
 import axios from "axios";
-import ApiService from "../api/ApiService";
+
 
 export default class CategoryService {
 
-    static BASE_URL = ApiService.BASE_URL;
+    static BASE_URL = "http://localhost:8080";
     static getHeader() {
-        return ApiService.getHeader();
+        const token = localStorage.getItem("token");
+        return {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        };
     }
-
+    
     static async addCategory(request) {
         const response = await axios.post(`${this.BASE_URL}/api/v1/category/add`, request, {
             headers: this.getHeader(),

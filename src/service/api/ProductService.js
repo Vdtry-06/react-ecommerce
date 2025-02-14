@@ -1,11 +1,14 @@
 import axios from "axios";
-import ApiService from "../api/ApiService";
 
 export default class ProductService {
 
-    static BASE_URL = ApiService.BASE_URL;
+    static BASE_URL = "http://localhost:8080";
     static getHeader() {
-        return ApiService.getHeader();
+        const token = localStorage.getItem("token");
+        return {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        };
     }
 
 
@@ -41,6 +44,11 @@ export default class ProductService {
 
     static async deleteProduct(productId) {
         const response = await axios.delete(`${this.BASE_URL}/api/v1/product/delete/${productId}`);
+        return response.data;
+    }
+
+    static async getProductByNames(productName) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/product/get-by-name/${productName}`);
         return response.data;
     }
 }
