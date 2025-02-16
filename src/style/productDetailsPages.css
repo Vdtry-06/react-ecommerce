@@ -1,4 +1,4 @@
-.product-detail{
+.product-detail {
     max-width: 350px;
     margin: 10rem auto 10rem auto;
     padding: 15px;
@@ -11,20 +11,20 @@
     gap: 16px;
 }
 
-.product-detail img{
+.product-detail img {
     width: 350px;
     height: auto;
 }
 
-.product-detail h1{
+.product-detail h1 {
     text-align: center;
 }
-.product-detail span{
+.product-detail span {
     display: block;
     font-size: 20px;
     color: #3ae7de;
 }
-.product-detail button{
+.product-detail button {
     display: block;
     width: 100%;
     padding: 10px;
@@ -35,6 +35,6 @@
     font-size: 16px;
     cursor: pointer;
 }
-.product-detail button:hover{
+.product-detail button:hover {
     background-color: #468d93;
 }

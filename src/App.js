@@ -6,6 +6,7 @@ import Footer from './component/common/Footer';
 import { CartProvider } from './component/context/CartContext';
 import Home from './component/pages/Home';
 import ProductDetailsPage from './component/pages/ProductDetailsPages';
+import RegisterPage from './component/pages/RegisterPage';
 
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
 
           <Route exact path="/" element={<Home/>} />
           <Route path="/product/:productId" element={<ProductDetailsPage />} />
-            
+          <Route path="/register" element={<RegisterPage />} />
           </Routes>
 
         <Footer />
