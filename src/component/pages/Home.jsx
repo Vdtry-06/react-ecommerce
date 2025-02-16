@@ -21,10 +21,10 @@ const Home = () => {
                 const searchItem = searchParams.get("search");
 
                 if (searchItem) {
-                    const response = await ApiService.ProductService(searchItem);
+                    const response = await ApiService.getProductByName(searchItem);
                     allProducts = response.productList || [];
                 } else {
-                    const response = await ApiService.getAllProducts(currentPage, itemsPerPage);
+                    const response = await ApiService.getAllProduct(currentPage, itemsPerPage);
                     allProducts = response.productList || [];
                     
                 }

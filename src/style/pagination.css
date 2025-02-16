@@ -16,6 +16,10 @@
     transition: background-color 0.3s;
 }
 
+.pagination button:active {
+    background-color: #6ea89c;
+}
+
 .pagination button:hover {
-    background-color: #5e867e;
+    background-color: #3b655d;
 }

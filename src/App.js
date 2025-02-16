@@ -5,6 +5,8 @@ import Navbar from './component/common/Navbar';
 import Footer from './component/common/Footer'; 
 import { CartProvider } from './component/context/CartContext';
 import Home from './component/pages/Home';
+import ProductDetailsPage from './component/pages/ProductDetailsPages';
+
 
 function App() {
   return (
@@ -14,6 +16,7 @@ function App() {
           <Routes>
 
           <Route exact path="/" element={<Home/>} />
+          <Route path="/product/:productId" element={<ProductDetailsPage />} />
             
           </Routes>
 
