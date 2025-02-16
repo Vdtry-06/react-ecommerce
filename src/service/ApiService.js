@@ -1,4 +1,5 @@
 import UserService from "./api/UserService";
+import AddressService from "./api/AddressService";
 import ProductService from "./api/ProductService";
 import CategoryService from "./api/CategoryService";
 import OrderService from "./api/OrderService";
@@ -13,12 +14,6 @@ export default class ApiService {
             "Content-Type": "application/json",
         };
     }
-    
-    /* AUTH && USERS API */
-    static UserService = UserService;
-
-    /* PRODUCT ENPOINT */
-    static ProductService = ProductService
 
     /* AUTHENTICATION CHECKER */
     static logout() {
@@ -35,14 +30,22 @@ export default class ApiService {
         const role = localStorage.getItem('role');
         return role === 'ADMIN';
     }
+    
+    /* AUTH && USERS API */
+    // static UserService = UserService;
 
-    /* CATEGORY ENDPOINT */
-    static CategoryService = CategoryService;
+    // /* ADDRESS API */
+    // static AddressService = AddressService;
 
-    /* ORDER ENDPOINT */
-    static OrderService = OrderService;
+    // /* PRODUCT ENPOINT */
+    // static ProductService = ProductService
 
-    /* PAYMENT ENDPOINT */
-    static PaymentService = PaymentService;
+    // /* CATEGORY ENDPOINT */
+    // static CategoryService = CategoryService;
 
+    // /* ORDER ENDPOINT */
+    // static OrderService = OrderService;
+
+    // /* PAYMENT ENDPOINT */
+    // static PaymentService = PaymentService;
 }

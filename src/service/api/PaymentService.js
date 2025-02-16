@@ -12,10 +12,7 @@ export default class PaymentService {
   }
   
   static async createPayment(request) {
-    const response = await axios.post(
-      `${this.BASE_URL}/api/v1/payments`,
-      request,
-      {
+    const response = await axios.post(`${this.BASE_URL}/api/v1/payment`, request, {
         headers: this.getHeader(),
         "Content-Type": "application/json",
       }
@@ -24,9 +21,7 @@ export default class PaymentService {
   }
 
   static async pay(orderId) {
-    const response = await axios.post(
-      `${this.BASE_URL}/api/v1/payments/vn-pay`,
-      {
+    const response = await axios.get(`${this.BASE_URL}/api/v1/payments/vn-pay`, {
         headers: this.getHeader(),
         params: { orderId },
       }
@@ -35,9 +30,7 @@ export default class PaymentService {
   }
 
   static async payCallback(queryParams) {
-    const response = await axios.get(
-      `${this.BASE_URL}/api/v1/payments/vn-pay-callback`,
-      {
+    const response = await axios.get(`${this.BASE_URL}/api/v1/payments/vn-pay-callback`, {
         headers: this.getHeader(),
         params: queryParams,
       }

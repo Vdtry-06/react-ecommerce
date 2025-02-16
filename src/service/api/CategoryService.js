@@ -28,8 +28,8 @@ export default class CategoryService {
         return response.data;
     }
 
-    static async getCategory(categoryId, request) {
-        const response = await axios.get(`${this.BASE_URL}/api/v1/category/get-category/${categoryId}`, request, {
+    static async getCategory(categoryId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/category/get-category/${categoryId}`, {
             headers: this.getHeader(),
         });
         return response.data;

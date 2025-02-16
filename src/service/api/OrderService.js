@@ -11,7 +11,7 @@ export default class OrderService {
         };
     }
 
-    static async addOrder(request) {
+    static async createOrder(request) {
         const response = await axios.post(`${this.BASE_URL}/api/v1/orders`, request, {
             headers: this.getHeader(),
             "Content-Type": "application/json",
@@ -19,8 +19,8 @@ export default class OrderService {
         return response.data;
     }
 
-    static async getOrder(orderId, request) {
-        const response = await axios.get(`${this.BASE_URL}/api/v1/orders/${orderId}`, request, {
+    static async getOrderById(orderId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/orders/${orderId}`, {
             headers: this.getHeader(),
         });
         return response.data;
@@ -36,7 +36,7 @@ export default class OrderService {
         return response.data;
     }
 
-    static async createOrderLine(orderId, request) {
+    static async addOrderLine(orderId, request) {
         const response = await axios.post(`${this.BASE_URL}/api/v1/orders/${orderId}/order-lines`, request, {
             headers: this.getHeader(),
             "Content-Type": "application/json",
@@ -51,12 +51,12 @@ export default class OrderService {
         return response.data;
     }
     
-    static async deleteOrderLine(orderLineId) {
+    static async removeOrderLine(orderLineId) {
         const response = await axios.delete(`${this.BASE_URL}/api/v1/orders/order-lines/${orderLineId}`);
         return response.data;
     }
 
-    static async getAllOrderLinesByOrderId(orderId) {
+    static async getOrderLines(orderId) {
         const response = await axios.get(`${this.BASE_URL}/api/v1/orders/${orderId}/order-lines`);
         return response.data;
     }

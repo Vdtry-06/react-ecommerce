@@ -23,16 +23,19 @@ export default class UserService {
         return response.data;
     }
 
-    static async getLoggedInUsersInfo() {
-        const response = await axios.get(`${this.BASE_URL}/api/v1/auth/users/myInfo`, {
+    static async getUser(userId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/auth/users/${userId}`, {
             headers: this.getHeader(),
         });
         return response.data;
     }
 
-    static async updateUser(request) {
-        const response = await axios.put(`${this.BASE_URL}/api/v1/auth/users`, request);
-        return response.data;
+    static async updateUser(userId, request) {
+        const response = await axios.put(`${this.BASE_URL}/api/v1/auth/users/${userId}`, request, {
+            headers: this.getHeader(),
+            "Content-Type": "multipart/form-data",
+        });
+        return response.data; 
     }
 
     /* Admin API */
@@ -42,8 +45,8 @@ export default class UserService {
     }
 
     static async deleteUser(userId) {
-            const response = await axios.delete(`${this.BASE_URL}/api/v1/auth/users/${userId}`);
-            return response.data;
-        }
+        const response = await axios.delete(`${this.BASE_URL}/api/v1/auth/users/${userId}`);
+        return response.data;
+    }
 
 }

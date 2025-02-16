@@ -35,7 +35,7 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="navbar-brand">
                 <NavLink to="/">
-                    <img src="./logo1.png" alt="logo" className="navbar-logo"></img>
+                    <img src="./logo3.png" alt="logo" className="navbar-logo"></img>
                 </NavLink>
             </div>
             <form className="navbar-search" onSubmit={handleSearchSubmit}>
@@ -52,7 +52,7 @@ const Navbar = () => {
             </form>
             <div className="navbar-link">
                 <NavLink to="/" activeClassName="active">Home</NavLink>
-                <NavLink to="/products" activeClassName="active">Products</NavLink>
+                <NavLink to="/categories" activeClassName="active">Categories</NavLink>
                 {isAuthenticated && <NavLink to="/profile" activeClassName="active">My Account</NavLink>}
                 {isAdmin && <NavLink to="/admin" activeClassName="active">Admin</NavLink>}
                 {isAuthenticated && <NavLink to="/logout" onClick={handleLogout}>Logout</NavLink>}
