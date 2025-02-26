@@ -4,14 +4,12 @@ import ApiService from "../../service/ApiService";
 // import { useAuth } from "../context/AuthContext";
 import "../../style/register.css";
 
-
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
         email: "",
         username: "",
         password: "",
     });
-
 
     const [message, setMessage] = useState(null);
     const navigate = useNavigate();
