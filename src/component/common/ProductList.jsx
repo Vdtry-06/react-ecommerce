@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import "../../style/productList.css";
+import "../../static/style/productList.css";
 
 const ProductList = ({products}) => {
     const {cart, dispatch} = useCart();
@@ -22,6 +22,7 @@ const ProductList = ({products}) => {
             dispatch({type: 'REMOVE_ITEM', payload: product});
         }
     }
+    console.log("Product List Render:", products);
 
     return (
         <div className="product-list">
@@ -46,9 +47,9 @@ const ProductList = ({products}) => {
                         )}
                     </div>
                 );
-            })};
+            })}
         </div>
-    );
+    );    
 };
 
 export default ProductList;

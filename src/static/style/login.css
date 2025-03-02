@@ -1,0 +1,117 @@
+/* Container chính của trang login */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #40cdcb, #217a80);
+}
+
+/* Hộp login */
+.login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    text-align: center;
+}
+
+/* Tiêu đề */
+.login-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #217a80;
+}
+
+/* Nhóm input */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+/* Label */
+.input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+/* Input */
+.input-group input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s ease-in-out;
+}
+
+/* Hiệu ứng focus cho input */
+.input-group input:focus {
+    border-color: #217a80;
+    box-shadow: 0px 0px 5px rgba(33, 122, 128, 0.5);
+}
+
+/* Nút login */
+.login-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background: #40cdcb;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.login-button:hover {
+    background: #217a80;
+}
+
+/* Đường phân cách */
+.divider {
+    margin: 20px 0;
+    height: 1px;
+    background: #ddd;
+}
+
+/* Nút đăng ký */
+.register-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background: white;
+    color: #217a80;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid #217a80;
+    transition: all 0.3s ease-in-out;
+}
+
+.register-button:hover {
+    background: #217a80;
+    color: white;
+}
+
+/* Snackbar - Thông báo lỗi */
+.snackbar {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 0, 0, 0.9);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}

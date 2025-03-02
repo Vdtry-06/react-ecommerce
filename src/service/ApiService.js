@@ -1,30 +1,23 @@
-import UserService from "./api/UserService";
-import AddressService from "./api/AddressService";
-import ProductService from "./api/ProductService";
-import CategoryService from "./api/CategoryService";
-import OrderService from "./api/OrderService";
-import PaymentService from "./api/PaymentService";
 import axios from "axios";
+
+export const KEY_TOKEN = "accessToken";
 
 export default class ApiService {
     static BASE_URL = "http://localhost:8080";
     static getHeader() {
-        const token = localStorage.getItem("token");
-        return {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-        };
+        const token = localStorage.getItem(KEY_TOKEN);
+        return token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : {};
     }
 
     /* AUTHENTICATION CHECKER */
     static logout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
+        localStorage.removeItem(KEY_TOKEN);
+        window.location.href = "/login"; // Chuyển hướng sau khi logout
     }
     
     static isAuthenticated() {
-        const token = localStorage.getItem('token');
-        return !!!token;
+        const token = localStorage.getItem('accessToken');
+        return token !== null && token !== undefined;
     }
 
     static isAdmin() {
@@ -88,7 +81,12 @@ export default class ApiService {
 
     /* Product Enpoint User*/
     static async getProductByName(productName) {
-        const response = await axios.get(`${this.BASE_URL}/api/v1/product/get-name-products/${productName}`);
+        const response = await axios.get(
+            `${this.BASE_URL}/api/v1/product/get-name-products/${productName}`,
+            {
+                headers: this.getHeader(), // Thêm token vào request
+            }
+        );
         return response.data;
     }
 }

@@ -1,12 +1,27 @@
+/* Đảm bảo trang web có chiều cao tối thiểu là 100% viewport */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Dùng Flexbox để đẩy footer xuống */
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 100% chiều cao viewport */
+}
+
+/* Nội dung chính mở rộng để đẩy footer xuống */
+.main-content {
+    flex: 1;
+}
+
 .footer {
-    position: fixed;
-    border: 0;
     width: 100%;
     background-color: #333;
     color: #fff;
     text-align: center;
     padding: 20px 0;
-    z-index: 1000;
 }
 
 .footer-links ul {

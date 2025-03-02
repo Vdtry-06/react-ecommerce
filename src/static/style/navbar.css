@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+.navbar-brand img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 20px;
+}
+
+/* Ô tìm kiếm nằm giữa */
+.navbar-search {
+    flex: 1; /* Mở rộng để giữ search ở giữa */
+    display: flex;
+    justify-content: center;
+}
+
+.navbar-search input[type="text"] {
+    padding: 10px;
+    width: 500px;
+    font-size: 17px;
+    border: none;
+    border-radius: 3px;
+}
+
+.navbar-search button {
+    padding: 10px;
+    border: none;
+    margin-left: 2px;
+    background-color: #f1f1f1;
+    color: #75ead3;
+    font-weight: bold;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+/* Menu link */
+.navbar-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.navbar-link a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Dropdown menu */
+.nav-item {
+    position: relative; /* Định vị menu dropdown theo nav-item */
+}
+
+
+.dropdown-menu {
+    position: absolute;
+    right: 0; /* Căn phải để không tràn ra ngoài */
+    top: 100%;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 5px;
+
+    display: none;
+    list-style: none;
+    min-width: 120px; /* Đảm bảo đủ rộng */
+    z-index: 9999; /* Hiển thị trên tất cả */
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    color: black;
+    background-color: #75ead3;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap; /* Tránh bị xuống dòng */
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1;
+}
+
+.navbar {
+    position: relative;
+    z-index: 1000;
+    justify-content: space-between; /* Căn các phần tử gọn lại */
+    align-items: center;
+    background-color: #13739c;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: 600;
+}

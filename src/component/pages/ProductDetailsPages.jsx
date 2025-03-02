@@ -2,13 +2,13 @@ import React, {useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 import { useCart } from "../context/CartContext"
 import ApiService from "../../service/ApiService";
-import "../../style/productDetailsPages.css";
+import "../../static/style/productDetailsPages.css";
 
-const ProductDetailsPage = () => {
+const ProductDetailsPages = () => {
 
     const { productId } = useParams();
     const {cart, dispatch} = useCart();
-    const {product, setProduct} = useState(null);
+    const [product, setProduct] = useState(null);
     
     useEffect(() => {
         fetchProduct();
@@ -17,9 +17,9 @@ const ProductDetailsPage = () => {
     const fetchProduct = async () => {
         try {
             const response = await ApiService.getProduct(productId);
-            setProduct(response.product);
+            setProduct(response.data); // Chỉnh sửa chỗ này
         } catch (error) {
-            console.log(error.message || error)
+            console.log(error.message || error);
         }
     }
 
@@ -71,4 +71,4 @@ const ProductDetailsPage = () => {
     )
 }
 
-export default ProductDetailsPage;
+export default ProductDetailsPages;

@@ -1,30 +1,35 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ProtectedRoute, AdminRoutes  } from "./service/Guard";
+// import { ProtectedRoute, AdminRoutes  } from "./service/Guard";
 import Navbar from './component/common/Navbar';
 import Footer from './component/common/Footer'; 
 import { CartProvider } from './component/context/CartContext';
 import Home from './component/pages/Home';
-import ProductDetailsPage from './component/pages/ProductDetailsPages';
+import ProductDetailsPages from './component/pages/ProductDetailsPages';
 import RegisterPage from './component/pages/RegisterPage';
-
+import LoginPage from './component/pages/LoginPage';
 
 function App() {
   return (
     <BrowserRouter>
       <CartProvider>
-        <Navbar />
-          <Routes>
-
-          <Route exact path="/" element={<Home/>} />
-          <Route path="/product/:productId" element={<ProductDetailsPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          </Routes>
-
-        <Footer />
+        <div id="root">
+          <Navbar />
+          <div className="main-content">
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/product/:productId" element={<ProductDetailsPages />} />
+            </Routes>
+          </div>
+          <Footer />
+        </div>
       </CartProvider>
     </BrowserRouter>
   );
 }
+
 
 export default App;

@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 // import { useAuth } from "../context/AuthContext";
-import "../../style/register.css";
+import "../../static/style/register.css";
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
