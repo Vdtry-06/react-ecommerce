@@ -107,7 +107,7 @@ const Navbar = () => {
                             />
                             <ul className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
                                 <li>
-                                    <NavLink className="dropdown-item" to="/profile">Profile</NavLink>
+                                    <NavLink className="dropdown-item" to="/account">Account</NavLink>
                                 </li>
                                 <li>
                                     <NavLink className="dropdown-item" to="/logout" onClick={handleLogout}>Logout</NavLink>

@@ -24,25 +24,17 @@ export default class ApiService {
         const role = localStorage.getItem('role');
         return role === 'ADMIN';
     }
-    
-    /* AUTH && USERS API */
-    // static UserService = UserService;
 
-    // /* ADDRESS API */
-    // static AddressService = AddressService;
+    /* Users API */
+    static async getMyInfo() {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/auth/users/myInfo`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
 
-    // /* PRODUCT ENPOINT */
-    // static ProductService = ProductService
 
-    // /* CATEGORY ENDPOINT */
-    // static CategoryService = CategoryService;
-
-    // /* ORDER ENDPOINT */
-    // static OrderService = OrderService;
-
-    // /* PAYMENT ENDPOINT */
-    // static PaymentService = PaymentService;
-
+    /*Product */
     static async addProduct(request) {
         const response = await axios.post(`${this.BASE_URL}/api/v1/product/add`, request, {
             headers: this.getHeader(),
@@ -89,4 +81,6 @@ export default class ApiService {
         );
         return response.data;
     }
+
+    
 }
