@@ -71,6 +71,26 @@ export default class ApiService {
         return response.data;
     }
 
+    static async FilterProductByCategories(categoryIds = []) {
+        if (!Array.isArray(categoryIds)) {
+            console.error("FilterProductByCategories expects an array, got:", categoryIds);
+            return { products: [] }; // Tránh lỗi API
+        }
+    
+        const query = categoryIds.length > 0 ? `?categoryIds=${categoryIds.join(",")}` : "";
+        try {
+            const response = await axios.get(`${this.BASE_URL}/api/v1/product/categories/filter${query}`, {
+                headers: this.getHeader(),
+            });
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching filtered products:", error);
+            throw error; // Để frontend xử lý lỗi
+        }
+    }
+    
+    
+
     /* Product Enpoint User*/
     static async getProductByName(productName) {
         const response = await axios.get(
@@ -79,6 +99,21 @@ export default class ApiService {
                 headers: this.getHeader(), // Thêm token vào request
             }
         );
+        return response.data;
+    }
+
+    /* Category */
+    static async getCategory(categoryId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/category/get-category/${categoryId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async getAllCategories() {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/category/get-categories`, {
+            headers: this.getHeader(),
+        });
         return response.data;
     }
 

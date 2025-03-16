@@ -54,7 +54,9 @@ const ProductDetailsPages = () => {
 
     return (
         <div className="product-detail">
-            <img src={product?.imageUrl} alt={product.name}/>
+        {/* Ảnh + Thông tin sản phẩm */}
+        <div className="product-info">
+            <img src={product?.imageUrl} alt={product.name} />
             <h1>{product?.name}</h1>
             <p>{product?.description}</p>
             <span>${product?.price.toFixed(2)}</span>
@@ -64,10 +66,23 @@ const ProductDetailsPages = () => {
                     <span>{cartItem.qty}</span>
                     <button onClick={incrementItem}> + </button>
                 </div>
-            ): (
+            ) : (
                 <button onClick={addToCart}>Add to Cart</button>
             )}
         </div>
+
+        {/* Danh mục sản phẩm */}
+        <div className="product-categories">
+            <h2>Categories</h2>
+            <ul>
+                {product?.categories?.map((category) => (
+                    <li key={category.id}>
+                        <strong>{category.name}</strong>: {category.description}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </div>
     )
 }
 

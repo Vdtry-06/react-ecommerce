@@ -10,6 +10,8 @@ import ProductDetailsPages from './component/pages/ProductDetailsPages';
 import RegisterPage from './component/pages/RegisterPage';
 import LoginPage from './component/pages/LoginPage';
 import Account from './component/pages/Account';
+import CategoryListPage from './component/pages/CategoryListPage';
+import CategoryProductsPage from './component/pages/CategoryProductsPage';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/product/:productId" element={<ProductDetailsPages />} />
                 <Route path="/account" element={<Account />} />
+                <Route path="/categories" element={<CategoryListPage />} />
+                <Route path="/category-products" element={<CategoryProductsPage />} /> 
             </Routes>
           </div>
           <Footer />
