@@ -49,18 +49,29 @@ const Navbar = () => {
     // 🛒 Tính tổng số lượng sản phẩm trong giỏ hàng
     const totalCartItems = cart.reduce((sum, item) => sum + item.qty, 0);
 
+    const [isSearching, setIsSearching] = useState(false);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setIsSearching(true);
+        navigate(`/?search=${searchValue}`);
+
+        // Reset hiệu ứng sau 500ms
+        setTimeout(() => setIsSearching(false), 500);
+    };
+
     return (
         <nav className="navbar">
             <div className="navbar-container">
                 <div className="navbar-brand">
-                    <NavLink to="/">
+                    <NavLink to="https://res-console.cloudinary.com/vdtry06/thumbnails/v1/image/upload/v1739549220/TXkgQnJhbmQvbG9nbzJfdWhlNmF2/drilldown">
                         <img src="./logo2.png" alt="logo" className="navbar-logo" />
                     </NavLink>
                 </div>
 
-                <form className="navbar-search" onSubmit={(e) => { e.preventDefault(); navigate(`/?search=${searchValue}`); }}>
+                <form className="navbar-search" onSubmit={handleSearch}>
                     <input type="text" className="search-input" placeholder="Search..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
-                    <button type="submit" className="search-button">Search</button>
+                    <button type="submit" className={`search-button ${isSearching ? 'searching' : ''}`}>Search</button>
                 </form>
 
                 <div className="navbar-link">
@@ -75,21 +86,49 @@ const Navbar = () => {
                     {/* 🛒 Hiển thị số lượng sản phẩm trên icon giỏ hàng */}
                     <NavLink to="/cart" className={({ isActive }) => isActive ? "active" : ""} style={{ position: "relative" }}>
                         <img src={cartImage} alt="cart" className="navbar-home" />
-                        {totalCartItems > 0 && (
+                        {totalCartItems > -1 && (
                             <span className="cart-badge">{totalCartItems}</span> // Badge hiển thị số lượng
                         )}
                     </NavLink>
 
                     {isLoggedIn ? (
                         <div className="nav-item" ref={dropdownRef}>
-                            <img src={accountImage} alt="account" className="navbar-home" onClick={toggleDropdown} style={{ cursor: "pointer" }} />
+                            <img 
+                                src={accountImage} 
+                                alt="account" 
+                                className="navbar-home" 
+                                onClick={toggleDropdown} 
+                                style={{ cursor: "pointer" }} 
+                            />
                             <ul className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
-                                <li><NavLink className="dropdown-item" to="/account">Account</NavLink></li>
-                                <li><NavLink className="dropdown-item" to="/logout" onClick={handleLogout}>Logout</NavLink></li>
+                                <li>
+                                    <NavLink 
+                                        className="dropdown-item" 
+                                        to="/account" 
+                                        onClick={() => setIsDropdownOpen(false)} // Đóng menu khi nhấn
+                                    >
+                                        Account
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink 
+                                        className="dropdown-item" 
+                                        to="/logout" 
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleLogout();
+                                            setIsDropdownOpen(false); // Đóng menu khi đăng xuất
+                                        }}
+                                    >
+                                        Logout
+                                    </NavLink>
+                                </li>
                             </ul>
                         </div>
                     ) : (
-                        <NavLink to="/login" className={({ isActive }) => isActive ? "active" : ""}>Login</NavLink>
+                        <NavLink to="/login" className={({ isActive }) => isActive ? "active" : ""}>
+                            Login
+                        </NavLink>
                     )}
 
                     {isAdmin && (
