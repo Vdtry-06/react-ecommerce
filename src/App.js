@@ -12,6 +12,7 @@ import LoginPage from './component/pages/LoginPage';
 import Account from './component/pages/Account';
 import CategoryListPage from './component/pages/CategoryListPage';
 import CategoryProductsPage from './component/pages/CategoryProductsPage';
+import CartPage from './component/pages/CartPage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/account" element={<Account />} />
                 <Route path="/categories" element={<CategoryListPage />} />
                 <Route path="/category-products" element={<CategoryProductsPage />} /> 
+                <Route path="/cart" element={<CartPage />} />
             </Routes>
           </div>
           <Footer />

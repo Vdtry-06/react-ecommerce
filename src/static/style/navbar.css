@@ -95,6 +95,21 @@ body {
     background-color: #f1f1f1;
 }
 
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 50%;
+    min-width: 20px;
+    text-align: center;
+}
+
+
 .navbar {
     position: relative;
     z-index: 1000;
