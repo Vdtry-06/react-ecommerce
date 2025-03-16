@@ -1,0 +1,64 @@
+.address-page {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.address-page h2 {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.address-page form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.address-page label {
+    font-weight: 600;
+    font-size: 16px;
+    text-align: left;
+    display: block;
+}
+
+.address-page input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.address-page input:focus {
+    border-color: #f68b1e;
+    outline: none;
+    box-shadow: 0px 0px 5px rgba(246, 139, 30, 0.5);
+}
+
+.address-page button {
+    padding: 12px 0;
+    background-color: #f68b1e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.address-page button:hover {
+    background-color: #e67e00;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}

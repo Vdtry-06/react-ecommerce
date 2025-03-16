@@ -65,7 +65,7 @@ const Account = () => {
                             <div>
                                 <p><strong>Country: </strong>{userInfo.address.country}</p>
                                 <p><strong>City: </strong>{userInfo.address.city}</p>
-                                <p><strong>District: </strong>{userInfo.address.district}</p>
+                                {/* <p><strong>District: </strong>{userInfo.address.district}</p> */}
                                 <p><strong>Ward: </strong>{userInfo.address.ward}</p>
                                 <p><strong>Street: </strong>{userInfo.address.street}</p>
                                 <p><strong>HouseNumber: </strong>{userInfo.address.houseNumber}</p>

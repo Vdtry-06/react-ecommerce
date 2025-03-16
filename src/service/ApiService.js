@@ -27,7 +27,22 @@ export default class ApiService {
 
     /* Users API */
     static async getMyInfo() {
-        const response = await axios.get(`${this.BASE_URL}/api/v1/auth/users/myInfo`, {
+        try {
+            const response = await axios.get(`${this.BASE_URL}/api/v1/auth/users/myInfo`, {
+                headers: this.getHeader(),
+            });
+            console.log("API getMyInfo response:", response.data); // Debug response data
+            return response.data;
+        } catch (error) {
+            console.error("Error in getMyInfo:", error);
+            throw error;
+        }
+    }
+    
+
+    /* Address API */
+    static async updateAddress(request) {
+        const response = await axios.put(`${this.BASE_URL}/api/v1/addresses/update-address`, request, {
             headers: this.getHeader(),
         });
         return response.data;
@@ -116,6 +131,8 @@ export default class ApiService {
         });
         return response.data;
     }
+
+    /* Order */
 
     
 }

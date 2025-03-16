@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-// import { ProtectedRoute, AdminRoutes  } from "./service/Guard";
+import { ProtectedRoute, AdminRoutes  } from "./service/Guard";
 import Navbar from './component/common/Navbar';
 import Footer from './component/common/Footer'; 
 import { CartProvider } from './component/context/CartContext';
@@ -13,6 +13,7 @@ import Account from './component/pages/Account';
 import CategoryListPage from './component/pages/CategoryListPage';
 import CategoryProductsPage from './component/pages/CategoryProductsPage';
 import CartPage from './component/pages/CartPage';
+import AddressPage from './component/pages/AddressPage';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
                 <Route path="/categories" element={<CategoryListPage />} />
                 <Route path="/category-products" element={<CategoryProductsPage />} /> 
                 <Route path="/cart" element={<CartPage />} />
+                <Route path='/add-address' element={<ProtectedRoute element={<AddressPage/>} />} />
+                <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage/>} />} />
             </Routes>
           </div>
           <Footer />
