@@ -31,8 +31,8 @@ function App() {
                 <Route path="/categories" element={<CategoryListPage />} />
                 <Route path="/category-products" element={<CategoryProductsPage />} /> 
                 <Route path="/cart" element={<CartPage />} />
-                <Route path='/add-address' element={<ProtectedRoute element={<AddressPage/>} />} />
                 <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage/>} />} />
+                <Route path='/add-address' element={<ProtectedRoute element={<AddressPage/>} />} />
             </Routes>
           </div>
           <Footer />

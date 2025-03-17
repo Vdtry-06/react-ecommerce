@@ -41,6 +41,16 @@ export default class ApiService {
     
 
     /* Address API */
+
+    static async addAddress(request) {
+        const response = await axios.post(`${this.BASE_URL}/api/v1/addresses/add-address`, request, {
+            headers: this.getHeader(),
+            "Content-Type": "application/json",
+        });
+        return response.data;
+    }
+
+
     static async updateAddress(request) {
         const response = await axios.put(`${this.BASE_URL}/api/v1/addresses/update-address`, request, {
             headers: this.getHeader(),

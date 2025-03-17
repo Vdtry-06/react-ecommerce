@@ -21,7 +21,7 @@ const AddressPage = () => {
 
     useEffect(() => {
 
-        if (location.pathname === '/edit-address') {
+        if (location.pathname === '/edit-address' || location.pathname === '/add-address') {
             fetchUserInfo();
         }
     }, [location.pathname]);
@@ -62,14 +62,16 @@ const AddressPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await ApiService.updateAddress(address);
+            if(location.pathname === '/edit-address') {
+                await ApiService.updateAddress(address);
+            } else {
+                await ApiService.addAddress(address);
+            }
             navigate("/account");
         } catch (error) {
             setError(error.response?.data?.message || error.message || "Failed to save/update address");
         }
     };
-    
-
 
     return(
         <div className="address-page">
