@@ -59,6 +59,7 @@ const ProductDetailsPages = () => {
             <img src={product?.imageUrl} alt={product.name} />
             <h1>{product?.name}</h1>
             <p>{product?.description}</p>
+            <p>Số lượng: {product?.availableQuantity}</p>
             <span>${product?.price.toFixed(2)}</span>
             {cartItem ? (
                 <div className="quantity-controls">

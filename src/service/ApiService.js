@@ -114,6 +114,42 @@ export default class ApiService {
         }
     }
     
+    /* Admin Process Topping API */
+    static async addTopping(request) {
+        const response = await axios.post(`${this.BASE_URL}/api/v1/topping/add`, request, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async updateTopping(toppingId, request) {
+        const response = await axios.put(`${this.BASE_URL}/api/v1/topping/update/${toppingId}`, request, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async deleteTopping(toppingId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/v1/topping/delete/${toppingId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    /* User use Topping API */
+    static async getTopping(toppingId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/topping/get-topping/${toppingId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async getAllToppings() {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/topping/get-all`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
     
 
     /* Product Enpoint User*/
