@@ -9,6 +9,7 @@ const ProductDetailsPages = () => {
     const { productId } = useParams();
     const {cart, dispatch} = useCart();
     const [product, setProduct] = useState(null);
+    const [selectedToppings, setSelectedToppings] = useState(new Set());
     
     useEffect(() => {
         fetchProduct();
@@ -17,7 +18,7 @@ const ProductDetailsPages = () => {
     const fetchProduct = async () => {
         try {
             const response = await ApiService.getProduct(productId);
-            setProduct(response.data); // Chỉnh sửa chỗ này
+            setProduct(response.data);
         } catch (error) {
             console.log(error.message || error);
         }
@@ -25,6 +26,10 @@ const ProductDetailsPages = () => {
 
     const addToCart = () => {
         if (product) {
+            const productWithToppings = {
+                ...product,
+                selectedToppings: Array.from(selectedToppings)
+            };
             dispatch({type: 'ADD_ITEM', payload: product});
         }
     }
@@ -46,6 +51,14 @@ const ProductDetailsPages = () => {
         }
     }
 
+    const toggleTopping = (toppingId) => {
+        setSelectedToppings(prev => {
+            const newToppings = new Set(prev);
+            newToppings.has(toppingId) ? newToppings.delete(toppingId) : newToppings.add(toppingId);
+            return newToppings;
+        });
+    }
+    
     if (!product) {
         return <p>Loading...</p>;
     }
@@ -79,6 +92,28 @@ const ProductDetailsPages = () => {
                 {product?.categories?.map((category) => (
                     <li key={category.id}>
                         <strong>{category.name}</strong>: {category.description}
+                    </li>
+                ))}
+            </ul>
+        </div>
+
+        {/* Topping */}
+        <div className="product-toppings">
+            <h2>Toppings</h2>
+            <ul>
+                {product?.toppings?.map((topping) => (
+                    <li key={topping.id}>
+                        <label>
+                            <input 
+                                type="checkbox"
+                                onChange={() => toggleTopping(topping.id)}
+                                checked={selectedToppings.has(topping.id)}
+                            />
+                            <div className="topping-info">
+                                <strong>{topping.name}</strong>: {topping.price}
+                            </div>
+                        </label>
+                        
                     </li>
                 ))}
             </ul>

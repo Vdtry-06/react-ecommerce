@@ -162,3 +162,64 @@
     content: "🛒";
     font-size: 20px;
 }
+
+/* Topping section */
+.product-toppings {
+    flex: 1;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.product-toppings h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.product-toppings ul {
+    list-style: none;
+    padding: 0;
+}
+
+.product-toppings li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.product-toppings .topping-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.product-toppings .topping-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-toppings .topping-info strong {
+    font-size: 16px;
+    color: #333;
+}
+
+.product-toppings .topping-info p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.product-toppings .topping-info span {
+    font-size: 16px;
+    color: #21c7c1;
+    font-weight: bold;
+}
