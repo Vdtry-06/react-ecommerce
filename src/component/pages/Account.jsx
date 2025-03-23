@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import '../../static/style/account.css';
@@ -35,8 +35,8 @@ const Account = () => {
 
     const orderItemList = userInfo.orders || [];
 
-    const totalPages = Math.ceil(userInfo.orders.length / itemsPerPage);
-    const paginatedOrders = userInfo.orders.slice(
+    const totalPages = Math.ceil(orderItemList.length / itemsPerPage);
+    const paginatedOrders = orderItemList.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -82,12 +82,15 @@ const Account = () => {
                     <ul>
                         {paginatedOrders.map(order => (
                             <li key={order.id}>
-                                <p><strong>Order ID: </strong>{order.id}</p>
+                                {/* <p><strong>Order ID: </strong>{order.id}</p>
                                 <p><strong>Status: </strong>{order.status}</p>
-                                <p><strong>Total Price: </strong>{order.totalPrice.toFixed(2)}</p>
+                                <p><strong>Total Price: </strong>{order.totalPrice.toFixed(2)}</p> */}
                                 <ul>
                                     {order.orderLines.map(item => (
                                         <li key={item.id}>
+                                            {/* <p><strong>Product: </strong>{item.product.imageUrl}</p> */}
+                                            <p><strong>Product: </strong>{item.productId}</p>
+                                            <p><strong>Product Name: </strong>{item.name}</p>
                                             <p><strong>Quantity: </strong>{item.quantity}</p>
                                             <p><strong>Price: </strong>{item.price.toFixed(2)}</p>
                                         </li>

@@ -21,9 +21,11 @@ export default class ApiService {
     }
 
     static isAdmin() {
-        const role = localStorage.getItem('role');
+        const role = localStorage.getItem('role')?.trim().toUpperCase(); // Chuẩn hóa role
+        console.log("Role in localStorage:", role);
         return role === 'ADMIN';
     }
+    
 
     /* Users API */
     static async getMyInfo() {
@@ -178,7 +180,137 @@ export default class ApiService {
         return response.data;
     }
 
-    /* Order */
+    /* Admin Process Category */
 
+    static async addCategory(request) {
+        const response = await axios.post(`${this.BASE_URL}/api/v1/category/add`, request, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async updateCategory(categoryId, request) {
+        const response = await axios.put(`${this.BASE_URL}/api/v1/category/update/${categoryId}`, request, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async deleteCategory(categoryId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/v1/category/delete/${categoryId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    /* Order */
+    static async createOrder() {
+        const response = await axios.post(`${this.BASE_URL}/api/v1/orders`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async getAllOrdersOfUser(userId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/orders/user-id/${userId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data
+    }
+
+    static async getOrderById(orderId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/orders/${orderId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async deleteOrder(orderId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/v1/orders/delete/${orderId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    /* Admin process Orders */
+    static async getAllOrders() {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/orders/get-all`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    /* Order Detail */
+    static async addOrderLine(orderId, request) {
+        const response = await axios.post(`${this.BASE_URL}/api/v1/orders/${orderId}/order-lines`, request, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async updateOrderLine(orderId, orderLineId, request) {
+        const response = await axios.put(
+            `${this.BASE_URL}/api/v1/orders/${orderId}/order-lines/${orderLineId}`,
+            request,
+            {
+                headers: this.getHeader(),
+            }
+        );
+        return response.data;
+    }
+
+    static async getAllOrderLines(orderId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/orders/${orderId}/order-lines`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async deleteOrderLine(orderId, orderLineId) {
+        const response = await axios.delete(
+            `${this.BASE_URL}/api/v1/orders/${orderId}/order-lines/${orderLineId}`,
+            {
+                headers: this.getHeader(),
+            }
+        );
+        return response.data;
+    }
+
+    /* Review */
+    static async addReview(request) {
+        const response = await axios.post(`${this.BASE_URL}/api/v1/reviews/add`, request, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async updateReview(reviewId, request) {
+        const response = await axios.put(`${this.BASE_URL}/api/v1/reviews/update/${reviewId}`, request, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async deleteReview(reviewId) {
+        const response = await axios.delete(`${this.BASE_URL}/api/v1/reviews/delete/${reviewId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    static async getReview(reviewId) {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/reviews/get/${reviewId}`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
+
+    /* Admin process Reviews */
+    static async getAllReviews() {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/reviews/get-all`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    }
     
 }

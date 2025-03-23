@@ -13,9 +13,14 @@ export const ProtectedRoute = ({element: Component}) => {
 
 export const AdminRoute = ({element: Component}) => {
     const location = useLocation();
-    return ApiService.isAdmin() ? (
-        Component
-    ) : (
-        <Navigate to="/login" replace state={{from: location}} />
-    );
+    const [isAdmin, setIsAdmin] = React.useState(null);
+
+    React.useEffect(() => {
+        setIsAdmin(ApiService.isAdmin());
+    }, []);
+
+    if (isAdmin === null) return <div>Loading...</div>; // Đợi kiểm tra quyền
+
+    return isAdmin ? Component : <Navigate to="/login" replace state={{from: location}} />;
 };
+

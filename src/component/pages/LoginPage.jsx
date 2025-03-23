@@ -44,18 +44,17 @@ const LoginPage = () => {
               password: password,
             }),
         })
-        .then((response) => {
-            return response.json();
-        })
+        .then((response) => response.json())
         .then((data) => {
             console.log("Response body:", data);
             // This code is a commitment between BE and FE
             if (data.code !== 1000) {
               throw new Error(data.message);
             }
-    
-            setToken(data.data?.token);
+            const userData = data.data;
+            setToken(userData?.token);
             localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("role", userData.nameRole);
             window.dispatchEvent(new Event("authChanged"));
     
             navigate("/");

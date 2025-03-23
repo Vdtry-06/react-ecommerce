@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ProtectedRoute, AdminRoutes  } from "./service/Guard";
+import { ProtectedRoute, AdminRoute  } from "./service/Guard";
 import Navbar from './component/common/Navbar';
 import Footer from './component/common/Footer'; 
 import { CartProvider } from './component/context/CartContext';
@@ -14,6 +14,9 @@ import CategoryListPage from './component/pages/CategoryListPage';
 import CategoryProductsPage from './component/pages/CategoryProductsPage';
 import CartPage from './component/pages/CartPage';
 import AddressPage from './component/pages/AddressPage';
+import AdminPage from './component/admin/AdminPage';
+import AdminCategoryPage from './component/admin/AdminCategoryPage';
+import AddCategory from './component/admin/AddCategory';
 
 function App() {
   return (
@@ -23,16 +26,21 @@ function App() {
           <Navbar />
           <div className="main-content">
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route exact path='/' element={<Home/>}/>
                 <Route path="/product/:productId" element={<ProductDetailsPages />} />
-                <Route path="/account" element={<Account />} />
                 <Route path="/categories" element={<CategoryListPage />} />
                 <Route path="/category-products" element={<CategoryProductsPage />} /> 
                 <Route path="/cart" element={<CartPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/account" element={<Account />} />
+
                 <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage/>} />} />
                 <Route path='/add-address' element={<ProtectedRoute element={<AddressPage/>} />} />
+            
+                <Route path='/admin' element={<AdminRoute element={<AdminPage/>} />} />
+                <Route path='/admin/categories' element={<AdminRoute element={<AdminCategoryPage/>} />} />
+                <Route path='/admin/add-category' element={<AdminRoute element={<AddCategory/>} />} />
             </Routes>
           </div>
           <Footer />
