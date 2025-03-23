@@ -37,6 +37,7 @@ const AdminProductPage = () => {
             try {
                 const response = await ApiService.deleteProduct(id);
                 if (response.status === 200) {
+                    window.confirm("Xóa sản phẩm thành công");
                     fetchProducts(currentPage);
                     setError(null);
                 }
@@ -44,7 +45,7 @@ const AdminProductPage = () => {
                 if (error.response?.status === 401) {
                     setError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
                 } else {
-                    setError(error.response?.data?.message || "Không thể xóa sản phẩm");
+                    setError(error.response?.data?.message || "Không thể xóa sản phẩm vì đã có ràng buộc.");
                 }
             }
         }
