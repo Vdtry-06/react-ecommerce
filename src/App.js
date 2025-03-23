@@ -20,6 +20,7 @@ import AddCategory from './component/admin/AddCategory';
 import EditCategory from './component/admin/EditCategory';
 import AdminProductPage from './component/admin/AdminProductPage';
 import AddProduct from './component/admin/AddProduct';
+import EditProduct from './component/admin/EditProductPage';
 
 function App() {
   return (
@@ -47,7 +48,7 @@ function App() {
                 <Route path='/admin/edit-category/:categoryId' element={<AdminRoute element={<EditCategory/>} />} />
                 <Route path='/admin/products' element={<AdminRoute element={<AdminProductPage/>} />} />
                 <Route path='/admin/add-product' element={<AdminRoute element={<AddProduct/>} />} />
-
+                <Route path='/admin/edit-product/:productId' element={<AdminRoute element={<EditProduct/>} />} />
             </Routes>
           </div>
           <Footer />

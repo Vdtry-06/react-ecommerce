@@ -91,15 +91,17 @@ export default class ApiService {
 
   static async updateProduct(productId, request) {
     const response = await axios.put(
-      `${this.BASE_URL}/api/v1/product/update/${productId}`,
-      request,
-      {
-        headers: this.getHeader(),
-        "Content-Type": "multipart/form-data",
-      }
+        `${this.BASE_URL}/api/v1/product/update/${productId}`, 
+        request, 
+        {
+            headers: {
+                ...this.getHeader(),
+                "Content-Type": "multipart/form-data",
+            },
+        }
     );
-    return response.data;
-  }
+    return response;
+}
 
   static async getProduct(productId) {
     const response = await axios.get(
