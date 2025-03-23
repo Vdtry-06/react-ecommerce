@@ -31,7 +31,7 @@ const AdminCategoryPage = () => {
                 await ApiService.deleteCategory(id);
                 fetchCategories();
             } catch (error) {
-                const confirmed = window.confirm("Cannot delete: This category is linked to existing products.")
+                window.confirm("Cannot delete: This category is linked to existing products.")
                 console.log("Error deleting category by id")
             }
         }
