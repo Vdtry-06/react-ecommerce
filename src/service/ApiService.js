@@ -124,12 +124,12 @@ export default class ApiService {
     return response.data;
   }
 
-  static async deleteProduct(productId) {
-    const response = await axios.delete(
-      `${this.BASE_URL}/api/v1/product/delete/${productId}`
-    );
-    return response.data;
-  }
+  static async deleteProduct(id) {
+    const response = await axios.delete(`${this.BASE_URL}/api/v1/product/${id}`, {
+        headers: this.getHeader(),
+    });
+    return response;
+}
 
   static async FilterProductByCategories(categoryIds = []) {
     if (!Array.isArray(categoryIds)) {
