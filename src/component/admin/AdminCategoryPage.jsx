@@ -31,6 +31,7 @@ const AdminCategoryPage = () => {
                 await ApiService.deleteCategory(id);
                 fetchCategories();
             } catch (error) {
+                const confirmed = window.confirm("Cannot delete: This category is linked to existing products.")
                 console.log("Error deleting category by id")
             }
         }
@@ -45,6 +46,7 @@ const AdminCategoryPage = () => {
                     {categories.map((category) => (
                         <li key={category.id}>
                             <span>{category.name}</span>
+                            <span>{category.description}</span>
                             <div className="admin-bt">
                                     <button className="admin-btn-edit" onClick={()=> handleEdit(category.id)}>Edit</button>
                                     <button  onClick={()=> handleDelete(category.id)}>Delete</button>
