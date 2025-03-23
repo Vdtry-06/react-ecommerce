@@ -81,15 +81,12 @@ export default class ApiService {
 
   /*Product */
   static async addProduct(request) {
-    const response = await axios.post(
-      `${this.BASE_URL}/api/v1/product/add`,
-      request,
-      {
-        headers: this.getHeader(),
+    return await axios.post(`${this.BASE_URL}/api/v1/product/add`, request, {
+      headers: {
+        ...this.getHeader(),
         "Content-Type": "multipart/form-data",
-      }
-    );
-    return response.data;
+      },
+    });
   }
 
   static async updateProduct(productId, request) {
