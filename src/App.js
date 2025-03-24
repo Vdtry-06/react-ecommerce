@@ -42,13 +42,13 @@ function App() {
                 <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage/>} />} />
                 <Route path='/add-address' element={<ProtectedRoute element={<AddressPage/>} />} />
             
-                <Route path='/admin' element={<AdminRoute element={<AdminPage/>} />} />
-                <Route path='/admin/categories' element={<AdminRoute element={<AdminCategoryPage/>} />} />
+                <Route path='/admin/*' element={<AdminRoute element={<AdminPage/>} />} />
+                {/* <Route path='/admin/categories' element={<AdminRoute element={<AdminCategoryPage/>} />} />
                 <Route path='/admin/add-category' element={<AdminRoute element={<AddCategory/>} />} />
                 <Route path='/admin/edit-category/:categoryId' element={<AdminRoute element={<EditCategory/>} />} />
                 <Route path='/admin/products' element={<AdminRoute element={<AdminProductPage/>} />} />
                 <Route path='/admin/add-product' element={<AdminRoute element={<AddProduct/>} />} />
-                <Route path='/admin/edit-product/:productId' element={<AdminRoute element={<EditProduct/>} />} />
+                <Route path='/admin/edit-product/:productId' element={<AdminRoute element={<EditProduct/>} />} /> */}
             </Routes>
           </div>
           <Footer />
