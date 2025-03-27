@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import '../../static/style/navbar.css';
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
+import '../../static/style/navbar.css';
+
+// Import icons (using the existing imports)
 import homeImage from "../../static/images/home.png";
 import categoryImage from "../../static/images/application.png";
 import accountImage from "../../static/images/account.png";
@@ -15,12 +17,35 @@ const Navbar = () => {
     const dropdownRef = useRef(null);
     const [isLoggedIn, setIsLoggedIn] = useState(ApiService.isAuthenticated());
     const [totalCartItems, setTotalCartItems] = useState(0);
+    const [isSearching, setIsSearching] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [cartUpdated, setCartUpdated] = useState(false);
 
+    // Toggle account dropdown
     const toggleDropdown = () => {
         setIsDropdownOpen(prev => !prev);
     };
 
-    // Lấy số lượng giỏ hàng từ backend
+    // Toggle mobile menu
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(prev => !prev);
+    };
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    // Fetch cart items from backend
     const fetchCartItems = async () => {
         try {
             if (ApiService.isAuthenticated()) {
@@ -33,6 +58,12 @@ const Navbar = () => {
                 if (pendingOrder && pendingOrder.orderLines) {
                     const total = pendingOrder.orderLines.reduce((sum, item) => sum + item.quantity, 0);
                     setTotalCartItems(total);
+                    
+                    // Animate the cart icon when items are added/updated
+                    if (total > 0) {
+                        setCartUpdated(true);
+                        setTimeout(() => setCartUpdated(false), 1000);
+                    }
                 } else {
                     setTotalCartItems(0);
                 }
@@ -45,16 +76,16 @@ const Navbar = () => {
         }
     };
 
-    // Cập nhật trạng thái đăng nhập và giỏ hàng
+    // Update login status and cart
     useEffect(() => {
         const updateAuthStatus = () => {
             setIsLoggedIn(ApiService.isAuthenticated());
             fetchCartItems();
         };
 
-        fetchCartItems(); // Lấy giỏ hàng lần đầu khi mount
+        fetchCartItems(); // Initial cart fetch
 
-        // Lắng nghe sự kiện authChanged và cartChanged
+        // Listen for auth and cart change events
         window.addEventListener("authChanged", updateAuthStatus);
         window.addEventListener("cartChanged", fetchCartItems);
 
@@ -65,7 +96,7 @@ const Navbar = () => {
     }, []);
 
     const handleLogout = () => {
-        const confirmLogout = window.confirm("Are you sure you want to logout?");
+        const confirmLogout = window.confirm("Bạn có chắc chắn muốn đăng xuất?");
         if (confirmLogout) {
             ApiService.logout();
             localStorage.removeItem("isLoggedIn");
@@ -77,96 +108,126 @@ const Navbar = () => {
         }
     };
 
-    const [isSearching, setIsSearching] = useState(false);
-
     const handleSearch = (e) => {
         e.preventDefault();
-        setIsSearching(true);
-        navigate(`/?search=${searchValue}`);
-        setTimeout(() => setIsSearching(false), 500);
+        if (searchValue.trim()) {
+            setIsSearching(true);
+            navigate(`/?search=${encodeURIComponent(searchValue.trim())}`);
+            setTimeout(() => setIsSearching(false), 800);
+        }
     };
 
     return (
         <nav className="navbar">
             <div className="navbar-container">
+                {/* Mobile menu toggle */}
+                <div className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                {/* Brand logo */}
                 <div className="navbar-brand">
-                    <NavLink to="https://res-console.cloudinary.com/vdtry06/thumbnails/v1/image/upload/v1739549220/TXkgQnJhbmQvbG9nbzJfdWhlNmF2/drilldown">
+                    <NavLink to="/">
                         <img src="./logo2.png" alt="logo" className="navbar-logo" />
                     </NavLink>
                 </div>
 
+                {/* Search form */}
                 <form className="navbar-search" onSubmit={handleSearch}>
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Search..."
-                        value={searchValue}
-                        onChange={(e) => setSearchValue(e.target.value)}
-                    />
-                    <button type="submit" className={`search-button ${isSearching ? 'searching' : ''}`}>
-                        Search
-                    </button>
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Tìm kiếm sản phẩm..."
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                        />
+                        <button type="submit" className={`search-button ${isSearching ? 'searching' : ''}`}>
+                            <span className="search-text">Tìm kiếm</span>
+                        </button>
+                    </div>
                 </form>
 
-                <div className="navbar-link">
-                    <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
-                        <img src={homeImage} alt="home" className="navbar-icon" />
+                {/* Navigation links */}
+                <div className={`navbar-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+                    <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} onClick={() => setIsMobileMenuOpen(false)}>
+                        <img src={homeImage || "/placeholder.svg"} alt="home" className="navbar-icon" />
+                        <span className="nav-text">Trang chủ</span>
                     </NavLink>
 
-                    <NavLink to="/categories" className={({ isActive }) => (isActive ? "active" : "")}>
-                        <img src={categoryImage} alt="categories" className="navbar-icon" />
+                    <NavLink to="/categories" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} onClick={() => setIsMobileMenuOpen(false)}>
+                        <img src={categoryImage || "/placeholder.svg"} alt="categories" className="navbar-icon" />
+                        <span className="nav-text">Danh mục</span>
                     </NavLink>
 
-                    <NavLink to="/cart" className={({ isActive }) => (isActive ? "active" : "")} style={{ position: "relative" }}>
-                        <img src={cartImage} alt="cart" className="navbar-icon" />
-                        {totalCartItems > 0 && (
-                            <span className="cart-badge">{totalCartItems}</span>
-                        )}
+                    <NavLink to="/cart" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} onClick={() => setIsMobileMenuOpen(false)}>
+                        <div className={`cart-icon-container ${cartUpdated ? 'cart-updated' : ''}`}>
+                            <img src={cartImage || "/placeholder.svg"} alt="cart" className="navbar-icon" />
+                            {totalCartItems > 0 && (
+                                <span className="cart-badge">{totalCartItems}</span>
+                            )}
+                        </div>
+                        <span className="nav-text">Giỏ hàng</span>
                     </NavLink>
 
                     {isLoggedIn ? (
                         <div className="nav-item" ref={dropdownRef}>
-                            <img
-                                src={accountImage}
-                                alt="account"
-                                className="navbar-icon"
-                                onClick={toggleDropdown}
-                                style={{ cursor: "pointer" }}
-                            />
+                            <div className="account-button" onClick={toggleDropdown}>
+                                <img src={accountImage || "/placeholder.svg"} alt="account" className="navbar-icon" />
+                                <span className="nav-text">Tài khoản</span>
+                            </div>
                             <ul className={`dropdown-menu ${isDropdownOpen ? 'show' : ''}`}>
                                 <li>
                                     <NavLink
                                         className="dropdown-item"
                                         to="/account"
-                                        onClick={() => setIsDropdownOpen(false)}
+                                        onClick={() => {
+                                            setIsDropdownOpen(false);
+                                            setIsMobileMenuOpen(false);
+                                        }}
                                     >
-                                        Account
+                                        Thông tin tài khoản
                                     </NavLink>
                                 </li>
                                 <li>
                                     <NavLink
                                         className="dropdown-item"
-                                        to="/logout"
+                                        to="/orders"
+                                        onClick={() => {
+                                            setIsDropdownOpen(false);
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                    >
+                                        Đơn hàng của tôi
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <button
+                                        className="dropdown-item logout-button"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             handleLogout();
-                                            setIsDropdownOpen(false);
+                                            setIsMobileMenuOpen(false);
                                         }}
                                     >
-                                        Logout
-                                    </NavLink>
+                                        Đăng xuất
+                                    </button>
                                 </li>
                             </ul>
                         </div>
                     ) : (
-                        <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
-                            Login
+                        <NavLink to="/login" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} onClick={() => setIsMobileMenuOpen(false)}>
+                            <img src={accountImage || "/placeholder.svg"} alt="login" className="navbar-icon" />
+                            <span className="nav-text">Đăng nhập</span>
                         </NavLink>
                     )}
 
                     {ApiService.isAdmin() && (
-                        <NavLink to="/admin" className={({ isActive }) => (isActive ? "active" : "")}>
-                            <img src={adminImage} alt="admin" className="navbar-icon" />
+                        <NavLink to="/admin" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} onClick={() => setIsMobileMenuOpen(false)}>
+                            <img src={adminImage || "/placeholder.svg"} alt="admin" className="navbar-icon" />
+                            <span className="nav-text">Quản trị</span>
                         </NavLink>
                     )}
                 </div>

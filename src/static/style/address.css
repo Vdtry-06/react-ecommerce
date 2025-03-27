@@ -2,63 +2,76 @@
     max-width: 500px;
     margin: 50px auto;
     padding: 25px;
-    background: #ffffff;
+    background: #fff;
     border-radius: 10px;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
-}
-
-.address-page h2 {
-    font-size: 26px;
+  }
+  
+  .address-page h2 {
+    font-size: 24px;
     color: #333;
-    margin-bottom: 15px;
-}
-
-.address-page form {
+    margin-bottom: 20px;
+  }
+  
+  .address-page form {
     display: flex;
     flex-direction: column;
     gap: 15px;
-}
-
-.address-page label {
+  }
+  
+  .address-page label {
     font-weight: 600;
     font-size: 16px;
     text-align: left;
     display: block;
-}
-
-.address-page input {
+  }
+  
+  .address-page input {
     width: 100%;
     padding: 10px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    transition: all 0.3s ease-in-out;
-}
-
-.address-page input:focus {
+    transition: all 0.3s;
+    margin-top: 5px;
+  }
+  
+  .address-page input:focus {
     border-color: #f68b1e;
     outline: none;
-    box-shadow: 0px 0px 5px rgba(246, 139, 30, 0.5);
-}
-
-.address-page button {
-    padding: 12px 0;
-    background-color: #f68b1e;
+    box-shadow: 0 0 5px rgba(246, 139, 30, 0.3);
+  }
+  
+  .address-page button {
+    padding: 12px;
+    background: linear-gradient(135deg, #ff9f43, #f68b1e);
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 18px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.address-page button:hover {
-    background-color: #e67e00;
-}
-
-.error-message {
-    color: red;
-    font-size: 14px;
+    transition: transform 0.2s, box-shadow 0.2s;
     margin-top: 10px;
-}
+  }
+  
+  .address-page button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .address-page button:active {
+    transform: translateY(0);
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin: 10px 0;
+    padding: 8px;
+    background-color: #fdecea;
+    border-radius: 4px;
+  }
+  
+  

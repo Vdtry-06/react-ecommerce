@@ -1,210 +1,317 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import ApiService from "../../service/ApiService";
-import "../../static/style/productDetailsPages.css";
+"use client"
+
+import { useEffect, useState } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import ApiService from "../../service/ApiService"
+import "../../static/style/productDetailsPages.css"
 
 const ProductDetailsPages = () => {
-    const { productId } = useParams();
-    const [product, setProduct] = useState(null);
-    const [selectedToppings, setSelectedToppings] = useState(new Set());
-    const [cartItem, setCartItem] = useState(null); // State để lưu thông tin sản phẩm trong giỏ hàng
+  const { productId } = useParams()
+  const navigate = useNavigate()
+  const [product, setProduct] = useState(null)
+  const [cart, setCart] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [activeTab, setActiveTab] = useState("description")
 
-    useEffect(() => {
-        fetchProduct();
-        fetchCartItem(); // Lấy thông tin giỏ hàng khi component mount
-    }, [productId]);
+  // Fetch product and cart data
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      try {
+        const response = await ApiService.getProduct(productId)
+        setProduct(response.data)
 
-    const fetchProduct = async () => {
-        try {
-            const response = await ApiService.getProduct(productId);
-            setProduct(response.data);
-        } catch (error) {
-            console.log(error.message || error);
+        if (ApiService.isAuthenticated()) {
+          const userInfo = await ApiService.getMyInfo()
+          const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
+          const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
+
+          if (pendingOrder?.orderLines) {
+            setCart(
+              pendingOrder.orderLines.map((line) => ({
+                id: line.productId,
+                qty: line.quantity,
+                orderLineId: line.id,
+              })),
+            )
+          }
         }
-    };
-
-    // Lấy thông tin giỏ hàng từ backend để kiểm tra sản phẩm đã có trong giỏ chưa
-    const fetchCartItem = async () => {
-        try {
-            if (ApiService.isAuthenticated()) {
-                const userInfo = await ApiService.getMyInfo();
-                const userId = userInfo.data.id;
-                const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
-                const orders = ordersResponse.data || [];
-                const pendingOrder = orders.find(order => order.status === "PENDING");
-
-                if (pendingOrder && pendingOrder.orderLines) {
-                    const orderLine = pendingOrder.orderLines.find(line => line.productId === parseInt(productId));
-                    if (orderLine) {
-                        setCartItem({ id: orderLine.productId, qty: orderLine.quantity });
-                    } else {
-                        setCartItem(null);
-                    }
-                } else {
-                    setCartItem(null);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching cart item:", error);
-            setCartItem(null);
-        }
-    };
-
-    const addToCart = async () => {
-        if (!product) return;
-
-        try {
-            if (!ApiService.isAuthenticated()) {
-                alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!");
-                return;
-            }
-
-            const userInfo = await ApiService.getMyInfo();
-            const userId = userInfo.data.id;
-            const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
-            const orders = ordersResponse.data || [];
-            let pendingOrder = orders.find(order => order.status === "PENDING");
-
-            const orderLineRequest = { productId: product.id, quantity: 1 };
-
-            if (!pendingOrder) {
-                const orderRequest = {
-                    userId,
-                    orderLines: [orderLineRequest],
-                    paymentMethod: "CASH_ON_DELIVERY"
-                };
-                await ApiService.createOrder(orderRequest);
-            } else {
-                await ApiService.addOrderLine(pendingOrder.id, orderLineRequest);
-            }
-            window.dispatchEvent(new Event("cartChanged")); // Thông báo thay đổi giỏ hàng
-            fetchCartItem(); // Cập nhật lại thông tin giỏ hàng
-        } catch (error) {
-            console.error("Error adding to cart:", error);
-            alert(error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng!");
-        }
-    };
-
-    const incrementItem = async () => {
-        if (!product) return;
-
-        try {
-            const userInfo = await ApiService.getMyInfo();
-            const userId = userInfo.data.id;
-            const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
-            const orders = ordersResponse.data || [];
-            const pendingOrder = orders.find(order => order.status === "PENDING");
-
-            if (pendingOrder) {
-                const orderLine = pendingOrder.orderLines.find(line => line.productId === product.id);
-                if (orderLine) {
-                    const orderLineRequest = { productId: product.id, quantity: orderLine.quantity + 1 };
-                    await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest);
-                    window.dispatchEvent(new Event("cartChanged"));
-                    fetchCartItem(); // Cập nhật lại thông tin giỏ hàng
-                }
-            }
-        } catch (error) {
-            console.error("Error incrementing item:", error);
-            alert(error.response?.data?.message || "Lỗi khi tăng số lượng!");
-        }
-    };
-
-    const decrementItem = async () => {
-        if (!product) return;
-
-        try {
-            const userInfo = await ApiService.getMyInfo();
-            const userId = userInfo.data.id;
-            const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
-            const orders = ordersResponse.data || [];
-            const pendingOrder = orders.find(order => order.status === "PENDING");
-
-            if (pendingOrder) {
-                const orderLine = pendingOrder.orderLines.find(line => line.productId === product.id);
-                if (orderLine) {
-                    if (orderLine.quantity > 1) {
-                        const orderLineRequest = { productId: product.id, quantity: orderLine.quantity - 1 };
-                        await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest);
-                    } else {
-                        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id);
-                    }
-                    window.dispatchEvent(new Event("cartChanged"));
-                    fetchCartItem(); // Cập nhật lại thông tin giỏ hàng
-                }
-            }
-        } catch (error) {
-            console.error("Error decrementing item:", error);
-            alert(error.response?.data?.message || "Lỗi khi giảm số lượng!");
-        }
-    };
-
-    const toggleTopping = (toppingId) => {
-        setSelectedToppings(prev => {
-            const newToppings = new Set(prev);
-            newToppings.has(toppingId) ? newToppings.delete(toppingId) : newToppings.add(toppingId);
-            return newToppings;
-        });
-    };
-
-    if (!product) {
-        return <p>Loading...</p>;
+      } catch (error) {
+        console.log(error.message || error)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    return (
-        <div className="product-detail">
-            {/* Ảnh + Thông tin sản phẩm */}
-            <div className="product-info">
-                <img src={product?.imageUrl} alt={product.name} />
-                <h1>{product?.name}</h1>
-                <p>{product?.description}</p>
-                <p>Số lượng: {product?.availableQuantity}</p>
-                <span>${product?.price.toFixed(2)}</span>
-                {cartItem ? (
-                    <div className="quantity-controls">
-                        <button onClick={decrementItem}> - </button>
-                        <span>{cartItem.qty}</span>
-                        <button onClick={incrementItem}> + </button>
-                    </div>
-                ) : (
-                    <button onClick={addToCart}>Add to Cart</button>
-                )}
-            </div>
+    fetchData()
+    window.addEventListener("cartChanged", fetchData)
+    return () => window.removeEventListener("cartChanged", fetchData)
+  }, [productId])
 
-            {/* Danh mục sản phẩm */}
-            <div className="product-categories">
-                <h2>Categories</h2>
-                <ul>
-                    {product?.categories?.map((category) => (
-                        <li key={category.id}>
-                            <strong>{category.name}</strong>: {category.description}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+  // Add to cart function
+  const addToCart = async () => {
+    if (!product) return
 
-            {/* Topping */}
-            <div className="product-toppings">
-                <h2>Toppings</h2>
-                <ul>
-                    {product?.toppings?.map((topping) => (
-                        <li key={topping.id}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    onChange={() => toggleTopping(topping.id)}
-                                    checked={selectedToppings.has(topping.id)}
-                                />
-                                <div className="topping-info">
-                                    <strong>{topping.name}</strong>: {topping.price}
-                                </div>
-                            </label>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+    try {
+      setIsProcessing(true)
+
+      if (!ApiService.isAuthenticated()) {
+        const confirmLogin = window.confirm("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng! Đến trang đăng nhập?")
+        if (confirmLogin) navigate("/login")
+        return
+      }
+
+      const userInfo = await ApiService.getMyInfo()
+      const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
+      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
+      const orderLineRequest = { productId: product.id, quantity: 1 }
+
+      if (!pendingOrder) {
+        await ApiService.createOrder({
+          userId: userInfo.data.id,
+          orderLines: [orderLineRequest],
+          paymentMethod: "CASH_ON_DELIVERY",
+        })
+      } else {
+        const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id)
+        if (existingLine) {
+          await ApiService.updateOrderLine(pendingOrder.id, existingLine.id, {
+            ...orderLineRequest,
+            quantity: existingLine.quantity + 1,
+          })
+        } else {
+          await ApiService.addOrderLine(pendingOrder.id, orderLineRequest)
+        }
+      }
+
+      window.dispatchEvent(new Event("cartChanged"))
+      alert("Sản phẩm đã được thêm vào giỏ hàng!")
+    } catch (error) {
+      alert("Lỗi khi thêm vào giỏ hàng!")
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  // Buy now function
+  const buyNow = async () => {
+    try {
+      setIsProcessing(true)
+      await addToCart()
+      navigate("/cart")
+    } catch (error) {
+      alert("Lỗi khi mua hàng!")
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  // Update cart quantity
+  const updateQuantity = async (increment) => {
+    if (!product) return
+
+    try {
+      setIsProcessing(true)
+      const userInfo = await ApiService.getMyInfo()
+      const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
+      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
+
+      if (!pendingOrder) return
+
+      const orderLine = pendingOrder.orderLines.find((line) => line.productId === product.id)
+      if (!orderLine) return
+
+      const newQuantity = orderLine.quantity + (increment ? 1 : -1)
+
+      if (newQuantity > 0) {
+        await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, {
+          productId: product.id,
+          quantity: newQuantity,
+        })
+      } else {
+        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
+      }
+
+      window.dispatchEvent(new Event("cartChanged"))
+    } catch (error) {
+      alert(increment ? "Lỗi khi tăng số lượng!" : "Lỗi khi giảm số lượng!")
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  if (isLoading) {
+    return <div className="loading-container">Đang tải thông tin sản phẩm...</div>
+  }
+
+  if (!product) {
+    return <div className="error-container">Không tìm thấy sản phẩm</div>
+  }
+
+  const cartItem = cart.find((item) => item.id === product.id)
+
+  // Sample related products
+  const relatedProducts = [
+    { id: "related1", name: "Sản phẩm liên quan 1", price: 19.99, imageUrl: "/placeholder.svg?height=150&width=150" },
+    { id: "related2", name: "Sản phẩm liên quan 2", price: 24.99, imageUrl: "/placeholder.svg?height=150&width=150" },
+    { id: "related3", name: "Sản phẩm liên quan 3", price: 29.99, imageUrl: "/placeholder.svg?height=150&width=150" },
+    { id: "related4", name: "Sản phẩm liên quan 4", price: 34.99, imageUrl: "/placeholder.svg?height=150&width=150" },
+  ]
+
+  return (
+    <div className="product-details-container">
+      {/* Product Image and Basic Info */}
+      <div className="product-detail-top">
+        <div className="product-image-section">
+          <div className="product-image-container">
+            <img src={product.imageUrl || "/placeholder.svg?height=300&width=300"} alt={product.name} />
+            {product.discount > 0 && <div className="discount-badge">-{product.discount}%</div>}
+          </div>
         </div>
-    );
-};
 
-export default ProductDetailsPages;
+        <div className="product-info">
+          <h1>{product.name}</h1>
+
+          <div className="product-price">
+            <span className="current-price">${product.price?.toFixed(2)}</span>
+            {product.originalPrice && <span className="original-price">${product.originalPrice.toFixed(2)}</span>}
+          </div>
+
+          <div className="product-availability">
+            <span
+              className={`availability-indicator ${product.availableQuantity > 0 ? "in-stock" : "out-of-stock"}`}
+            ></span>
+            <span className="availability-text">
+              {product.availableQuantity > 0 ? `Còn hàng (${product.availableQuantity})` : "Hết hàng"}
+            </span>
+          </div>
+
+          {cartItem ? (
+            <div className="quantity-controls">
+              <button onClick={() => updateQuantity(false)} disabled={isProcessing}>
+                -
+              </button>
+              <span>{isProcessing ? "..." : cartItem.qty}</span>
+              <button onClick={() => updateQuantity(true)} disabled={isProcessing}>
+                +
+              </button>
+            </div>
+          ) : (
+            <div className="product-buttons">
+              <button
+                className="add-to-cart-button"
+                onClick={addToCart}
+                disabled={isProcessing || product.availableQuantity <= 0}
+              >
+                {isProcessing ? "Đang xử lý..." : "Thêm vào giỏ"}
+              </button>
+              <button
+                className="buy-now-button"
+                onClick={buyNow}
+                disabled={isProcessing || product.availableQuantity <= 0}
+              >
+                {isProcessing ? "Đang xử lý..." : "Mua ngay"}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Product Description */}
+      <div className="product-detail-content">
+        <div className="product-tabs">
+          <button
+            className={`tab-button ${activeTab === "description" ? "active" : ""}`}
+            onClick={() => setActiveTab("description")}
+          >
+            Mô tả sản phẩm
+          </button>
+          <button
+            className={`tab-button ${activeTab === "specifications" ? "active" : ""}`}
+            onClick={() => setActiveTab("specifications")}
+          >
+            Thông số kỹ thuật
+          </button>
+        </div>
+
+        <div className="tab-content">
+          {activeTab === "description" && (
+            <div className="product-description">
+              <p>{product.description || "Chưa có mô tả cho sản phẩm này."}</p>
+              <div className="product-features">
+                <h3>Đặc điểm sản phẩm</h3>
+                <ul>
+                  <li>Thương hiệu: {product.brand || "Chưa cập nhật"}</li>
+                  <li>Xuất xứ: {product.origin || "Chưa cập nhật"}</li>
+                  <li>Trọng lượng: {product.weight || "Chưa cập nhật"}</li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "specifications" && (
+            <div className="product-specifications">
+              <h2>Thông số kỹ thuật</h2>
+              <table className="specs-table">
+                <tbody>
+                  <tr>
+                    <td>Mã sản phẩm</td>
+                    <td>{product.id || "N/A"}</td>
+                  </tr>
+                  <tr>
+                    <td>Kích thước</td>
+                    <td>{product.dimensions || "Chưa cập nhật"}</td>
+                  </tr>
+                  <tr>
+                    <td>Chất liệu</td>
+                    <td>{product.material || "Chưa cập nhật"}</td>
+                  </tr>
+                  <tr>
+                    <td>Bảo hành</td>
+                    <td>{product.warranty || "Chưa cập nhật"}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Customer Reviews Section - Simplified */}
+      <div className="customer-reviews-section">
+        <h2>Đánh giá từ khách hàng</h2>
+        <div className="reviews-summary">
+          <div className="average-rating">
+            <div className="rating-number">4.7</div>
+            <div className="rating-stars">★★★★★</div>
+            <div className="total-reviews">3 đánh giá</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Related Products Section */}
+      <div className="related-products-section">
+        <h2>Sản phẩm liên quan</h2>
+        <div className="related-products-grid">
+          {relatedProducts.map((product) => (
+            <div className="related-product-card" key={product.id} onClick={() => navigate(`/product/${product.id}`)}>
+              <div className="related-product-image">
+                <img src={product.imageUrl || "/placeholder.svg"} alt={product.name} />
+              </div>
+              <div className="related-product-info">
+                <h3>{product.name}</h3>
+                <div className="related-product-price">
+                  <span className="current-price">${product.price.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ProductDetailsPages
+
