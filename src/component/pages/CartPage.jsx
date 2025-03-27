@@ -141,9 +141,9 @@ const CartPage = () => {
     })
   }
 
-  const handleCheckout = async () => {
+  const handleBuy = () => {
     if (!ApiService.isAuthenticated()) {
-      setMessage("Bạn cần đăng nhập trước khi thanh toán!")
+      setMessage("Bạn cần đăng nhập trước khi mua hàng!")
       setTimeout(() => {
         setMessage("")
         navigate("/login")
@@ -152,55 +152,21 @@ const CartPage = () => {
     }
 
     if (selectedItems.size === 0) {
-      setMessage("Vui lòng chọn ít nhất một sản phẩm để thanh toán!")
+      setMessage("Vui lòng chọn ít nhất một sản phẩm để mua!")
       setTimeout(() => setMessage(""), 3000)
       return
     }
 
-    try {
-      const userInfo = await ApiService.getMyInfo()
-      const userId = userInfo.data.id
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId)
-      const orders = ordersResponse.data || []
-      const pendingOrder = orders.find((order) => order.status === "PENDING")
+    // Lọc các sản phẩm được chọn
+    const selectedCartItems = cart.filter((item) => selectedItems.has(item.id))
 
-      if (!pendingOrder || pendingOrder.orderLines.length === 0) {
-        setMessage("Giỏ hàng trống!")
-        setTimeout(() => setMessage(""), 3000)
-        return
-      }
-
-      // Lọc các sản phẩm được chọn
-      const selectedCartItems = cart.filter((item) => selectedItems.has(item.id))
-      const orderRequest = {
-        userId,
-        orderLines: selectedCartItems.map((item) => ({
-          productId: item.id,
-          quantity: item.qty,
-        })),
-        paymentMethod: "CASH_ON_DELIVERY",
-      }
-      await ApiService.createOrder(orderRequest)
-
-      // Xóa các sản phẩm đã thanh toán khỏi đơn hàng PENDING
-      for (const item of selectedCartItems) {
-        const orderLine = pendingOrder.orderLines.find((line) => line.productId === item.id)
-        if (orderLine) {
-          await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
-        }
-      }
-
-      setMessage("Thanh toán thành công!")
-      setSelectedItems(new Set()) // Reset các sản phẩm được chọn
-      setTimeout(() => {
-        setMessage("")
-        fetchCart() // Cập nhật lại giỏ hàng
-      }, 3000)
-      window.dispatchEvent(new Event("cartChanged"))
-    } catch (error) {
-      setMessage(error.response?.data?.message || "Lỗi khi thanh toán!")
-      setTimeout(() => setMessage(""), 3000)
-    }
+    // Chuyển hướng đến /checkout với dữ liệu sản phẩm đã chọn
+    navigate("/checkout", {
+      state: {
+        selectedItems: selectedCartItems,
+        totalPrice: totalPrice.toFixed(2),
+      },
+    })
   }
 
   // Tính tổng giá của các sản phẩm được chọn
@@ -210,10 +176,8 @@ const CartPage = () => {
 
   const selectAll = () => {
     if (selectedItems.size === cart.length) {
-      // If all items are selected, deselect all
       setSelectedItems(new Set())
     } else {
-      // Otherwise, select all items
       setSelectedItems(new Set(cart.map((item) => item.id)))
     }
   }
@@ -336,10 +300,10 @@ const CartPage = () => {
 
               <button
                 className={`checkout-button ${selectedItems.size === 0 ? "disabled" : ""}`}
-                onClick={handleCheckout}
+                onClick={handleBuy}
                 disabled={selectedItems.size === 0}
               >
-                Thanh toán ngay
+                Mua Hàng
               </button>
 
               <button className="continue-shopping" onClick={() => navigate("/products")}>

@@ -43,7 +43,7 @@ const AddressPage = () => {
           ward: "",
           street: "",
           houseNumber: "",
-        },
+        }
       )
     } catch (err) {
       setError("Unable to fetch user information")
@@ -59,7 +59,10 @@ const AddressPage = () => {
     e.preventDefault()
     try {
       await (isEditMode ? ApiService.updateAddress(address) : ApiService.addAddress(address))
-      navigate("/account")
+      setError(null) // Xóa lỗi nếu thành công
+      // Quay lại trang trước dựa trên returnUrl từ state, mặc định là /account
+      const returnUrl = location.state?.returnUrl || "/account"
+      navigate(returnUrl, { state: location.state?.checkoutState }) // Truyền lại checkoutState nếu có
     } catch (err) {
       setError("Failed to save address information")
     }
@@ -74,14 +77,26 @@ const AddressPage = () => {
         {fields.map((field) => (
           <label key={field.name}>
             {field.label}:
-            <input type="text" name={field.name} value={address[field.name] || ""} onChange={handleChange} required />
+            <input
+              type="text"
+              name={field.name}
+              value={address[field.name] || ""}
+              onChange={handleChange}
+              required
+            />
           </label>
         ))}
         <button type="submit">{isEditMode ? "Update Address" : "Save Address"}</button>
+        <button
+          type="button"
+          onClick={() => navigate(location.state?.returnUrl || "/account", { state: location.state?.checkoutState })}
+          className="cancel-button"
+        >
+          Cancel
+        </button>
       </form>
     </div>
   )
 }
 
 export default AddressPage
-

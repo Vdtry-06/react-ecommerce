@@ -79,6 +79,24 @@ export default class ApiService {
     return response.data;
   }
 
+  static async getAddress(id) {
+    const response = await axios.get(
+      `${this.BASE_URL}/api/v1/addresses/get-address/${id}`,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
+
+  static async getAddresses() {
+    const response = await axios.get(`${this.BASE_URL}/api/v1/addresses/get-all`, {
+      headers: this.getHeader(),
+    });
+    return response.data;
+  }
+
+
   /*Product */
   static async addProduct(request) {
     return await axios.post(`${this.BASE_URL}/api/v1/product/add`, request, {

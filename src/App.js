@@ -13,6 +13,7 @@ import Account from './component/pages/Account';
 import CategoryListPage from './component/pages/CategoryListPage';
 import CategoryProductsPage from './component/pages/CategoryProductsPage';
 import CartPage from './component/pages/CartPage';
+import CheckoutPage from './component/pages/CheckoutPage';
 import AddressPage from './component/pages/AddressPage';
 import AdminPage from './component/admin/AdminPage';
 import AdminCategoryPage from './component/admin/AdminCategoryPage';
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/categories" element={<CategoryListPage />} />
                 <Route path="/category-products" element={<CategoryProductsPage />} /> 
                 <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/account" element={<Account />} />

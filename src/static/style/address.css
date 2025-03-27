@@ -1,23 +1,30 @@
 .address-page {
     max-width: 500px;
     margin: 50px auto;
-    padding: 25px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .address-page:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   }
   
   .address-page h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
+    font-size: 26px;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
   }
   
   .address-page form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
   }
   
   .address-page label {
@@ -25,53 +32,84 @@
     font-size: 16px;
     text-align: left;
     display: block;
+    color: #34495e;
+    margin-bottom: 5px;
   }
   
   .address-page input {
     width: 100%;
-    padding: 10px;
+    padding: 12px 15px;
     font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    transition: all 0.3s;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
     margin-top: 5px;
   }
   
   .address-page input:focus {
     border-color: #f68b1e;
+    background-color: #ffffff;
+    box-shadow: 0 0 8px rgba(246, 139, 30, 0.25);
     outline: none;
-    box-shadow: 0 0 5px rgba(246, 139, 30, 0.3);
   }
   
-  .address-page button {
-    padding: 12px;
-    background: linear-gradient(135deg, #ff9f43, #f68b1e);
+  .address-page button[type="submit"] {
+    padding: 14px;
+    background: linear-gradient(135deg, #ff9f43 0%, #f68b1e 100%);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+  }
+  
+  .address-page button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(246, 139, 30, 0.3);
+    background: linear-gradient(135deg, #ffa959 0%, #ff7f0e 100%);
+  }
+  
+  .address-page button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(246, 139, 30, 0.2);
+  }
+  
+  .address-page .cancel-button {
+    padding: 14px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
     margin-top: 10px;
   }
   
-  .address-page button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  .address-page .cancel-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
+    background: linear-gradient(135deg, #ff6655 0%, #e74c3c 100%);
   }
   
-  .address-page button:active {
+  .address-page .cancel-button:active {
     transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(231, 76, 60, 0.2);
   }
   
   .error-message {
-    color: #e74c3c;
+    color: #c0392b;
     font-size: 14px;
-    margin: 10px 0;
-    padding: 8px;
-    background-color: #fdecea;
-    border-radius: 4px;
+    margin: 15px 0;
+    padding: 10px 15px;
+    background-color: #fef1f0;
+    border: 1px solid #f9ccc7;
+    border-radius: 6px;
+    font-weight: 500;
+    text-align: center;
   }
-  
-  
