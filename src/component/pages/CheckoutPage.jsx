@@ -6,7 +6,7 @@ import ApiService from "../../service/ApiService"
 import "../../static/style/checkout.css"
 
 const CheckoutPage = () => {
-  const { state } = useLocation() // Lấy dữ liệu từ CartPage
+  const { state } = useLocation()
   const navigate = useNavigate()
   const [selectedItems, setSelectedItems] = useState([])
   const [totalPrice, setTotalPrice] = useState(0)
@@ -20,6 +20,13 @@ const CheckoutPage = () => {
       setTotalPrice(state.totalPrice || 0)
     }
     fetchUserAddress()
+
+    // Xử lý callback từ VNPay
+    const urlParams = new URLSearchParams(window.location.search)
+    const vnpResponseCode = urlParams.get("vnp_ResponseCode")
+    if (vnpResponseCode) {
+      handleVNPayCallback(vnpResponseCode)
+    }
   }, [state])
 
   const fetchUserAddress = async () => {
@@ -50,19 +57,57 @@ const CheckoutPage = () => {
     try {
       const userInfo = await ApiService.getMyInfo()
       const userId = userInfo.data.id
+
+      const selectedOrderLines = selectedItems.map((item) => ({
+        productId: item.id,
+        quantity: item.qty,
+        price: item.price * item.qty,
+      }))
+
+      const response = await ApiService.createVNPayPaymentForSelectedItems({
+        orderLines: selectedOrderLines,
+        userId: userId,
+        bankCode: "NCB",
+      })
+
+      if (response.data.code === "ok") {
+        window.location.href = response.data.paymentUrl
+      } else {
+        setMessage("Lỗi khi tạo thanh toán VNPay!")
+        setTimeout(() => setMessage(""), 3000)
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Lỗi khi thanh toán!")
+      setTimeout(() => setMessage(""), 3000)
+    }
+  }
+
+  const handleVNPayCallback = async (responseCode) => {
+    try {
+      if (responseCode === "00") {
+        setMessage("Thanh toán thành công!")
+        await removePaidItemsFromPendingOrder()
+        setTimeout(() => {
+          setMessage("")
+          navigate("/") // Chuyển về trang chủ thay vì /orders
+        }, 3000)
+      } else {
+        setMessage("Thanh toán thất bại!")
+        setTimeout(() => setMessage(""), 3000)
+      }
+    } catch (error) {
+      setMessage("Lỗi khi xử lý callback từ VNPay!")
+      setTimeout(() => setMessage(""), 3000)
+    }
+  }
+
+  const removePaidItemsFromPendingOrder = async () => {
+    try {
+      const userInfo = await ApiService.getMyInfo()
+      const userId = userInfo.data.id
       const ordersResponse = await ApiService.getAllOrdersOfUser(userId)
       const orders = ordersResponse.data || []
       const pendingOrder = orders.find((order) => order.status === "PENDING")
-
-      const orderRequest = {
-        userId,
-        orderLines: selectedItems.map((item) => ({
-          productId: item.id,
-          quantity: item.qty,
-        })),
-        paymentMethod: "CASH_ON_DELIVERY",
-      }
-      await ApiService.createOrder(orderRequest)
 
       if (pendingOrder) {
         for (const item of selectedItems) {
@@ -71,17 +116,10 @@ const CheckoutPage = () => {
             await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
           }
         }
+        window.dispatchEvent(new Event("cartChanged"))
       }
-
-      setMessage("Thanh toán thành công!")
-      window.dispatchEvent(new Event("cartChanged"))
-      setTimeout(() => {
-        setMessage("")
-        navigate("/orders")
-      }, 3000)
     } catch (error) {
-      setMessage(error.response?.data?.message || "Lỗi khi thanh toán!")
-      setTimeout(() => setMessage(""), 3000)
+      console.error("Error removing paid items from pending order:", error)
     }
   }
 

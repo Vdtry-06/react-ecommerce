@@ -450,6 +450,26 @@ export default class ApiService {
       }
     );
   }
+
+  /* Payment */
+    static async createVNPayPaymentForSelectedItems(request) {
+      const response = await axios.post(
+        `${this.BASE_URL}/api/v1/payment/vn-pay-selected`,
+        request,
+        {
+          headers: this.getHeader(),
+        }
+      )
+      return response.data
+    }
+
+    static async payCallback(params) {
+      const response = await axios.get(`${this.BASE_URL}/api/v1/payment/vn-pay-callback`, {
+        params,
+        headers: this.getHeader(),
+      })
+      return response.data
+    }
 }
 
 // Set up Axios interceptors
