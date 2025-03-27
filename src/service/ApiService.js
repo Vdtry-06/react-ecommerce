@@ -277,8 +277,8 @@ export default class ApiService {
   }
 
   /* Order */
-  static async createOrder() {
-    const response = await axios.post(`${this.BASE_URL}/api/v1/orders`, {
+  static async createOrder(request) {
+    const response = await axios.post(`${this.BASE_URL}/api/v1/orders`, request, {
       headers: this.getHeader(),
     });
     return response.data;
