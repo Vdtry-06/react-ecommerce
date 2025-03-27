@@ -6,13 +6,13 @@ import ApiService from "../../service/ApiService"
 import "../../static/style/cart.css"
 
 const CartPage = () => {
-  const [cart, setCart] = useState([]) // Giỏ hàng từ backend
+  const [cart, setCart] = useState([]) // Giỏ hàng từ đơn hàng PENDING
   const [selectedItems, setSelectedItems] = useState(new Set()) // Các sản phẩm được tích chọn
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  // Hàm lấy giỏ hàng từ backend
+  // Hàm lấy giỏ hàng từ backend (chỉ lấy đơn hàng PENDING)
   const fetchCart = async () => {
     try {
       if (!ApiService.isAuthenticated()) {
@@ -32,7 +32,7 @@ const CartPage = () => {
             return {
               id: line.productId,
               qty: line.quantity,
-              price: line.price / line.quantity, // Giả sử price là tổng giá
+              price: line.price / line.quantity, // Giả sử price là tổng giá của orderLine
               name: product.name || `Product ${line.productId}`,
               imageUrl: product.imageUrl || "",
               description: product.description || "",
@@ -50,9 +50,11 @@ const CartPage = () => {
               orderLineId: line.id,
             }
           }
-        }),
+        })
       )
       setCart(cartItems)
+      // Đặt lại selectedItems dựa trên cart mới
+      setSelectedItems(new Set())
     } catch (error) {
       setMessage(error.message || "Lỗi khi tải giỏ hàng!")
       setTimeout(() => setMessage(""), 3000)
@@ -64,7 +66,7 @@ const CartPage = () => {
     }
   }
 
-  // Gọi fetchCart khi component mount
+  // Gọi fetchCart khi component mount và khi giỏ hàng thay đổi
   useEffect(() => {
     fetchCart()
     window.addEventListener("cartChanged", fetchCart)
@@ -96,7 +98,6 @@ const CartPage = () => {
         }
       }
       window.dispatchEvent(new Event("cartChanged"))
-      fetchCart()
     } catch (error) {
       setMessage(error.response?.data?.message || "Lỗi khi tăng số lượng!")
       setTimeout(() => setMessage(""), 3000)
@@ -122,7 +123,6 @@ const CartPage = () => {
         await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
       }
       window.dispatchEvent(new Event("cartChanged"))
-      fetchCart()
     } catch (error) {
       setMessage(error.response?.data?.message || "Lỗi khi giảm số lượng!")
       setTimeout(() => setMessage(""), 3000)
@@ -157,10 +157,7 @@ const CartPage = () => {
       return
     }
 
-    // Lọc các sản phẩm được chọn
     const selectedCartItems = cart.filter((item) => selectedItems.has(item.id))
-
-    // Chuyển hướng đến /checkout với dữ liệu sản phẩm đã chọn
     navigate("/checkout", {
       state: {
         selectedItems: selectedCartItems,
@@ -169,7 +166,6 @@ const CartPage = () => {
     })
   }
 
-  // Tính tổng giá của các sản phẩm được chọn
   const totalPrice = cart
     .filter((item) => selectedItems.has(item.id))
     .reduce((total, item) => total + item.price * item.qty, 0)

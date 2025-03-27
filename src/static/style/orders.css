@@ -1,0 +1,40 @@
+.orders-page {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .orders-list {
+    margin-top: 20px;
+  }
+  
+  .order-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+  }
+  
+  .order-item h2 {
+    font-size: 1.2em;
+    margin: 0 0 10px;
+  }
+  
+  .order-item .paid {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .back-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .back-button:hover {
+    background-color: #0056b3;
+  }
