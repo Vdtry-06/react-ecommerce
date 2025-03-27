@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import '../../static/style/navbar.css';
 import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
-import { useCart } from "../context/CartContext";  // Import useCart
+import { useCart } from "../context/CartContext";
 import homeImage from "../../static/images/home.png";
 import categoryImage from "../../static/images/application.png";
 import accountImage from "../../static/images/account.png";
@@ -10,7 +10,7 @@ import adminImage from "../../static/images/admin.png";
 import cartImage from "../../static/images/cart.png";
 
 const Navbar = () => {
-    const { cart } = useCart(); // Lấy giỏ hàng từ context
+    const { cart } = useCart();
     const [searchValue, setSearchValue] = useState("");
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -46,7 +46,6 @@ const Navbar = () => {
         }
     };
 
-    // 🛒 Tính tổng số lượng sản phẩm trong giỏ hàng
     const totalCartItems = cart.reduce((sum, item) => sum + item.qty, 0);
 
     const [isSearching, setIsSearching] = useState(false);
@@ -55,8 +54,6 @@ const Navbar = () => {
         e.preventDefault();
         setIsSearching(true);
         navigate(`/?search=${searchValue}`);
-
-        // Reset hiệu ứng sau 500ms
         setTimeout(() => setIsSearching(false), 500);
     };
 
@@ -76,18 +73,17 @@ const Navbar = () => {
 
                 <div className="navbar-link">
                     <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>
-                        <img src={homeImage} alt="home" className="navbar-home" />
+                        <img src={homeImage} alt="home" className="navbar-icon" />
                     </NavLink>
 
                     <NavLink to="/categories" className={({ isActive }) => isActive ? "active" : ""}>
-                        <img src={categoryImage} alt="categories" className="navbar-home" />
+                        <img src={categoryImage} alt="categories" className="navbar-icon" />
                     </NavLink>
 
-                    {/* 🛒 Hiển thị số lượng sản phẩm trên icon giỏ hàng */}
                     <NavLink to="/cart" className={({ isActive }) => isActive ? "active" : ""} style={{ position: "relative" }}>
-                        <img src={cartImage} alt="cart" className="navbar-home" />
+                        <img src={cartImage} alt="cart" className="navbar-icon" />
                         {totalCartItems > -1 && (
-                            <span className="cart-badge">{totalCartItems}</span> // Badge hiển thị số lượng
+                            <span className="cart-badge">{totalCartItems}</span>
                         )}
                     </NavLink>
 
@@ -96,7 +92,7 @@ const Navbar = () => {
                             <img 
                                 src={accountImage} 
                                 alt="account" 
-                                className="navbar-home" 
+                                className="navbar-icon" 
                                 onClick={toggleDropdown} 
                                 style={{ cursor: "pointer" }} 
                             />
@@ -105,7 +101,7 @@ const Navbar = () => {
                                     <NavLink 
                                         className="dropdown-item" 
                                         to="/account" 
-                                        onClick={() => setIsDropdownOpen(false)} // Đóng menu khi nhấn
+                                        onClick={() => setIsDropdownOpen(false)}
                                     >
                                         Account
                                     </NavLink>
@@ -117,7 +113,7 @@ const Navbar = () => {
                                         onClick={(e) => {
                                             e.preventDefault();
                                             handleLogout();
-                                            setIsDropdownOpen(false); // Đóng menu khi đăng xuất
+                                            setIsDropdownOpen(false);
                                         }}
                                     >
                                         Logout
@@ -133,7 +129,7 @@ const Navbar = () => {
 
                     {isAdmin && (
                         <NavLink to="/admin" className={({ isActive }) => isActive ? "active" : ""}>
-                            <img src={adminImage} alt="admin" className="navbar-home" />
+                            <img src={adminImage} alt="admin" className="navbar-icon" />
                         </NavLink>
                     )}
                 </div>
