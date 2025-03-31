@@ -14,7 +14,6 @@ const AddCategory = () => {
     try {
       const response = await ApiService.addCategory({ name, description });
       if (response.code === 1000) {
-        // Assuming the response code 1000 indicates success
         setMessage("Category added successfully!");
         setTimeout(() => {
           navigate("/admin/categories");

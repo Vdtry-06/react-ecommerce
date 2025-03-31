@@ -19,7 +19,6 @@ const AdminPage = () => {
     const [error, setError] = useState(null);
     const itemsPerPage = 5;
 
-    // Product-specific states for Add/Edit modals
     const [showAddProductModal, setShowAddProductModal] = useState(false);
     const [showEditProductModal, setShowEditProductModal] = useState(false);
     const [newProduct, setNewProduct] = useState({
@@ -365,22 +364,22 @@ const AdminPage = () => {
                 return (
                     <div className="admin-category-list">
                         <div className="category-header">
-                            <h2>Categories Management</h2>
+                            <h2>Quản lý danh mục</h2>
                             <button 
                                 className="add-btn"
                                 onClick={() => setShowAddModal(true)}
                             >
-                                Add Category
+                                Thêm danh mục
                             </button>
                         </div>
                         {categories.length === 0 ? (
-                            <p className="no-data">No categories found. Add one to get started!</p>
+                            <p className="no-data">Chưa có danh mục nào. Thêm một danh mục để bắt đầu!</p>
                         ) : (
                             <div className="category-table">
                                 <div className="table-header">
-                                    <span>Name</span>
-                                    <span>Description</span>
-                                    <span>Actions</span>
+                                    <span>Tên</span>
+                                    <span>Mô tả</span>
+                                    <span>Chỉnh sửa</span>
                                 </div>
                                 {categories.map((category) => (
                                     <div key={category.id} className="table-row">
@@ -391,13 +390,13 @@ const AdminPage = () => {
                                                 className="admin-btn-edit" 
                                                 onClick={() => handleEditCategory(category.id)}
                                             >
-                                                Edit
+                                                Sửa
                                             </button>
                                             <button 
                                                 className="admin-btn-delete"
                                                 onClick={() => handleDeleteCategory(category.id)}
                                             >
-                                                Delete
+                                                Xóa
                                             </button>
                                         </div>
                                     </div>
@@ -408,7 +407,7 @@ const AdminPage = () => {
                         {showAddModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
-                                    <h2>Add New Category</h2>
+                                    <h2>Thêm mới danh mục</h2>
                                     {message && showAddModal && <p className="message">{message}</p>}
                                     <form onSubmit={handleAddCategorySubmit} className="category-form">
                                         <input
@@ -436,7 +435,7 @@ const AdminPage = () => {
                         {showEditModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
-                                    <h2>Edit Category</h2>
+                                    <h2>Sửa danh mục</h2>
                                     {message && showEditModal && <p className="message">{message}</p>}
                                     <form onSubmit={handleEditCategorySubmit} className="category-form">
                                         <input
@@ -451,9 +450,9 @@ const AdminPage = () => {
                                             onChange={(e) => setEditCategory({...editCategory, description: e.target.value})}
                                         />
                                         <div className="modal-buttons">
-                                            <button type="submit">Update Category</button>
+                                            <button type="submit">Cập nhật danh mục</button>
                                             <button type="button" onClick={() => setShowEditModal(false)}>
-                                                Cancel
+                                                Hủy bỏ
                                             </button>
                                         </div>
                                     </form>
@@ -466,27 +465,27 @@ const AdminPage = () => {
                 return (
                     <div className="admin-product-list">
                         <div className="product-header">
-                            <h2>Products Management</h2>
+                            <h2>Quản lý sản phẩm</h2>
                             <button 
                                 className="add-btn"
                                 onClick={() => setShowAddProductModal(true)}
                             >
-                                Add Product
+                                Thêm sản phẩm
                             </button>
                         </div>
                         {products.length === 0 ? (
-                            <p className="no-data">No products found. Add one to get started!</p>
+                            <p className="no-data">Chưa có sản phẩm nào. Thêm một sản phẩm để bắt đầu!</p>
                         ) : (
                             <div className="product-table">
                                 <div className="table-header">
-                                    <span>Name</span>
-                                    <span>Price</span>
-                                    <span>Description</span>
-                                    <span>Quantity</span>
-                                    <span>Categories</span>
-                                    <span>Image</span>
+                                    <span>Tên</span>
+                                    <span>Giá</span>
+                                    <span>Mô tả</span>
+                                    <span>Số lượng</span>
+                                    <span>Danh mục</span>
+                                    <span>Ảnh</span>
                                     <span>Toppings</span>
-                                    <span>Actions</span>
+                                    <span>Chỉnh sửa</span>
                                 </div>
                                 {products.map((product) => (
                                     <div key={product.id} className="table-row">
@@ -528,13 +527,13 @@ const AdminPage = () => {
                                                 className="admin-btn-edit" 
                                                 onClick={() => handleEditProduct(product.id)}
                                             >
-                                                Edit
+                                                Sửa
                                             </button>
                                             <button 
                                                 className="admin-btn-delete" 
                                                 onClick={() => handleDeleteProduct(product.id)}
                                             >
-                                                Delete
+                                                Xóa
                                             </button>
                                         </div>
                                     </div>
@@ -550,10 +549,10 @@ const AdminPage = () => {
                         {showAddProductModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content product-modal">
-                                    <h2>Add New Product</h2>
+                                    <h2>Thêm mới sản phẩm</h2>
                                     {message && showAddProductModal && <p className="message">{message}</p>}
                                     <form onSubmit={handleAddProductSubmit} className="product-form">
-                                        <label>Upload Image:</label>
+                                        <label>Cập nhật ảnh:</label>
                                         <input type="file" onChange={(e) => handleImageChange(e)} />
                                         {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
                                         <input
@@ -588,7 +587,7 @@ const AdminPage = () => {
                                             onChange={(e) => handleProductChange(e)}
                                             required
                                         />
-                                        <label>Categories:</label>
+                                        <label>Danh mục:</label>
                                         <div className="checkbox-group">
                                             {allCategories.map(cat => (
                                                 <label key={cat.id} className="checkbox-label">
@@ -617,12 +616,12 @@ const AdminPage = () => {
                                             ))}
                                         </div>
                                         <div className="modal-buttons">
-                                            <button type="submit">Add Product</button>
+                                            <button type="submit">Thêm sản phẩm</button>
                                             <button type="button" onClick={() => {
                                                 setShowAddProductModal(false);
                                                 setImagePreview(null);
                                             }}>
-                                                Cancel
+                                                Hủy bỏ
                                             </button>
                                         </div>
                                     </form>
@@ -633,10 +632,10 @@ const AdminPage = () => {
                         {showEditProductModal && (
                             <div className="modal-overlay">
                                 <div className="modal-content product-modal">
-                                    <h2>Edit Product</h2>
+                                    <h2>Thay đổi sản phẩm</h2>
                                     {message && showEditProductModal && <p className="message">{message}</p>}
                                     <form onSubmit={handleEditProductSubmit} className="product-form">
-                                        <label>Upload Image:</label>
+                                        <label>Cập nhật ảnh:</label>
                                         <input type="file" onChange={(e) => handleImageChange(e, true)} />
                                         {imagePreview && <img src={imagePreview} alt={editProduct.name} className="image-preview" />}
                                         <input
@@ -671,7 +670,7 @@ const AdminPage = () => {
                                             onChange={(e) => handleProductChange(e, true)}
                                             required
                                         />
-                                        <label>Categories:</label>
+                                        <label>Danh mục:</label>
                                         <div className="checkbox-group">
                                             {allCategories.map(cat => (
                                                 <label key={cat.id} className="checkbox-label">
@@ -700,12 +699,12 @@ const AdminPage = () => {
                                             ))}
                                         </div>
                                         <div className="modal-buttons">
-                                            <button type="submit">Update Product</button>
+                                            <button type="submit">Cập nhật</button>
                                             <button type="button" onClick={() => {
                                                 setShowEditProductModal(false);
                                                 setImagePreview(null);
                                             }}>
-                                                Cancel
+                                                Hủy bỏ
                                             </button>
                                         </div>
                                     </form>
@@ -715,9 +714,9 @@ const AdminPage = () => {
                     </div>
                 );
             case "dashboard":
-                return <p>Welcome to the Admin Dashboard</p>;
+                return <p>Chào mừng bạn đến với Bảng điều khiển Quản trị!</p>;
             default:
-                return <p>Select a section from the sidebar or implement this section!</p>;
+                return <p>Chọn một mục từ thanh bên hoặc triển khai mục này!</p>;
         }
     };
 

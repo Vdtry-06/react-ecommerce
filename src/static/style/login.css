@@ -1,4 +1,3 @@
-/* Container chính của trang login */
 .login-container {
     display: flex;
     justify-content: center;
@@ -7,7 +6,6 @@
     background: linear-gradient(to right, #40cdcb, #217a80);
 }
 
-/* Hộp login */
 .login-box {
     background: white;
     padding: 30px;
@@ -17,7 +15,6 @@
     text-align: center;
 }
 
-/* Tiêu đề */
 .login-title {
     font-size: 24px;
     font-weight: bold;
@@ -25,7 +22,6 @@
     color: #217a80;
 }
 
-/* Nhóm input */
 .input-group {
     display: flex;
     flex-direction: column;
@@ -33,14 +29,12 @@
     margin-bottom: 15px;
 }
 
-/* Label */
 .input-group label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #444;
 }
 
-/* Input */
 .input-group input {
     padding: 10px;
     border: 1px solid #ccc;
@@ -50,13 +44,11 @@
     transition: border 0.3s ease-in-out;
 }
 
-/* Hiệu ứng focus cho input */
 .input-group input:focus {
     border-color: #217a80;
     box-shadow: 0px 0px 5px rgba(33, 122, 128, 0.5);
 }
 
-/* Nút login */
 .login-button {
     width: 100%;
     padding: 12px;
@@ -74,14 +66,12 @@
     background: #217a80;
 }
 
-/* Đường phân cách */
 .divider {
     margin: 20px 0;
     height: 1px;
     background: #ddd;
 }
 
-/* Nút đăng ký */
 .register-button {
     width: 100%;
     padding: 12px;
@@ -101,7 +91,6 @@
     color: white;
 }
 
-/* Snackbar - Thông báo lỗi */
 .snackbar {
     position: absolute;
     top: 10px;

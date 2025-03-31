@@ -1,10 +1,221 @@
-.home {
-    padding: 20px;
-}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
 
-.error-message {
+.home-layout {
+    min-height: 100vh;
+  }
+  
+  
+  .home-header {
+    display: flex;
+    align-items: center;
+    background-color: rgba(149, 122, 87, 0.196);
     text-align: center;
+  }
+  .home-header p {
+    margin: 0;
+    color: #333;
+  }
+  
+  .sider-content-layout {
+    display: flex;
+    padding: 0 48px;
+  }
+  
+  .home-sider {
+    background: linear-gradient(135deg, #ff8f1f, #ff9f43);
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+    width: 200px !important;
+    min-width: 200px !important;
+    height: 280px;
+    margin-right: 24px;
+    overflow: auto;
+    padding: 24px;
+    margin-top: 25px;
+  }
+  
+  .sider-space {
+    width: 100%;
+  }
+  
+  .sider-button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .home-content {
+    flex: 1;
+    padding: 0;
+    margin-top: 25px;
+  }
+  
+  .home-breadcrumb {
+    margin: 16px 0;
+  }
+  
+
+  .carousel-slide {
+    /* height: 100%; */
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 280px !important;
+    transition: background-color 0.5s ease;
+    border-radius: 10px;
+  }
+  
+  .carousel-slide.slide-1 {
+    background: linear-gradient(135deg, #d28080 0%, #e5a076 100%);
+  }
+  
+  .carousel-slide.slide-2 {
+    background: linear-gradient(135deg, #7286D3 0%, #8EA7E9 100%);
+  }
+  
+  .carousel-slide.slide-3 {
+    background: linear-gradient(135deg, #65B741 0%, #C1F2B0 100%);
+  }
+  
+  .banner-image {
+    max-height: 220px;
+    max-width: 30%;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+  }
+  
+  .banner-image:hover {
+    transform: scale(1.05);
+  }
+  
+  .carousel-text {
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
+    text-align: left;
+  }
+  
+  .carousel-text p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.3;
+  }
+  
+  .carousel-text .highlight {
+    color: #FFD700;
+    font-style: italic;
+  }
+  
+  .order-button {
+    background: white;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .order-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .order-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .order-button::after {
+    content: "";
+    background: rgba(255, 255, 255, 0.2);
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 200%;
+    height: 200%;
+    transform: rotate(30deg);
+    transition: transform 0.4s ease;
+    z-index: -1;
+  }
+  
+  .order-button:hover::after {
+    transform: rotate(30deg) translate(10%, 10%);
+  }
+  
+  
+  .products-container {
+    padding: 0 48px 24px;
+    margin-top: 24px;
+  }
+  
+  .products-flex {
+    display: flex;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .category-filter {
+    width: 25%;
+    /* padding-right: 30px; */
+    margin-left: 220px;
+  }
+  
+  .category-list {
+    display: grid;
+    grid-template-columns: repeat(1, 100px);
+    list-style: none;
+    gap: 10px;
+  }
+
+  .category-list li {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+  
+  .filter-button {
+    margin-top: 16px;
+  }
+  
+  .product-list {
+    margin-left: 40px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .product-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    /* text-align: center; */
+    background-color: #fff;
+    border-radius: 10px;
+  }
+  
+  .error-text {
     color: red;
-    font-size: 20px;
-    margin-top: 20px;
-}
+  }
+  
+  .home-footer {
+    text-align: center;
+  }

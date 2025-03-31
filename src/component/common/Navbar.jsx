@@ -3,7 +3,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import '../../static/style/navbar.css';
 
-// Import icons (using the existing imports)
 import homeImage from "../../static/images/home.png";
 import categoryImage from "../../static/images/application.png";
 import accountImage from "../../static/images/account.png";
@@ -21,17 +20,14 @@ const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [cartUpdated, setCartUpdated] = useState(false);
 
-    // Toggle account dropdown
     const toggleDropdown = () => {
         setIsDropdownOpen(prev => !prev);
     };
 
-    // Toggle mobile menu
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(prev => !prev);
     };
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -59,7 +55,6 @@ const Navbar = () => {
                     const total = pendingOrder.orderLines.reduce((sum, item) => sum + item.quantity, 0);
                     setTotalCartItems(total);
                     
-                    // Animate the cart icon when items are added/updated
                     if (total > 0) {
                         setCartUpdated(true);
                         setTimeout(() => setCartUpdated(false), 1000);
@@ -76,16 +71,14 @@ const Navbar = () => {
         }
     };
 
-    // Update login status and cart
     useEffect(() => {
         const updateAuthStatus = () => {
             setIsLoggedIn(ApiService.isAuthenticated());
             fetchCartItems();
         };
 
-        fetchCartItems(); // Initial cart fetch
+        fetchCartItems();
 
-        // Listen for auth and cart change events
         window.addEventListener("authChanged", updateAuthStatus);
         window.addEventListener("cartChanged", fetchCartItems);
 
@@ -120,21 +113,18 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="navbar-container">
-                {/* Mobile menu toggle */}
                 <div className="mobile-menu-toggle" onClick={toggleMobileMenu}>
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
 
-                {/* Brand logo */}
                 <div className="navbar-brand">
                     <NavLink to="/">
                         <img src="./logo2.png" alt="logo" className="navbar-logo" />
                     </NavLink>
                 </div>
 
-                {/* Search form */}
                 <form className="navbar-search" onSubmit={handleSearch}>
                     <div className="search-container">
                         <input

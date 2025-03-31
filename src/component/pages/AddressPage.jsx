@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import ApiService from "../../service/ApiService"
@@ -9,6 +7,7 @@ const AddressPage = () => {
   const [address, setAddress] = useState({
     country: "",
     city: "",
+    district: "",
     ward: "",
     street: "",
     houseNumber: "",
@@ -18,13 +17,13 @@ const AddressPage = () => {
   const location = useLocation()
   const isEditMode = location.pathname === "/edit-address"
 
-  // Form fields configuration
   const fields = [
-    { name: "country", label: "Country" },
-    { name: "city", label: "City" },
-    { name: "ward", label: "Ward" },
-    { name: "street", label: "Street" },
-    { name: "houseNumber", label: "House Number" },
+    { name: "country", label: "Quốc gia" },
+    { name: "city", label: "Thành phố" },
+    { name: "district", label: "Quận"},
+    { name: "ward", label: "Phường" },
+    { name: "street", label: "Đường" },
+    { name: "houseNumber", label: "Số nhà" },
   ]
 
   useEffect(() => {
@@ -40,6 +39,7 @@ const AddressPage = () => {
         response?.data?.address || {
           country: "",
           city: "",
+          district: "",
           ward: "",
           street: "",
           houseNumber: "",
@@ -59,10 +59,10 @@ const AddressPage = () => {
     e.preventDefault()
     try {
       await (isEditMode ? ApiService.updateAddress(address) : ApiService.addAddress(address))
-      setError(null) // Xóa lỗi nếu thành công
-      // Quay lại trang trước dựa trên returnUrl từ state, mặc định là /account
+      setError(null) 
+
       const returnUrl = location.state?.returnUrl || "/account"
-      navigate(returnUrl, { state: location.state?.checkoutState }) // Truyền lại checkoutState nếu có
+      navigate(returnUrl, { state: location.state?.checkoutState })
     } catch (err) {
       setError("Failed to save address information")
     }
@@ -70,7 +70,7 @@ const AddressPage = () => {
 
   return (
     <div className="address-page">
-      <h2>{isEditMode ? "Edit Address" : "Add Address"}</h2>
+      <h2>{isEditMode ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ"}</h2>
       {error && <p className="error-message">{error}</p>}
 
       <form onSubmit={handleSubmit}>
@@ -86,13 +86,13 @@ const AddressPage = () => {
             />
           </label>
         ))}
-        <button type="submit">{isEditMode ? "Update Address" : "Save Address"}</button>
+        <button type="submit">{isEditMode ? "Cập nhật" : "Lưu"}</button>
         <button
           type="button"
           onClick={() => navigate(location.state?.returnUrl || "/account", { state: location.state?.checkoutState })}
           className="cancel-button"
         >
-          Cancel
+          Hủy bỏ
         </button>
       </form>
     </div>

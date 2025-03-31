@@ -89,7 +89,7 @@ const CheckoutPage = () => {
         await removePaidItemsFromPendingOrder()
         setTimeout(() => {
           setMessage("")
-          navigate("/") // Chuyển về trang chủ thay vì /orders
+          navigate("/")
         }, 3000)
       } else {
         setMessage("Thanh toán thất bại!")

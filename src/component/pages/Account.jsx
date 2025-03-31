@@ -1,5 +1,3 @@
-"use client" // Thêm "use client" nếu chưa có
-
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import ApiService from "../../service/ApiService"
@@ -35,7 +33,6 @@ const Account = () => {
   }
 
   const handleAddressClick = () => {
-    // Truyền returnUrl là /account
     navigate(userInfo.address ? "/edit-address" : "/add-address", { state: { returnUrl: "/account" } })
   }
 
@@ -54,7 +51,7 @@ const Account = () => {
             <img src={userInfo.imageUrl} alt={userInfo.username} className="profile-image" />
           </div>
           <div className="user-intro">
-            <h1>Welcome, {userInfo.username}</h1>
+            <h1>Xin chào, {userInfo.username}</h1>
             <p>{userInfo.email}</p>
           </div>
         </div>
@@ -64,18 +61,18 @@ const Account = () => {
 
       <div className="account-sections">
         <div className="personal-info section">
-          <h2>Personal Information</h2>
+          <h2>Thông tin cá nhân</h2>
           <div className="info-grid">
             <div className="info-item">
-              <span className="info-label">First Name</span>
+              <span className="info-label">Tên</span>
               <span className="info-value">{userInfo.firstName}</span>
             </div>
             <div className="info-item">
-              <span className="info-label">Last Name</span>
+              <span className="info-label">Họ</span>
               <span className="info-value">{userInfo.lastName}</span>
             </div>
             <div className="info-item">
-              <span className="info-label">Date of Birth</span>
+              <span className="info-label">Ngày sinh</span>
               <span className="info-value">{userInfo.dateOfBirth}</span>
             </div>
             <div className="info-item">
@@ -86,42 +83,51 @@ const Account = () => {
         </div>
 
         <div className="address-section section">
-          <h2>Address Information</h2>
+          <h2>Thông tin địa chỉ</h2>
           {userInfo.address ? (
             <div className="info-grid">
+
               <div className="info-item">
-                <span className="info-label">Street</span>
-                <span className="info-value">{userInfo.address.street}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">House Number</span>
+                <span className="info-label">Số nhà</span>
                 <span className="info-value">{userInfo.address.houseNumber}</span>
               </div>
+
               <div className="info-item">
-                <span className="info-label">Ward</span>
+                <span className="info-label">Đường</span>
+                <span className="info-value">{userInfo.address.street}</span>
+              </div>
+              
+              <div className="info-item">
+                <span className="info-label">Phường</span>
                 <span className="info-value">{userInfo.address.ward}</span>
               </div>
+
               <div className="info-item">
-                <span className="info-label">City</span>
+                <span className="info-label">Quận</span>
+                <span className="info-value">{userInfo.address.district}</span>
+              </div>
+
+              <div className="info-item">
+                <span className="info-label">Thành phố</span>
                 <span className="info-value">{userInfo.address.city}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">Country</span>
+                <span className="info-label">Quốc gia</span>
                 <span className="info-value">{userInfo.address.country}</span>
               </div>
             </div>
           ) : (
-            <p className="no-address">No Address information available</p>
+            <p className="no-address">Chưa có thông tin địa chỉ</p>
           )}
           <button className="address-action-btn" onClick={handleAddressClick}>
-            {userInfo.address ? "Edit Address" : "Add Address"}
+            {userInfo.address ? "Sửa địa chỉ" : "Thêm địa chỉ"}
           </button>
         </div>
 
         <div className="order-history section">
-          <h2>Order History</h2>
+          <h2>Lịch sử đặt hàng</h2>
           {paginatedOrders.length === 0 ? (
-            <p className="no-orders">No orders yet</p>
+            <p className="no-orders">Chưa có đơn hàng nào</p>
           ) : (
             <div className="order-list">
               {paginatedOrders.map((order) => (
@@ -130,7 +136,7 @@ const Account = () => {
                     <div key={item.id} className="order-item">
                       <div className="order-item-details">
                         <span className="order-product-name">{item.name}</span>
-                        <span className="order-product-quantity">Qty: {item.quantity}</span>
+                        <span className="order-product-quantity">Số lượng: {item.quantity}</span>
                       </div>
                       <span className="order-product-price">${item.price.toFixed(2)}</span>
                     </div>

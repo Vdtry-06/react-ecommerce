@@ -1,11 +1,9 @@
-/* Base styles */
 .product-details-container {
     max-width: 1200px;
     margin: 5rem auto;
     padding: 0 20px;
   }
-  
-  /* Product detail top section - image and basic info */
+
   .product-detail-top {
     display: flex;
     flex-wrap: wrap;
@@ -50,7 +48,6 @@
     font-size: 0.9rem;
   }
   
-  /* Product info section */
   .product-info {
     flex: 1;
     min-width: 300px;
@@ -101,7 +98,6 @@
     background-color: #f44336;
   }
   
-  /* Product buttons */
   .product-buttons {
     display: flex;
     gap: 15px;
@@ -149,7 +145,6 @@
     cursor: not-allowed;
   }
   
-  /* Quantity controls */
   .quantity-controls {
     display: flex;
     align-items: center;
@@ -179,7 +174,6 @@
     text-align: center;
   }
   
-  /* Product detail content section */
   .product-detail-content {
     padding: 30px;
     border-radius: 12px;
@@ -214,7 +208,6 @@
     padding: 20px 10px;
   }
   
-  /* Product description */
   .product-description p {
     font-size: 16px;
     color: #666;
@@ -240,7 +233,6 @@
     border-bottom: 1px dashed #eee;
   }
   
-  /* Specifications section */
   .specs-table {
     width: 100%;
     border-collapse: collapse;
@@ -257,7 +249,6 @@
     color: #555;
   }
   
-  /* Customer Reviews Section - Simplified */
   .customer-reviews-section {
     background-color: #fff;
     border-radius: 12px;
@@ -286,7 +277,6 @@
     font-size: 24px;
   }
   
-  /* Related Products Section */
   .related-products-section {
     background-color: #fff;
     border-radius: 12px;
@@ -346,7 +336,6 @@
     -webkit-box-orient: vertical;
   }
   
-  /* Loading and error states */
   .loading-container,
   .error-container {
     text-align: center;
@@ -357,7 +346,6 @@
     color: #f44336;
   }
   
-  /* Responsive adjustments */
   @media (max-width: 768px) {
     .product-detail-top {
       flex-direction: column;

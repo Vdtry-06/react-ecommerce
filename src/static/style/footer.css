@@ -1,4 +1,4 @@
-/* Cấu trúc chung */
+
 html, body {
     height: 100%;
     margin: 0;
@@ -14,7 +14,6 @@ html, body {
     flex: 1;
 }
 
-/* Footer */
 .footer {
     width: 100%;
     background-color: #222;
@@ -30,7 +29,6 @@ html, body {
     margin: 0 auto;
 }
 
-/* Danh sách liên kết */
 .footer-links ul {
     list-style: none;
     margin: 0;
@@ -53,7 +51,6 @@ html, body {
     color: #ff9900;
 }
 
-/* Mạng xã hội */
 .footer-social {
     margin-top: 15px;
 }
@@ -69,7 +66,6 @@ html, body {
     color: #ff9900;
 }
 
-/* Thông tin bản quyền */
 .footer-info {
     margin-top: 20px;
     font-size: 14px;

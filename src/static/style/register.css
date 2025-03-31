@@ -1,22 +1,28 @@
+.register-body {
+    background: linear-gradient(to right, #40cdcb, #217a80);
+}
+
+body {
+    background: #f4f4f4;
+}
+
 .register-page {
     max-width: 400px;
     margin: 50px auto;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
+    background: white;
 }
 
 .register-page h2 {
     text-align: center;
     margin-bottom: 20px;
 }
+
 .register-page form {
     display: flex;
     flex-direction: column;
-}
-
-.register-page label {
-    margin-bottom: 5px;
 }
 
 .register-page input {
@@ -25,6 +31,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
 .register-page button {
     padding: 10px;
     border: none;
@@ -39,14 +46,17 @@
 .register-page button:hover {
     background-color: #217a80;
 }
+
 .message {
     text-align: center;
     color: green;
 }
+
 .register-link {
     margin-top: 20px;
     font-size: 14px;
 }
+
 .register-link a {
     text-decoration: none;
     color: #0e989a;

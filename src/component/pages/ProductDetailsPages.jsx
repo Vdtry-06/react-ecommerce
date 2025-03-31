@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import ApiService from "../../service/ApiService"
@@ -14,7 +12,6 @@ const ProductDetailsPages = () => {
   const [isProcessing, setIsProcessing] = useState(false)
   const [activeTab, setActiveTab] = useState("description")
 
-  // Fetch product and cart data
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
@@ -49,7 +46,6 @@ const ProductDetailsPages = () => {
     return () => window.removeEventListener("cartChanged", fetchData)
   }, [productId])
 
-  // Add to cart function
   const addToCart = async () => {
     if (!product) return
 
@@ -94,7 +90,6 @@ const ProductDetailsPages = () => {
     }
   }
 
-  // Buy now function
   const buyNow = async () => {
     try {
       setIsProcessing(true)
@@ -107,7 +102,6 @@ const ProductDetailsPages = () => {
     }
   }
 
-  // Update cart quantity
   const updateQuantity = async (increment) => {
     if (!product) return
 
@@ -151,7 +145,6 @@ const ProductDetailsPages = () => {
 
   const cartItem = cart.find((item) => item.id === product.id)
 
-  // Sample related products
   const relatedProducts = [
     { id: "related1", name: "Sản phẩm liên quan 1", price: 19.99, imageUrl: "/placeholder.svg?height=150&width=150" },
     { id: "related2", name: "Sản phẩm liên quan 2", price: 24.99, imageUrl: "/placeholder.svg?height=150&width=150" },
@@ -161,7 +154,6 @@ const ProductDetailsPages = () => {
 
   return (
     <div className="product-details-container">
-      {/* Product Image and Basic Info */}
       <div className="product-detail-top">
         <div className="product-image-section">
           <div className="product-image-container">
@@ -218,7 +210,6 @@ const ProductDetailsPages = () => {
         </div>
       </div>
 
-      {/* Product Description */}
       <div className="product-detail-content">
         <div className="product-tabs">
           <button
@@ -278,7 +269,6 @@ const ProductDetailsPages = () => {
         </div>
       </div>
 
-      {/* Customer Reviews Section - Simplified */}
       <div className="customer-reviews-section">
         <h2>Đánh giá từ khách hàng</h2>
         <div className="reviews-summary">
@@ -290,7 +280,6 @@ const ProductDetailsPages = () => {
         </div>
       </div>
 
-      {/* Related Products Section */}
       <div className="related-products-section">
         <h2>Sản phẩm liên quan</h2>
         <div className="related-products-grid">

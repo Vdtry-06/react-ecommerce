@@ -1,9 +1,7 @@
 import React, {createContext, useReducer, useEffect} from "react";
 
-/* Context */
 const CartContext = createContext();
 
-/* Initial state */
 const initialState = {
     cart: JSON.parse(localStorage.getItem("cart")) || [],
 }
@@ -11,9 +9,6 @@ const initialState = {
 const cartReducer = (state, action) => {
     switch(action.type) {
 
-        /* CART ACTIONS */
-
-        /* Add item to cart */
         case 'ADD_ITEM': {
             const existItem = state.cart.find(item => item.id === action.payload.id);
             let newCart = [];
@@ -29,14 +24,12 @@ const cartReducer = (state, action) => {
             return {...state, cart: newCart};
         }
 
-        /* Remove item from cart */
         case 'REMOVE_ITEM': {
             const newCart = state.cart.filter(item => item.id !== action.payload.id);
             localStorage.setItem("cart", JSON.stringify(newCart));
             return {...state, cart: newCart};
         }
 
-        /* Increment item quantity */
         case 'INCREMENT_ITEM': {
             const newCart = state.cart.map(item => 
                 item.id === action.payload.id
@@ -47,7 +40,6 @@ const cartReducer = (state, action) => {
             return {...state, cart: newCart};
         }
 
-        /* Decrement item quantity */
         case 'DECREMENT_ITEM': {
             const newCart = state.cart.map(item => 
                 item.id === action.payload.id && item.qty > 1
@@ -58,7 +50,6 @@ const cartReducer = (state, action) => {
             return {...state, cart: newCart};
         }
 
-        /* Clear cart */
         case 'CLEAR_CART': {
             localStorage.removeItem("cart");
             return {...state, cart: []};

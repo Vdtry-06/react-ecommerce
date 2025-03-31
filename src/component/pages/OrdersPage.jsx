@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import ApiService from "../../service/ApiService"
@@ -20,7 +18,7 @@ const OrdersPage = () => {
       const userInfo = await ApiService.getMyInfo()
       const userId = userInfo.data.id
       const response = await ApiService.getAllOrdersOfUser(userId)
-      // Lọc chỉ các đơn hàng PAID
+
       const paidOrders = response.data.filter(order => order.status === "PAID")
       setOrders(paidOrders)
     } catch (err) {

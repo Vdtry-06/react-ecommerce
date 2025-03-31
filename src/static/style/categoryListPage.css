@@ -1,46 +1,90 @@
-.category-list{
+.category-list1 {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 40px auto;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 80px rgba(0, 9, 9, 0.01);
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-.category-list h2{
+.category-list1 h2 {
     font-size: 2rem;
     margin-bottom: 20px;
     color: #333;
-    text-align: center;
+    font-weight: bold;
 }
 
-.category-list ul{
+.category-list1 ul {
     list-style-type: none;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
     justify-content: center;
 }
 
-.category-list li{
-    flex:  1 1 calc(33.33% - 20px);
-    max-width: calc(33.33% - 20px);
-}
-.category-list button{
-    width: 100%;
-    padding: 15px;
-    font-size: 1.2rem;
-    background-color: #f68b1e;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3 ease;
+.category-list1 li {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    transition: 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
 }
 
-.error-message{
-    color: red;
-    text-align: center;
-    font-size: 1.2em;
+.category-list1 li:hover {
+    background: #e9ecef;
+}
+
+.category-list1 input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.category-list1 label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.category-list1 button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff7b00, #ffae42);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
     margin-top: 20px;
+}
+
+.category-list1 button:hover {
+    background: linear-gradient(45deg, #ff6500, #ff9800);
+    transform: scale(1.05);
+}
+
+.category-list1 button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.loading-message1,
+.error-message1 {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.error-message {
+    color: red;
 }

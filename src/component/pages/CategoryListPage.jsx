@@ -39,11 +39,11 @@ const CategoryListPage = () => {
     };
 
     return (
-        <div className="category-list">
+        <div className="category-list1">
             {loading ? (
-                <p className="loading-message">Đang tải danh mục...</p>
+                <p className="loading-message1">Đang tải danh mục...</p>
             ) : error ? (
-                <p className="error-message">{error}</p>
+                <p className="error-message1">{error}</p>
             ) : (
                 <div>
                     <h2>Danh mục</h2>

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import ApiService from "../../service/ApiService"
@@ -10,7 +8,6 @@ const ProductList = ({ products }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [processingItem, setProcessingItem] = useState(null)
 
-  // Fetch cart items from backend
   const fetchCart = async () => {
     try {
       if (ApiService.isAuthenticated()) {
@@ -39,7 +36,6 @@ const ProductList = ({ products }) => {
     }
   }
 
-  // Get pending order from backend
   const getPendingOrder = async () => {
     try {
       if (!ApiService.isAuthenticated()) {
@@ -56,7 +52,6 @@ const ProductList = ({ products }) => {
     }
   }
 
-  // Add item to cart
   const addToCart = async (product) => {
     try {
       setProcessingItem(product.id)
@@ -95,7 +90,6 @@ const ProductList = ({ products }) => {
         }
       }
 
-      // Notify cart changed
       window.dispatchEvent(new Event("cartChanged"))
       await fetchCart()
     } catch (error) {
@@ -106,7 +100,6 @@ const ProductList = ({ products }) => {
     }
   }
 
-  // Increment item quantity
   const incrementItem = async (product) => {
     try {
       setProcessingItem(product.id)
@@ -130,7 +123,6 @@ const ProductList = ({ products }) => {
     }
   }
 
-  // Decrement item quantity
   const decrementItem = async (product) => {
     try {
       setProcessingItem(product.id)
@@ -147,7 +139,6 @@ const ProductList = ({ products }) => {
         await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
       }
 
-      // Notify cart changed
       window.dispatchEvent(new Event("cartChanged"))
       await fetchCart()
     } catch (error) {
@@ -158,12 +149,10 @@ const ProductList = ({ products }) => {
     }
   }
 
-  // Initial cart fetch and listen for cart changes
   useEffect(() => {
     setIsLoading(true)
     fetchCart().finally(() => setIsLoading(false))
 
-    // Listen for cart changes from other components
     const handleCartUpdate = () => fetchCart()
     window.addEventListener("cartChanged", handleCartUpdate)
 

@@ -37,7 +37,7 @@ const LoginPage = () => {
         fetch("http://localhost:8080/api/v1/auth/login", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json", // Set the content type to JSON
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               email: email,
@@ -47,7 +47,6 @@ const LoginPage = () => {
         .then((response) => response.json())
         .then((data) => {
             console.log("Response body:", data);
-            // This code is a commitment between BE and FE
             if (data.code !== 1000) {
               throw new Error(data.message);
             }
@@ -67,7 +66,6 @@ const LoginPage = () => {
 
     return (
         <div className="login-container">
-          {/* Thông báo lỗi */}
           {open && <div className="snackbar">{message}</div>}
       
           <div className="login-box">
@@ -85,7 +83,7 @@ const LoginPage = () => {
               </div>
       
               <div className="input-group">
-                <label>Password:</label>
+                <label>Mật khẩu:</label>
                 <input
                   type="password"
                   value={password}
@@ -94,7 +92,7 @@ const LoginPage = () => {
                 />
               </div>
       
-              <button type="submit" className="login-button" onClick={handleSubmit}>Login</button>
+              <button type="submit" className="login-button" onClick={handleSubmit}>Đăng nhập</button>
             </form>
       
             <div className="divider"></div>
@@ -105,7 +103,7 @@ const LoginPage = () => {
             </button> */}
       
             <button className="register-button" onClick={() => navigate("/register")}>
-              Create an account
+              Tạo tài khoản
             </button>
           </div>
         </div>

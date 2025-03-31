@@ -6,13 +6,12 @@ import ApiService from "../../service/ApiService"
 import "../../static/style/cart.css"
 
 const CartPage = () => {
-  const [cart, setCart] = useState([]) // Giỏ hàng từ đơn hàng PENDING
-  const [selectedItems, setSelectedItems] = useState(new Set()) // Các sản phẩm được tích chọn
+  const [cart, setCart] = useState([])
+  const [selectedItems, setSelectedItems] = useState(new Set())
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  // Hàm lấy giỏ hàng từ backend (chỉ lấy đơn hàng PENDING)
   const fetchCart = async () => {
     try {
       if (!ApiService.isAuthenticated()) {
@@ -32,11 +31,11 @@ const CartPage = () => {
             return {
               id: line.productId,
               qty: line.quantity,
-              price: line.price / line.quantity, // Giả sử price là tổng giá của orderLine
+              price: line.price / line.quantity, 
               name: product.name || `Product ${line.productId}`,
               imageUrl: product.imageUrl || "",
               description: product.description || "",
-              orderLineId: line.id, // Lưu ID của orderLine để dùng khi thanh toán/xóa
+              orderLineId: line.id,
             }
           } catch (error) {
             console.error(`Error fetching product ${line.productId}:`, error)
@@ -53,7 +52,7 @@ const CartPage = () => {
         })
       )
       setCart(cartItems)
-      // Đặt lại selectedItems dựa trên cart mới
+      
       setSelectedItems(new Set())
     } catch (error) {
       setMessage(error.message || "Lỗi khi tải giỏ hàng!")
@@ -66,7 +65,6 @@ const CartPage = () => {
     }
   }
 
-  // Gọi fetchCart khi component mount và khi giỏ hàng thay đổi
   useEffect(() => {
     fetchCart()
     window.addEventListener("cartChanged", fetchCart)
@@ -197,7 +195,7 @@ const CartPage = () => {
           <div className="empty-cart">
             <div className="empty-cart-icon">🛒</div>
             <p>Giỏ hàng của bạn đang trống</p>
-            <button className="continue-shopping" onClick={() => navigate("/products")}>
+            <button className="continue-shopping" onClick={() => navigate("/")}>
               Tiếp tục mua sắm
             </button>
           </div>
@@ -302,7 +300,7 @@ const CartPage = () => {
                 Mua Hàng
               </button>
 
-              <button className="continue-shopping" onClick={() => navigate("/products")}>
+              <button className="continue-shopping" onClick={() => navigate("/")}>
                 Tiếp tục mua sắm
               </button>
             </div>
