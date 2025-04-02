@@ -5,6 +5,7 @@ body {
 }
 
 .navbar {
+  max-width: calc(100% - 17px);
   background: linear-gradient(135deg, #f68b1e, #ff9f43);
   color: white;
   padding: 0;

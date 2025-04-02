@@ -17,6 +17,7 @@ import CheckoutPage from './component/pages/CheckoutPage';
 import OrdersPage from './component/pages/OrdersPage';
 import AddressPage from './component/pages/AddressPage';
 import AdminPage from './component/admin/AdminPage';
+import ForgotPasswordPage from './component/pages/ForgotPasswordPage';
 import AdminCategoryPage from './component/admin/AdminCategoryPage';
 import AddCategory from './component/admin/AddCategory';
 import EditCategory from './component/admin/EditCategory';
@@ -41,6 +42,7 @@ function App() {
                 <Route path="/orders" element={<OrdersPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/account" element={<Account />} />
 
                 <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage/>} />} />
