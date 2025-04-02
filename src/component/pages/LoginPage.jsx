@@ -88,7 +88,7 @@ const LoginPage = () => {
             {open && <div className="snackbar">{message}</div>}
 
             <div className="login-box">
-                <h2 className="login-title">Welcome to Trong</h2>
+                <h2 className="login-title">Đăng nhập</h2>
 
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="input-group">
@@ -118,7 +118,7 @@ const LoginPage = () => {
                         }}>Quên mật khẩu?</a>
                     </div>
 
-                    <button type="submit" className="login-button">Đăng nhập</button>
+                    <button type="submit" className="login-button">Gửi</button>
                 </form>
 
                 <div className="divider"></div>
