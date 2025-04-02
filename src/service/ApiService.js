@@ -1,41 +1,35 @@
 import axios from "axios";
 
 export const KEY_TOKEN = "accessToken";
+export const KEY_ROLE = "role";
 
 export default class ApiService {
   static BASE_URL = "http://localhost:8080";
 
   static getHeader() {
     const token = localStorage.getItem(KEY_TOKEN);
-    return token
-      ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
-      : {};
+    return token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : {};
   }
 
-  /* AUTHENTICATION CHECKER */
   static logout() {
     localStorage.removeItem(KEY_TOKEN);
-    window.location.href = "/login"; // Chuyển hướng sau khi logout
+    localStorage.removeItem(KEY_ROLE);
+    window.location.href = "/login";
   }
 
   static isAuthenticated() {
-    const token = localStorage.getItem(KEY_TOKEN);
-    return token !== null && token !== undefined;
+    return Boolean(localStorage.getItem(KEY_TOKEN));
   }
 
   static isAdmin() {
-    const role = localStorage.getItem("role")?.trim().toUpperCase(); // Chuẩn hóa role
-    console.log("Role in localStorage:", role);
-    return role === "ADMIN";
+    return localStorage.getItem(KEY_ROLE)?.toUpperCase() === "ADMIN";
   }
 
   static async login(email, password) {
-    const response = await axios.post(`${this.BASE_URL}/api/v1/auth/login`, {
-      email,
-      password,
-    });
+    const response = await axios.post(`${this.BASE_URL}/api/v1/auth/login`, { email, password });
     return response.data;
   }
+
 
   /* Users API */
   static async getMyInfo() {

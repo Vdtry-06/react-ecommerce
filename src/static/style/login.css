@@ -3,23 +3,52 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(to right, #40cdcb, #217a80);
+    background: linear-gradient(135deg, #40cdcb, #217a80);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .login-box {
     background: white;
     padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
     width: 350px;
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 .login-title {
     font-size: 24px;
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: 20px;
     color: #217a80;
+    position: relative;
+    display: inline-block;
+}
+
+.login-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(to right, #40cdcb, #217a80);
+    transition: all 0.5s ease;
+    transform: translateX(-50%);
+}
+
+.login-box:hover .login-title::after {
+    width: 80%;
+}
+
+.login-form {
+    margin-bottom: 15px;
 }
 
 .input-group {
@@ -27,80 +56,283 @@
     flex-direction: column;
     text-align: left;
     margin-bottom: 15px;
+    position: relative;
+    overflow: hidden;
 }
 
 .input-group label {
-    font-weight: bold;
+    font-weight: 500;
     margin-bottom: 5px;
     color: #444;
+    font-size: 14px;
+    transition: color 0.3s ease;
 }
 
 .input-group input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
     outline: none;
-    transition: border 0.3s ease-in-out;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
+    position: relative;
+    z-index: 1;
 }
 
 .input-group input:focus {
-    border-color: #217a80;
-    box-shadow: 0px 0px 5px rgba(33, 122, 128, 0.5);
+    border-color: #40cdcb;
+    box-shadow: 0px 0px 6px rgba(64, 205, 203, 0.4);
+    background-color: #fff;
+}
+
+.input-group input:focus + label {
+    color: #217a80;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-top: -8px;
+    margin-bottom: 12px;
+}
+
+.forgot-password a {
+    color: #217a80;
+    font-size: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.forgot-password a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: #40cdcb;
+    transition: width 0.3s ease;
+}
+
+.forgot-password a:hover {
+    color: #40cdcb;
+}
+
+.forgot-password a:hover::after {
+    width: 100%;
 }
 
 .login-button {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border: none;
-    border-radius: 5px;
-    background: #40cdcb;
+    border-radius: 6px;
+    background: linear-gradient(45deg, #40cdcb, #217a80);
     color: white;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s ease-in-out;
+    transition: all 0.3s ease;
+    margin-top: 5px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.login-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #217a80, #40cdcb);
+    transition: all 0.5s ease;
+    z-index: -1;
+}
+
+.login-button:hover::before {
+    left: 0;
 }
 
 .login-button:hover {
-    background: #217a80;
+    box-shadow: 0px 4px 10px rgba(33, 122, 128, 0.3);
+    transform: translateY(-2px);
+}
+
+.login-button:active {
+    transform: translateY(1px);
 }
 
 .divider {
-    margin: 20px 0;
+    margin: 15px 0;
     height: 1px;
-    background: #ddd;
+    background: linear-gradient(to right, transparent, #ddd, transparent);
+    position: relative;
+}
+
+.divider:before {
+    content: "hoặc";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 0 10px;
+    color: #999;
+    font-size: 12px;
+}
+
+.google-login-button, .github-login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.google-login-button {
+    background-color: white;
+    color: #444;
+}
+
+.github-login-button {
+    background-color: #24292e;
+    color: white;
+}
+
+.google-login-button::before, .github-login-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+    z-index: -1;
+}
+
+.google-login-button:hover::before, .github-login-button:hover::before {
+    width: 300%;
+    height: 300%;
+}
+
+.google-login-button:hover {
+    border-color: #4285F4;
+    box-shadow: 0px 4px 8px rgba(66, 133, 244, 0.3);
+    transform: translateY(-2px);
+}
+
+.github-login-button:hover {
+    background-color: #000;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.google-icon, .github-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+}
+
+.google-login-button:hover .google-icon, .github-login-button:hover .github-icon {
+    transform: rotate(360deg);
 }
 
 .register-button {
     width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    background: white;
+    padding: 10px;
+    border: 1px solid #40cdcb;
+    border-radius: 6px;
+    background: transparent;
     color: #217a80;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    border: 2px solid #217a80;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.4s ease;
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.register-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: rgba(64, 205, 203, 0.2);
+    transition: width 0.4s ease;
+    z-index: -1;
+}
+
+.register-button:hover::after {
+    width: 100%;
 }
 
 .register-button:hover {
-    background: #217a80;
-    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0px 4px 8px rgba(64, 205, 203, 0.2);
 }
 
 .snackbar {
-    position: absolute;
-    top: 10px;
+    position: fixed;
+    top: 15px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(255, 0, 0, 0.9);
+    background: #f44336;
     color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+    opacity: 0.95;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translate(-50%, -15px);}
+    to {opacity: 0.95; transform: translate(-50%, 0);}
+}
+
+@keyframes fadeOut {
+    from {opacity: 0.95; transform: translate(-50%, 0);}
+    to {opacity: 0; transform: translate(-50%, -15px);}
+}
+
+@keyframes pulse {
+    0% {transform: scale(1);}
+    50% {transform: scale(1.05);}
+    100% {transform: scale(1);}
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        width: 85%;
+        padding: 25px 15px;
+    }
+    
+    .login-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
 }
