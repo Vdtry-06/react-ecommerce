@@ -10,6 +10,7 @@ import ProductDetailsPages from './component/pages/ProductDetailsPages';
 import RegisterPage from './component/pages/RegisterPage';
 import LoginPage from './component/pages/LoginPage';
 import Account from './component/pages/Account';
+import UpdateProfile from './component/pages/UpdateProfile';
 import CategoryListPage from './component/pages/CategoryListPage';
 import CategoryProductsPage from './component/pages/CategoryProductsPage';
 import CartPage from './component/pages/CartPage';
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/account" element={<Account />} />
+                <Route path="/update-profile" element={<UpdateProfile />} />
 
                 <Route path='/edit-address' element={<ProtectedRoute element={<AddressPage/>} />} />
                 <Route path='/add-address' element={<ProtectedRoute element={<AddressPage/>} />} />

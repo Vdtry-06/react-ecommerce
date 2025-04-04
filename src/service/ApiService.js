@@ -48,6 +48,38 @@ export default class ApiService {
     }
   }
 
+  static async updateUser(userId, request) {
+    try {
+      const response = await axios.put(`${this.BASE_URL}/api/v1/auth/users/${userId}`, request, {
+        headers: {
+          ...this.getHeader(),
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      console.log("API updateUser response:", response.data)
+      return response.data
+    } catch (error) {
+      console.error("Error in updateUser:", error)
+      throw error
+    }
+  }
+
+  static async getUser(userId) {
+    try {
+      const response = await axios.get(`${this.BASE_URL}/api/v1/auth/users/${userId}`, {
+        headers: this.getHeader(),
+      })
+      console.log("API getUser response:", response.data)
+      return response.data
+    } catch (error) {
+      console.error("Error in getUser:", error)
+      throw error
+    }
+  }
+
+
+
+
   /* Address API */
 
   static async addAddress(request) {
