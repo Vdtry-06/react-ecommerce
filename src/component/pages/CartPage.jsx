@@ -1,44 +1,54 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import ApiService from "../../service/ApiService"
-import "../../static/style/cart.css"
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import ApiService from "../../service/ApiService";
+import "../../static/style/cart.css";
 
 const CartPage = () => {
-  const [cart, setCart] = useState([])
-  const [selectedItems, setSelectedItems] = useState(new Set())
-  const [message, setMessage] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const [cart, setCart] = useState([]);
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const [message, setMessage] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchCart = async () => {
     try {
       if (!ApiService.isAuthenticated()) {
-        throw new Error("Bạn cần đăng nhập!")
+        throw new Error("Bạn cần đăng nhập!");
       }
-      const userInfo = await ApiService.getMyInfo()
-      const userId = userInfo.data.id
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId)
-      const orders = ordersResponse.data || []
-      const pendingOrder = orders.find((order) => order.status === "PENDING") || { orderLines: [] }
+      setLoading(true);
+      const userInfo = await ApiService.getMyInfo();
+      const userId = userInfo.data.id;
+      const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
+      const orders = ordersResponse.data || [];
+
+      // Only fetch items from PENDING orders
+      const pendingOrder = orders.find((order) => order.status === "PENDING") || { orderLines: [] };
+
+      if (pendingOrder.orderLines.length === 0) {
+        setCart([]);
+        setSelectedItems(new Set());
+        return;
+      }
 
       const cartItems = await Promise.all(
         pendingOrder.orderLines.map(async (line) => {
           try {
-            const productResponse = await ApiService.getProduct(line.productId)
-            const product = productResponse.data || {}
+            const productResponse = await ApiService.getProduct(line.productId);
+            const product = productResponse.data || {};
             return {
               id: line.productId,
               qty: line.quantity,
-              price: line.price / line.quantity, 
+              price: line.price / line.quantity, // Unit price
               name: product.name || `Product ${line.productId}`,
               imageUrl: product.imageUrl || "",
               description: product.description || "",
               orderLineId: line.id,
-            }
+            };
           } catch (error) {
-            console.error(`Error fetching product ${line.productId}:`, error)
+            console.error(`Error fetching product ${line.productId}:`, error);
             return {
               id: line.productId,
               qty: line.quantity,
@@ -47,134 +57,161 @@ const CartPage = () => {
               imageUrl: "",
               description: "Không thể tải thông tin sản phẩm",
               orderLineId: line.id,
-            }
+            };
           }
         })
-      )
-      setCart(cartItems)
-      
-      setSelectedItems(new Set())
+      );
+
+      setCart(cartItems);
+      setSelectedItems(new Set());
     } catch (error) {
-      setMessage(error.message || "Lỗi khi tải giỏ hàng!")
-      setTimeout(() => setMessage(""), 3000)
+      setMessage(error.message || "Lỗi khi tải giỏ hàng!");
+      setTimeout(() => setMessage(""), 3000);
       if (error.message === "Bạn cần đăng nhập!") {
-        navigate("/login")
+        navigate("/login");
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchCart()
-    window.addEventListener("cartChanged", fetchCart)
-    return () => window.removeEventListener("cartChanged", fetchCart)
-  }, [navigate])
+    fetchCart();
+
+    const handleCartChange = () => fetchCart();
+    const handlePaymentSuccess = () => {
+      fetchCart();
+      setMessage("Thanh toán thành công!");
+      setTimeout(() => setMessage(""), 3000);
+    };
+
+    window.addEventListener("cartChanged", handleCartChange);
+    window.addEventListener("paymentSuccess", handlePaymentSuccess);
+
+    // Check for redirect from payment success
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("payment") === "success") {
+      fetchCart();
+      setMessage("Thanh toán thành công!");
+      setTimeout(() => setMessage(""), 3000);
+    }
+
+    return () => {
+      window.removeEventListener("cartChanged", handleCartChange);
+      window.removeEventListener("paymentSuccess", handlePaymentSuccess);
+    };
+  }, [navigate, location]);
 
   const incrementItem = async (product) => {
     try {
-      const userInfo = await ApiService.getMyInfo()
-      const userId = userInfo.data.id
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId)
-      const orders = ordersResponse.data || []
-      const pendingOrder = orders.find((order) => order.status === "PENDING")
+      setLoading(true);
+      const userInfo = await ApiService.getMyInfo();
+      const userId = userInfo.data.id;
+      const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
+      const pendingOrder = ordersResponse.data.find((order) => order.status === "PENDING");
+
+      const orderLineRequest = { productId: product.id, quantity: product.qty + 1 };
 
       if (!pendingOrder) {
         const orderRequest = {
           userId,
           orderLines: [{ productId: product.id, quantity: 1 }],
           paymentMethod: "CASH_ON_DELIVERY",
-        }
-        await ApiService.createOrder(orderRequest)
+        };
+        await ApiService.createOrder(orderRequest);
       } else {
-        const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id)
-        const orderLineRequest = { productId: product.id, quantity: product.qty + 1 }
+        const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
         if (existingLine) {
-          await ApiService.updateOrderLine(pendingOrder.id, existingLine.id, orderLineRequest)
+          await ApiService.updateOrderLine(pendingOrder.id, existingLine.id, orderLineRequest);
         } else {
-          await ApiService.addOrderLine(pendingOrder.id, orderLineRequest)
+          await ApiService.addOrderLine(pendingOrder.id, orderLineRequest);
         }
       }
-      window.dispatchEvent(new Event("cartChanged"))
+      window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
-      setMessage(error.response?.data?.message || "Lỗi khi tăng số lượng!")
-      setTimeout(() => setMessage(""), 3000)
+      setMessage(error.response?.data?.message || "Lỗi khi tăng số lượng!");
+      setTimeout(() => setMessage(""), 3000);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const decrementItem = async (product) => {
     try {
-      const userInfo = await ApiService.getMyInfo()
-      const userId = userInfo.data.id
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId)
-      const orders = ordersResponse.data || []
-      const pendingOrder = orders.find((order) => order.status === "PENDING")
-      if (!pendingOrder) return
+      setLoading(true);
+      const userInfo = await ApiService.getMyInfo();
+      const userId = userInfo.data.id;
+      const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
+      const pendingOrder = ordersResponse.data.find((order) => order.status === "PENDING");
 
-      const orderLine = pendingOrder.orderLines.find((line) => line.productId === product.id)
-      if (!orderLine) return
+      if (!pendingOrder) return;
+
+      const orderLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
+      if (!orderLine) return;
 
       if (orderLine.quantity > 1) {
-        const orderLineRequest = { productId: product.id, quantity: product.qty - 1 }
-        await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest)
+        const orderLineRequest = { productId: product.id, quantity: product.qty - 1 };
+        await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest);
       } else {
-        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
+        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id);
       }
-      window.dispatchEvent(new Event("cartChanged"))
+      window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
-      setMessage(error.response?.data?.message || "Lỗi khi giảm số lượng!")
-      setTimeout(() => setMessage(""), 3000)
+      setMessage(error.response?.data?.message || "Lỗi khi giảm số lượng!");
+      setTimeout(() => setMessage(""), 3000);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const toggleSelectItem = (productId) => {
     setSelectedItems((prev) => {
-      const newSelected = new Set(prev)
+      const newSelected = new Set(prev);
       if (newSelected.has(productId)) {
-        newSelected.delete(productId)
+        newSelected.delete(productId);
       } else {
-        newSelected.add(productId)
+        newSelected.add(productId);
       }
-      return newSelected
-    })
-  }
+      return newSelected;
+    });
+  };
 
   const handleBuy = () => {
     if (!ApiService.isAuthenticated()) {
-      setMessage("Bạn cần đăng nhập trước khi mua hàng!")
+      setMessage("Bạn cần đăng nhập trước khi mua hàng!");
       setTimeout(() => {
-        setMessage("")
-        navigate("/login")
-      }, 3000)
-      return
+        setMessage("");
+        navigate("/login");
+      }, 3000);
+      return;
     }
 
     if (selectedItems.size === 0) {
-      setMessage("Vui lòng chọn ít nhất một sản phẩm để mua!")
-      setTimeout(() => setMessage(""), 3000)
-      return
+      setMessage("Vui lòng chọn ít nhất một sản phẩm để mua!");
+      setTimeout(() => setMessage(""), 3000);
+      return;
     }
 
-    const selectedCartItems = cart.filter((item) => selectedItems.has(item.id))
+    const selectedCartItems = cart.filter((item) => selectedItems.has(item.id));
     navigate("/checkout", {
       state: {
         selectedItems: selectedCartItems,
         totalPrice: totalPrice.toFixed(2),
       },
-    })
-  }
+    });
+  };
 
   const totalPrice = cart
     .filter((item) => selectedItems.has(item.id))
-    .reduce((total, item) => total + item.price * item.qty, 0)
+    .reduce((total, item) => total + item.price * item.qty, 0);
 
   const selectAll = () => {
     if (selectedItems.size === cart.length) {
-      setSelectedItems(new Set())
+      setSelectedItems(new Set());
     } else {
-      setSelectedItems(new Set(cart.map((item) => item.id)))
+      setSelectedItems(new Set(cart.map((item) => item.id)));
     }
-  }
+  };
 
   return (
     <div className="cart-container">
@@ -208,6 +245,7 @@ const CartPage = () => {
                     type="checkbox"
                     checked={selectedItems.size === cart.length && cart.length > 0}
                     onChange={selectAll}
+                    disabled={loading}
                   />
                   <span>Chọn tất cả ({cart.length} sản phẩm)</span>
                 </label>
@@ -222,6 +260,7 @@ const CartPage = () => {
                         checked={selectedItems.has(item.id)}
                         onChange={() => toggleSelectItem(item.id)}
                         id={`select-${item.id}`}
+                        disabled={loading}
                       />
                       <label htmlFor={`select-${item.id}`} className="checkbox-custom">
                         {selectedItems.has(item.id) && <span className="checkmark">✓</span>}
@@ -229,7 +268,10 @@ const CartPage = () => {
                     </div>
 
                     <div className="item-image">
-                      <img src={item.imageUrl || "/placeholder.svg?height=100&width=100"} alt={item.name} />
+                      <img
+                        src={item.imageUrl || "/placeholder.svg?height=100&width=100"}
+                        alt={item.name}
+                      />
                     </div>
 
                     <div className="item-details">
@@ -242,6 +284,7 @@ const CartPage = () => {
                             onClick={() => decrementItem(item)}
                             className="quantity-btn"
                             aria-label="Giảm số lượng"
+                            disabled={loading}
                           >
                             <span className="quantity-icon">−</span>
                           </button>
@@ -250,6 +293,7 @@ const CartPage = () => {
                             onClick={() => incrementItem(item)}
                             className="quantity-btn"
                             aria-label="Tăng số lượng"
+                            disabled={loading}
                           >
                             <span className="quantity-icon">+</span>
                           </button>
@@ -293,14 +337,18 @@ const CartPage = () => {
               </div>
 
               <button
-                className={`checkout-button ${selectedItems.size === 0 ? "disabled" : ""}`}
+                className={`checkout-button ${selectedItems.size === 0 || loading ? "disabled" : ""}`}
                 onClick={handleBuy}
-                disabled={selectedItems.size === 0}
+                disabled={selectedItems.size === 0 || loading}
               >
                 Mua Hàng
               </button>
 
-              <button className="continue-shopping" onClick={() => navigate("/")}>
+              <button
+                className="continue-shopping"
+                onClick={() => navigate("/")}
+                disabled={loading}
+              >
                 Tiếp tục mua sắm
               </button>
             </div>
@@ -308,7 +356,7 @@ const CartPage = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CartPage
+export default CartPage;
