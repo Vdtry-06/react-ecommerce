@@ -47,6 +47,7 @@ export default class ApiService {
       throw error;
     }
   }
+  
 
   static async updateUser(userId, request) {
     try {
@@ -77,7 +78,29 @@ export default class ApiService {
     }
   }
 
+  static async getAllUsers() {
+      const response = await axios.get(`${this.BASE_URL}/api/v1/auth/users/all`, {
+          headers: this.getHeader(),
+      });
+      return response.data;
+  }
 
+  static async deleteUser(userId) {
+      const response = await axios.delete(`${this.BASE_URL}/api/v1/auth/users/${userId}`);
+      return response.data;
+  }
+
+  static async getUserInfoById(userId) {
+    try {
+        const response = await axios.get(`${this.BASE_URL}/api/v1/auth/users/${userId}/info`, {
+            headers: this.getHeader(),
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching user info:", error);
+        throw error;
+    }
+}
 
 
   /* Address API */
