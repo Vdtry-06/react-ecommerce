@@ -177,7 +177,7 @@ const ProductList = ({ products }) => {
                 className="product-image"
               />
               <h3>{product.name}</h3>
-              <p>{product.description}</p>
+              <p>Hiện còn: {product.availableQuantity} sản phẩm</p>
               <span>${product.price.toFixed(2)}</span>
             </Link>
             {cartItem ? (

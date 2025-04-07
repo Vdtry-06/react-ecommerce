@@ -5,7 +5,7 @@ import '../../static/style/categoryListPage.css';
 
 const CategoryListPage = () => {
     const [categories, setCategories] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState(new Set()); // Danh mục đã chọn nhưng chưa lọc
+    const [selectedCategories, setSelectedCategories] = useState(new Set());
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();

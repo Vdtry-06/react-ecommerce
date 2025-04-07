@@ -192,34 +192,27 @@ export default class ApiService {
   }
 
   static async deleteProduct(id) {
-    const response = await axios.delete(`${this.BASE_URL}/api/v1/product/${id}`, {
+    const response = await axios.delete(`${this.BASE_URL}/api/v1/product/delete/${id}`, {
         headers: this.getHeader(),
     });
     return response;
-}
+  }
 
-  static async FilterProductByCategories(categoryIds = []) {
-    if (!Array.isArray(categoryIds)) {
-      console.error(
-        "FilterProductByCategories expects an array, got:",
-        categoryIds
-      );
-      return { products: [] }; // Tránh lỗi API
-    }
-
-    const query =
-      categoryIds.length > 0 ? `?categoryIds=${categoryIds.join(",")}` : "";
+  static async getProductsByCategories(categoryIds, page = 0, size = 8) {
+    const query = `?page=${page}&size=${size}`;
     try {
+      // Giả sử chỉ lọc theo một categoryId đầu tiên, hoặc cần điều chỉnh API nếu muốn lọc nhiều category
       const response = await axios.get(
-        `${this.BASE_URL}/api/v1/product/categories/filter${query}`,
+        `${this.BASE_URL}/api/v1/product/categories/filter/${categoryIds[0]}${query}`,
         {
           headers: this.getHeader(),
         }
       );
-      return response.data;
+      // Trích xuất danh sách sản phẩm từ content
+      return { data: response.data.data.content || [] };
     } catch (error) {
-      console.error("Error fetching filtered products:", error);
-      throw error; // Để frontend xử lý lỗi
+      console.error("Error fetching products by categories:", error);
+      throw error;
     }
   }
 
@@ -291,7 +284,7 @@ export default class ApiService {
   /* Category */
   static async getCategory(categoryId) {
     const response = await axios.get(
-      `${this.BASE_URL}/api/v1/category/get-category/${categoryId}`,
+      `${this.BASE_URL}/api/v1/category/get/${categoryId}`,
       {
         headers: this.getHeader(),
       }
@@ -301,7 +294,7 @@ export default class ApiService {
 
   static async getAllCategories() {
     const response = await axios.get(
-      `${this.BASE_URL}/api/v1/category/get-categories`,
+      `${this.BASE_URL}/api/v1/category/get-all`,
       {
         headers: this.getHeader(),
       }

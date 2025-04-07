@@ -17,10 +17,11 @@ const AdminProductPage = () => {
     setLoading(true);
     try {
       const response = await ApiService.getAllProduct();
+      console.log("Fetched products:", response.data); // Debug
       setProducts(response.data || []);
     } catch (error) {
       message.error(error.response?.data?.message || "Không thể tải danh sách sản phẩm");
-      console.error("Error fetching products:", error);
+      console.error("Error fetching products:", error.response || error);
     } finally {
       setLoading(false);
     }
@@ -44,7 +45,7 @@ const AdminProductPage = () => {
               error.response?.data?.message || "Không thể xóa sản phẩm vì đã có ràng buộc."
             );
           }
-          console.error("Error deleting product:", error);
+          console.error("Error deleting product:", error.response || error);
         } finally {
           setLoading(false);
         }
@@ -52,7 +53,6 @@ const AdminProductPage = () => {
     });
   };
 
-  // Table columns
   const columns = [
     { title: "Tên", dataIndex: "name", key: "name" },
     {
@@ -74,20 +74,9 @@ const AdminProductPage = () => {
     },
     {
       title: "Danh mục",
-      dataIndex: "categories",
-      key: "categories",
-      render: (categories) =>
-        categories && categories.length > 0 ? (
-          <select className="dropdown-cell">
-            {categories.map((category) => (
-              <option key={category.id} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          "-"
-        ),
+      dataIndex: "category",
+      key: "category",
+      render: (category) => (category ? category.name : "-"),
     },
     {
       title: "Ảnh",
@@ -102,17 +91,9 @@ const AdminProductPage = () => {
       dataIndex: "toppings",
       key: "toppings",
       render: (toppings) =>
-        toppings && toppings.length > 0 ? (
-          <select className="dropdown-cell">
-            {toppings.map((topping) => (
-              <option key={topping.id} value={topping.name}>
-                {topping.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          "-"
-        ),
+        toppings && toppings.length > 0
+          ? toppings.map((topping) => topping.name).join(", ")
+          : "-",
     },
     {
       title: "Chỉnh sửa",

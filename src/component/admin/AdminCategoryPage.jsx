@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Button, Table, Form, Input, Modal, message } from "antd";
 import ApiService from "../../service/ApiService";
 import "../../static/style/adminCategoryPage.css";
-// import "../../static/style/adminPage.css";
 
 const AdminCategoryPage = () => {
   const navigate = useNavigate();
@@ -21,10 +20,11 @@ const AdminCategoryPage = () => {
     setLoading(true);
     try {
       const response = await ApiService.getAllCategories();
+      console.log("Fetched categories:", response.data); // Debug
       setCategories(response.data || []);
     } catch (error) {
-      message.error("Failed to load categories");
-      console.error("Error fetching category list:", error);
+      message.error("Failed to load categories: " + (error.response?.data?.message || "Unknown error"));
+      console.error("Error fetching category list:", error.response || error);
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,9 @@ const AdminCategoryPage = () => {
     try {
       if (editingCategory) {
         const response = await ApiService.updateCategory(editingCategory.id, values);
-        setCategories(categories.map((c) => (c.id === editingCategory.id ? response.data : c)));
+        setCategories(
+          categories.map((c) => (c.id === editingCategory.id ? response.data : c))
+        );
         message.success("Category updated successfully");
       } else {
         const response = await ApiService.addCategory(values);
@@ -46,8 +48,8 @@ const AdminCategoryPage = () => {
       form.resetFields();
       setEditingCategory(null);
     } catch (error) {
-      message.error(`Failed to ${editingCategory ? "update" : "add"} category`);
-      console.error("Error saving category:", error);
+      message.error(`Failed to ${editingCategory ? "update" : "add"} category: ${error.response?.data?.message || "Unknown error"}`);
+      console.error("Error saving category:", error.response || error);
     } finally {
       setLoading(false);
     }
@@ -64,8 +66,10 @@ const AdminCategoryPage = () => {
           setCategories(categories.filter((c) => c.id !== categoryId));
           message.success("Category deleted successfully");
         } catch (error) {
-          message.error("Cannot delete: This category may be linked to existing products.");
-          console.error("Error deleting category:", error);
+          message.error(
+            error.response?.data?.message || "Cannot delete: This category may be linked to existing products."
+          );
+          console.error("Error deleting category:", error.response || error);
         } finally {
           setLoading(false);
         }
@@ -123,8 +127,6 @@ const AdminCategoryPage = () => {
         pagination={{ pageSize: 10 }}
         locale={{ emptyText: "No categories found. Add a category to get started!" }}
       />
-
-      {/* Add/Edit Modal */}
       <Modal
         title={editingCategory ? "Edit Category" : "Add Category"}
         open={isModalVisible}

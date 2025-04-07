@@ -15,10 +15,10 @@ html, body {
 }
 
 .home-header {
-  background-color: #ff4d4f;
+  background-color: #fd000023;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  padding: 16px 48px;
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); */
+  /* padding: 16px 48px; */
   text-align: center;
 }
 
@@ -43,7 +43,6 @@ html, body {
 
 .sider-button {
   width: 100%;
-  margin-bottom: 8px;
   background-color: #fff;
   border: none;
   color: #ff6f61;

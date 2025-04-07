@@ -1,45 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Button, Form, Input, message } from "antd";
 import ApiService from "../../service/ApiService";
-import "../../static/style/adminPage.css"; // Sử dụng adminPage.css thay vì addCategory.css
+import "../../static/style/adminPage.css";
 
 const EditCategory = () => {
   const { categoryId } = useParams();
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (categoryId) fetchCategory(categoryId);
   }, [categoryId]);
 
   const fetchCategory = async (id) => {
+    setLoading(true);
     try {
       const response = await ApiService.getCategory(id);
-      if (response.data) {
-        setName(response.data.name || "");
-        setDescription(response.data.description || "");
-      }
+      form.setFieldsValue(response.data || {});
     } catch (error) {
-      setMessage(error.response?.data?.message || "Failed to get category");
-      setTimeout(() => setMessage(""), 3000);
+      message.error(error.response?.data?.message || "Failed to get category");
+      console.error("Error fetching category:", error.response || error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
+    setLoading(true);
     try {
-      const response = await ApiService.updateCategory(categoryId, { name, description });
+      const response = await ApiService.updateCategory(categoryId, values);
       if (response.data && response.data.id) {
-        setMessage("Update Successfully!");
-        setTimeout(() => {
-          setMessage("");
-          navigate("/admin/categories");
-        }, 3000);
+        message.success("Category updated successfully");
+        navigate("/admin/categories");
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || error.message || "Failed to save a category");
+      message.error(error.response?.data?.message || "Failed to update category");
+      console.error("Error updating category:", error.response || error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,31 +47,38 @@ const EditCategory = () => {
     <div className="admin-category-list">
       <div className="category-header">
         <h2>Edit Category</h2>
-            <button className="add-btn" onClick={() => navigate("/admin/categories")}>
-                Quay lại
-            </button>
-        </div>
-      {message && <p className={`message ${message.includes("Failed") ? "error" : ""}`}>{message}</p>}
-      <form onSubmit={handleSubmit} className="category-form">
-        <input
-          type="text"
-          placeholder="Category Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <div className="modal-buttons">
-          <button type="submit">Update</button>
-          <button type="button" onClick={() => navigate("/admin/categories")}>
+        <Button onClick={() => navigate("/admin/categories")}>
+          Back
+        </Button>
+      </div>
+      <Form
+        form={form}
+        onFinish={handleSubmit}
+        layout="vertical"
+        className="category-form"
+      >
+        <Form.Item
+          name="name"
+          label="Category Name"
+          rules={[{ required: true, message: "Please enter the category name" }]}
+        >
+          <Input placeholder="Category Name" />
+        </Form.Item>
+        <Form.Item name="description" label="Description">
+          <Input.TextArea rows={4} placeholder="Description" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Update
+          </Button>
+          <Button
+            style={{ marginLeft: 8 }}
+            onClick={() => navigate("/admin/categories")}
+          >
             Cancel
-          </button>
-        </div>
-      </form>
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
   );
 };

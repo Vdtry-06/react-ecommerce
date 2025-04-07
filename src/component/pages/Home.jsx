@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Layout, Breadcrumb, theme, Button, Dropdown, Space, Carousel, Card, Checkbox, Typography, Row, Col,
 } from "antd";
-import 'antd/dist/reset.css'; // Ant Design v5 styles
+import 'antd/dist/reset.css';
 import ProductList from "../common/ProductList";
 import Pagination from "../common/Pagination";
 import ApiService from "../../service/ApiService";
@@ -33,33 +33,32 @@ const Home = () => {
       try {
         const categoryResponse = await ApiService.getAllCategories();
         setCategories(categoryResponse.data || []);
-
-        let allProducts = [];
+  
+        let response;
         const searchParams = new URLSearchParams(location.search);
         const searchItem = searchParams.get("search");
         const categoryFilter = searchParams.get("categories");
-
+  
         if (searchItem) {
-          const response = await ApiService.getProductByName(searchItem);
-          allProducts = response.data || [];
+          response = await ApiService.getProductByName(searchItem);
+          setProducts(response.data || []);
         } else if (categoryFilter) {
           const categoryArray = categoryFilter.split(",");
-          const response = await ApiService.getProductsByCategories(categoryArray);
-          allProducts = response.data || [];
+          response = await ApiService.getProductsByCategories(categoryArray, currentPage - 1, itemsPerPage);
+          setProducts(response.data || []);
+          setTotalPages(response.data.totalPages || 1);
         } else {
-          const response = await ApiService.getAllProduct(currentPage, itemsPerPage);
-          allProducts = response.data || [];
+          response = await ApiService.getAllProduct(currentPage - 1, itemsPerPage);
+          setProducts(response.data || []);
+          setTotalPages(response.data.totalPages || 1);
         }
-
-        setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
-        setProducts(allProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
       } catch (error) {
         setError(error.response?.data?.message || error.message || "Lỗi khi tải dữ liệu!");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchHomeData();
   }, [location.search, currentPage]);
 

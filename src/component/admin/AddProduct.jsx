@@ -10,7 +10,7 @@ const AddProduct = () => {
     description: "",
     availableQuantity: "",
     price: "",
-    categoryNames: new Set(),
+    categoryName: "",
     toppingNames: new Set(),
     image: null,
   });
@@ -54,16 +54,7 @@ const AddProduct = () => {
   };
 
   const handleCategoryChange = (name) => {
-    const trimmedName = name.trim();
-    setNewProduct((prev) => {
-      const newCategoryNames = new Set(prev.categoryNames);
-      if (newCategoryNames.has(trimmedName)) {
-        newCategoryNames.delete(trimmedName);
-      } else {
-        newCategoryNames.add(trimmedName);
-      }
-      return { ...prev, categoryNames: newCategoryNames };
-    });
+    setNewProduct((prev) => ({ ...prev, categoryName: name }));
   };
 
   const handleToppingChange = (name) => {
@@ -87,19 +78,21 @@ const AddProduct = () => {
       formData.append("description", newProduct.description);
       formData.append("availableQuantity", parseFloat(newProduct.availableQuantity));
       formData.append("price", newProduct.price);
-      newProduct.categoryNames.forEach((name) => formData.append("categoryNames", name));
+      formData.append("categoryName", newProduct.categoryName);
       newProduct.toppingNames.forEach((name) => formData.append("toppingNames", name));
       if (newProduct.image) formData.append("file", newProduct.image);
 
       const response = await ApiService.addProduct(formData);
-      if (response.status === 200) {
+      console.log("Add product response:", response); // Log phản hồi để debug
+
+      if (response.status === 200 || response.status === 201) { // Chấp nhận cả 200 và 201
         setMessage("Product added successfully!");
         setNewProduct({
           name: "",
           description: "",
           availableQuantity: "",
           price: "",
-          categoryNames: new Set(),
+          categoryName: "",
           toppingNames: new Set(),
           image: null,
         });
@@ -108,9 +101,12 @@ const AddProduct = () => {
           navigate("/admin/products");
           setMessage("");
         }, 1000);
+      } else {
+        setMessage(`Unexpected status code: ${response.status}`);
       }
     } catch (error) {
       setMessage(error.response?.data?.message || "Failed to add product");
+      console.error("Error adding product:", error.response || error);
     }
   };
 
@@ -155,14 +151,15 @@ const AddProduct = () => {
           required
         />
         <label>Danh mục:</label>
-        <div className="checkbox-group">
+        <div className="radio-group">
           {allCategories.map((cat) => (
-            <label key={cat.id} className="checkbox-label">
+            <label key={cat.id} className="radio-label">
               <input
-                type="checkbox"
+                type="radio"
+                name="categoryName"
                 value={cat.name}
                 onChange={() => handleCategoryChange(cat.name)}
-                checked={newProduct.categoryNames.has(cat.name)}
+                checked={newProduct.categoryName === cat.name}
               />
               {cat.name}
             </label>

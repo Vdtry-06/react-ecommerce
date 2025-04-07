@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import ApiService from "../../service/ApiService"
-import "../../static/style/productDetailsPages.css"
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import ApiService from "../../service/ApiService";
+import "../../static/style/productDetailsPages.css";
 import {
   Row,
   Col,
@@ -19,33 +19,33 @@ import {
   message,
   Form,
   Input,
-} from "antd"
-import { CheckOutlined, HeartOutlined, HeartFilled } from "@ant-design/icons"
+} from "antd";
+import { CheckOutlined, HeartOutlined, HeartFilled } from "@ant-design/icons";
 
-const { Title, Text, Paragraph } = Typography
-const { TabPane } = Tabs
-const { TextArea } = Input
+const { Title, Text, Paragraph } = Typography;
+const { TabPane } = Tabs;
+const { TextArea } = Input;
 
 const ProductDetailsPages = () => {
-  const { productId } = useParams()
-  const navigate = useNavigate()
-  const [product, setProduct] = useState(null)
-  const [cart, setCart] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [activeTab, setActiveTab] = useState("description")
-  const [quantity, setQuantity] = useState(1)
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [hoveredImage, setHoveredImage] = useState(null)
-  const [userRating, setUserRating] = useState(5)
-  const [wishlist, setWishlist] = useState([])
+  const { productId } = useParams();
+  const navigate = useNavigate();
+  const [product, setProduct] = useState(null);
+  const [cart, setCart] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [activeTab, setActiveTab] = useState("description");
+  const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [hoveredImage, setHoveredImage] = useState(null);
+  const [userRating, setUserRating] = useState(5);
+  const [wishlist, setWishlist] = useState([]);
 
   const fetchData = async () => {
     try {
       if (ApiService.isAuthenticated()) {
-        const userInfo = await ApiService.getMyInfo()
-        const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
-        const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
+        const userInfo = await ApiService.getMyInfo();
+        const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id);
+        const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING");
 
         if (pendingOrder?.orderLines) {
           setCart(
@@ -54,78 +54,75 @@ const ProductDetailsPages = () => {
               qty: line.quantity,
               orderLineId: line.id,
             })),
-          )
+          );
         }
       }
     } catch (error) {
-      console.log(error.message || error)
+      console.log(error.message || error);
     }
-  }
+  };
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const response = await ApiService.getProduct(productId)
-        setProduct(response.data)
-        await fetchData()
+        const response = await ApiService.getProduct(productId);
+        setProduct(response.data);
+        await fetchData();
       } catch (error) {
-        console.log(error.message || error)
+        console.log(error.message || error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    loadData()
-  }, [productId])
+    loadData();
+  }, [productId]);
 
   const addToCart = async () => {
-    if (!product) return
+    if (!product) return;
 
     try {
-      setIsProcessing(true)
+      setIsProcessing(true);
 
       if (!ApiService.isAuthenticated()) {
-        const confirmLogin = window.confirm("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng! Đến trang đăng nhập?")
-        if (confirmLogin) navigate("/login")
-        return
+        const confirmLogin = window.confirm("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng! Đến trang đăng nhập?");
+        if (confirmLogin) navigate("/login");
+        return;
       }
 
-      const userInfo = await ApiService.getMyInfo()
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
-      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
-      const orderLineRequest = { productId: product.id, quantity: quantity }
+      const userInfo = await ApiService.getMyInfo();
+      const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id);
+      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING");
+      const orderLineRequest = { productId: product.id, quantity: quantity };
 
       if (!pendingOrder) {
         const result = await ApiService.createOrder({
           userId: userInfo.data.id,
           orderLines: [orderLineRequest],
           paymentMethod: "CASH_ON_DELIVERY",
-        })
-        // Update local cart state
-        setCart([{ id: product.id, qty: quantity, orderLineId: result.data.orderLines[0].id }])
+        });
+        setCart([{ id: product.id, qty: quantity, orderLineId: result.data.orderLines[0].id }]);
       } else {
-        const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id)
+        const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
         if (existingLine) {
           await ApiService.updateOrderLine(pendingOrder.id, existingLine.id, {
             ...orderLineRequest,
             quantity: existingLine.quantity + quantity,
-          })
-          // Update local cart state
+          });
           setCart((prevCart) => {
-            const updatedCart = [...prevCart]
-            const itemIndex = updatedCart.findIndex((item) => item.id === product.id)
+            const updatedCart = [...prevCart];
+            const itemIndex = updatedCart.findIndex((item) => item.id === product.id);
             if (itemIndex >= 0) {
               updatedCart[itemIndex] = {
                 ...updatedCart[itemIndex],
                 qty: updatedCart[itemIndex].qty + quantity,
-              }
+              };
             }
-            return updatedCart
-          })
+            return updatedCart;
+          });
         } else {
-          const result = await ApiService.addOrderLine(pendingOrder.id, orderLineRequest)
-          // Update local cart state
+          const result = await ApiService.addOrderLine(pendingOrder.id, orderLineRequest);
           setCart((prevCart) => [
             ...prevCart,
             {
@@ -133,105 +130,101 @@ const ProductDetailsPages = () => {
               qty: quantity,
               orderLineId: result.data.id,
             },
-          ])
+          ]);
         }
       }
 
-      message.success("Sản phẩm đã được thêm vào giỏ hàng!")
+      message.success("Sản phẩm đã được thêm vào giỏ hàng!");
     } catch (error) {
-      message.error("Lỗi khi thêm vào giỏ hàng!")
+      message.error("Lỗi khi thêm vào giỏ hàng!");
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   const buyNow = async () => {
     try {
-      setIsProcessing(true)
-      await addToCart()
-      navigate("/cart")
+      setIsProcessing(true);
+      await addToCart();
+      navigate("/cart");
     } catch (error) {
-      message.error("Lỗi khi mua hàng!")
+      message.error("Lỗi khi mua hàng!");
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   const updateQuantity = async (increment) => {
-    if (!product) return
+    if (!product) return;
 
     try {
-      setIsProcessing(true)
-      const userInfo = await ApiService.getMyInfo()
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
-      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
+      setIsProcessing(true);
+      const userInfo = await ApiService.getMyInfo();
+      const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id);
+      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING");
 
-      if (!pendingOrder) return
+      if (!pendingOrder) return;
 
-      const orderLine = pendingOrder.orderLines.find((line) => line.productId === product.id)
-      if (!orderLine) return
+      const orderLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
+      if (!orderLine) return;
 
-      const newQuantity = orderLine.quantity + (increment ? 1 : -1)
+      const newQuantity = orderLine.quantity + (increment ? 1 : -1);
 
-      // Update local cart state first for immediate UI feedback
       setCart((prevCart) => {
-        const updatedCart = [...prevCart]
-        const itemIndex = updatedCart.findIndex((item) => item.id === product.id)
+        const updatedCart = [...prevCart];
+        const itemIndex = updatedCart.findIndex((item) => item.id === product.id);
 
         if (itemIndex >= 0) {
           if (newQuantity > 0) {
             updatedCart[itemIndex] = {
               ...updatedCart[itemIndex],
               qty: newQuantity,
-            }
+            };
           } else {
-            // Remove item from cart if quantity is 0
-            updatedCart.splice(itemIndex, 1)
+            updatedCart.splice(itemIndex, 1);
           }
         }
-        return updatedCart
-      })
+        return updatedCart;
+      });
 
       if (newQuantity > 0) {
         await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, {
           productId: product.id,
           quantity: newQuantity,
-        })
+        });
       } else {
-        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
+        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id);
       }
     } catch (error) {
-      message.error(increment ? "Lỗi khi tăng số lượng!" : "Lỗi khi giảm số lượng!")
-      // Revert the cart state if there was an error
-      fetchData()
+      message.error(increment ? "Lỗi khi tăng số lượng!" : "Lỗi khi giảm số lượng!");
+      fetchData();
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   const toggleWishlist = (productId) => {
     if (wishlist.includes(productId)) {
-      setWishlist(wishlist.filter((id) => id !== productId))
+      setWishlist(wishlist.filter((id) => id !== productId));
     } else {
-      setWishlist([...wishlist, productId])
+      setWishlist([...wishlist, productId]);
     }
-  }
+  };
 
   if (isLoading) {
     return (
       <div className="loading-container">
         <Spin size="large" tip="Đang tải thông tin sản phẩm..." />
       </div>
-    )
+    );
   }
 
   if (!product) {
-    return <div className="error-container">Không tìm thấy sản phẩm</div>
+    return <div className="error-container">Không tìm thấy sản phẩm</div>;
   }
 
-  const cartItem = cart.find((item) => item.id === product.id)
+  const cartItem = cart.find((item) => item.id === product.id);
 
-  // Thumbnail images
   const thumbnails = [
     {
       src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-oCDYrDhBNiRat9hM0JEG963hpW12qk.png",
@@ -249,9 +242,8 @@ const ProductDetailsPages = () => {
       src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-oCDYrDhBNiRat9hM0JEG963hpW12qk.png",
       alt: "Burger",
     },
-  ]
+  ];
 
-  // Mock data for the product
   const mockProduct = {
     name: "RUTI WITH BEEF SLICE",
     price: 28.99,
@@ -262,9 +254,8 @@ const ProductDetailsPages = () => {
     sku: "PRODUCT1",
     categories: "BURGER",
     tags: "BURGER, PASTA",
-  }
+  };
 
-  // Use mock data if product data is incomplete
   const displayProduct = {
     ...product,
     name: product.name || mockProduct.name,
@@ -273,11 +264,10 @@ const ProductDetailsPages = () => {
     discount: product.discount || mockProduct.discount,
     description: product.description || mockProduct.description,
     sku: product.id || mockProduct.sku,
-    categories: product.category || mockProduct.categories,
+    categories: product.category ? product.category.name : mockProduct.categories, // Sửa ở đây
     tags: product.tags?.join(", ") || mockProduct.tags,
-  }
+  };
 
-  // Related products
   const relatedProducts = [
     {
       id: "related1",
@@ -315,9 +305,8 @@ const ProductDetailsPages = () => {
       imageUrl: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-vow3IiYbxsJxMDPhqpdTCeWWS77GnE.png",
       rating: 5,
     },
-  ]
+  ];
 
-  // Comments
   const comments = [
     {
       author: "Food Expert",
@@ -329,7 +318,7 @@ const ProductDetailsPages = () => {
       date: "2024-04-17 23:43",
       content: "I totally agree, this is my new favorite place to eat!",
     },
-  ]
+  ];
 
   return (
     <div className="product-details-container">
@@ -620,8 +609,7 @@ const ProductDetailsPages = () => {
         </Row>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductDetailsPages
-
+export default ProductDetailsPages;

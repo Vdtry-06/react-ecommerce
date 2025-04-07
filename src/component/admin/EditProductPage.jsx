@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Form, Input, Button, Upload, Checkbox, message, Spin } from "antd";
+import { Form, Input, Button, Upload, Checkbox, message, Spin, Radio } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import ApiService from "../../service/ApiService";
 import "../../static/style/adminProductPage.css";
@@ -31,7 +31,7 @@ const EditProduct = () => {
         description: productData.description || "",
         availableQuantity: productData.availableQuantity || "",
         price: productData.price || "",
-        categoryNames: productData.categories?.map((cat) => cat.name) || [],
+        categoryName: productData.category?.name || "", // Chỉ lấy một categoryName
         toppingNames: productData.toppings?.map((top) => top.name) || [],
       });
       setImagePreview(productData.imageUrl || null);
@@ -81,20 +81,22 @@ const EditProduct = () => {
       formData.append("description", values.description || "");
       formData.append("availableQuantity", values.availableQuantity);
       formData.append("price", values.price);
-      (values.categoryNames || []).forEach((name) => formData.append("categoryNames", name));
+      formData.append("categoryName", values.categoryName || ""); // Chỉ gửi một categoryName
       (values.toppingNames || []).forEach((name) => formData.append("toppingNames", name));
       if (fileList.length > 0 && fileList[0].originFileObj) {
         formData.append("file", fileList[0].originFileObj);
       }
 
       const response = await ApiService.updateProduct(productId, formData);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) { // Chấp nhận cả 200 và 201
         message.success("Product updated successfully!");
         setTimeout(() => navigate("/admin/products"), 1000);
+      } else {
+        message.error(`Unexpected status code: ${response.status}`);
       }
     } catch (error) {
       message.error(error.response?.data?.message || "Failed to update product");
-      console.error("Error updating product:", error);
+      console.error("Error updating product:", error.response || error);
     } finally {
       setLoading(false);
     }
@@ -154,14 +156,18 @@ const EditProduct = () => {
             <Input type="number" step="0.01" placeholder="Price" />
           </Form.Item>
 
-          <Form.Item name="categoryNames" label="Danh mục">
-            <Checkbox.Group>
+          <Form.Item
+            name="categoryName"
+            label="Danh mục"
+            rules={[{ required: true, message: "Vui lòng chọn một danh mục" }]}
+          >
+            <Radio.Group>
               {allCategories.map((cat) => (
-                <Checkbox key={cat.id} value={cat.name}>
+                <Radio key={cat.id} value={cat.name}>
                   {cat.name}
-                </Checkbox>
+                </Radio>
               ))}
-            </Checkbox.Group>
+            </Radio.Group>
           </Form.Item>
 
           <Form.Item name="toppingNames" label="Toppings">
