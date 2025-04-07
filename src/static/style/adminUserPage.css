@@ -2,15 +2,8 @@
     padding: 16px;
   }
   
-  .product-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
   h2 {
-    margin: 0;
+    margin-bottom: 16px;
   }
   
   .ant-table {
@@ -18,9 +11,9 @@
     border-radius: 8px;
   }
   
-  .dropdown-cell {
-    width: 100%;
-    padding: 4px;
+  .image-preview {
+    max-width: 60px;
+    border-radius: 4px;
   }
   
   .ant-btn-primary {

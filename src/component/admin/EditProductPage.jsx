@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Form, Input, Button, Upload, Checkbox, message, Spin } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import ApiService from "../../service/ApiService";
-import "../../static/style/adminPage.css";
+import "../../static/style/adminProductPage.css";
 
 const EditProduct = () => {
   const navigate = useNavigate();
   const { productId } = useParams();
-  const [editProduct, setEditProduct] = useState({
-    id: "",
-    name: "",
-    description: "",
-    availableQuantity: "",
-    price: "",
-    categoryNames: new Set(),
-    toppingNames: new Set(),
-    image: null,
-  });
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [allCategories, setAllCategories] = useState([]);
   const [allToppings, setAllToppings] = useState([]);
-  const [message, setMessage] = useState("");
+  const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
     fetchProduct(productId);
@@ -28,28 +22,27 @@ const EditProduct = () => {
   }, [productId]);
 
   const fetchProduct = async (id) => {
+    setLoading(true);
     try {
       const response = await ApiService.getProduct(id);
       const productData = response.data;
-      setEditProduct({
-        id: id,
+      form.setFieldsValue({
         name: productData.name || "",
         description: productData.description || "",
         availableQuantity: productData.availableQuantity || "",
         price: productData.price || "",
-        categoryNames: new Set(
-          productData.categories?.map((cat) => cat.name) || []
-        ),
-        toppingNames: new Set(
-          productData.toppings?.map((top) => top.name) || []
-        ),
-        image: null,
+        categoryNames: productData.categories?.map((cat) => cat.name) || [],
+        toppingNames: productData.toppings?.map((top) => top.name) || [],
       });
       setImagePreview(productData.imageUrl || null);
+      if (productData.imageUrl) {
+        setFileList([{ uid: "-1", name: "image", status: "done", url: productData.imageUrl }]);
+      }
     } catch (error) {
+      message.error("Failed to load product data");
       console.error("Error fetching product:", error);
-      setMessage("Failed to load product data");
-      setTimeout(() => setMessage(""), 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,165 +64,138 @@ const EditProduct = () => {
     }
   };
 
-  const handleProductChange = (e) => {
-    const { name, value } = e.target;
-    setEditProduct((prev) => ({ ...prev, [name]: value }));
+  const handleImageChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+    if (newFileList.length > 0 && newFileList[0].originFileObj) {
+      setImagePreview(URL.createObjectURL(newFileList[0].originFileObj));
+    } else if (newFileList.length === 0) {
+      setImagePreview(null);
+    }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setEditProduct((prev) => ({ ...prev, image: file }));
-    setImagePreview(URL.createObjectURL(file));
-  };
-
-  const handleCategoryChange = (name) => {
-    const trimmedName = name.trim();
-    setEditProduct((prev) => {
-      const newCategoryNames = new Set(prev.categoryNames);
-      if (newCategoryNames.has(trimmedName)) {
-        newCategoryNames.delete(trimmedName);
-      } else {
-        newCategoryNames.add(trimmedName);
-      }
-      return { ...prev, categoryNames: newCategoryNames };
-    });
-  };
-
-  const handleToppingChange = (name) => {
-    const trimmedName = name.trim();
-    setEditProduct((prev) => {
-      const newToppingNames = new Set(prev.toppingNames);
-      if (newToppingNames.has(trimmedName)) {
-        newToppingNames.delete(trimmedName);
-      } else {
-        newToppingNames.add(trimmedName);
-      }
-      return { ...prev, toppingNames: newToppingNames };
-    });
-  };
-
-  const handleEditProductSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
+    setLoading(true);
     try {
       const formData = new FormData();
-      formData.append("name", editProduct.name);
-      formData.append("description", editProduct.description);
-      formData.append(
-        "availableQuantity",
-        parseFloat(editProduct.availableQuantity)
-      );
-      formData.append("price", editProduct.price);
-      editProduct.categoryNames.forEach((name) =>
-        formData.append("categoryNames", name)
-      );
-      editProduct.toppingNames.forEach((name) =>
-        formData.append("toppingNames", name)
-      );
-      if (editProduct.image) formData.append("file", editProduct.image);
+      formData.append("name", values.name);
+      formData.append("description", values.description || "");
+      formData.append("availableQuantity", values.availableQuantity);
+      formData.append("price", values.price);
+      (values.categoryNames || []).forEach((name) => formData.append("categoryNames", name));
+      (values.toppingNames || []).forEach((name) => formData.append("toppingNames", name));
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        formData.append("file", fileList[0].originFileObj);
+      }
 
-      const response = await ApiService.updateProduct(editProduct.id, formData);
+      const response = await ApiService.updateProduct(productId, formData);
       if (response.status === 200) {
-        setMessage("Product updated successfully!");
-        setTimeout(() => {
-          navigate("/admin/products");
-          setMessage("");
-        }, 1000);
+        message.success("Product updated successfully!");
+        setTimeout(() => navigate("/admin/products"), 1000);
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || "Failed to update product");
+      message.error(error.response?.data?.message || "Failed to update product");
+      console.error("Error updating product:", error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const uploadProps = {
+    onChange: handleImageChange,
+    fileList,
+    beforeUpload: () => false,
+    maxCount: 1,
+    listType: "picture",
   };
 
   return (
     <div className="admin-product-list">
-      <div className="product-header">
-        <h2>Thay đổi sản phẩm</h2>
-        <button className="add-btn" onClick={() => navigate("/admin/products")}>
-          Quay lại
-        </button>
-      </div>
-      {message && (
-        <p className={`message ${message.includes("Failed") ? "error" : ""}`}>
-          {message}
-        </p>
-      )}
-      <form onSubmit={handleEditProductSubmit} className="product-form">
-        <label>Cập nhật ảnh:</label>
-        <input type="file" onChange={handleImageChange} />
-        {imagePreview && (
-          <img
-            src={imagePreview}
-            alt={editProduct.name}
-            className="image-preview"
-          />
-        )}
-        <input
-          type="text"
-          name="name"
-          placeholder="Product Name"
-          value={editProduct.name}
-          onChange={handleProductChange}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={editProduct.description}
-          onChange={handleProductChange}
-          required
-        />
-        <input
-          type="number"
-          name="availableQuantity"
-          placeholder="Available Quantity"
-          value={editProduct.availableQuantity}
-          onChange={handleProductChange}
-          required
-        />
-        <input
-          type="number"
-          step="0.01"
-          name="price"
-          placeholder="Price"
-          value={editProduct.price}
-          onChange={handleProductChange}
-          required
-        />
-        <label>Danh mục:</label>
-        <div className="checkbox-group">
-          {allCategories.map((cat) => (
-            <label key={cat.id} className="checkbox-label">
-              <input
-                type="checkbox"
-                value={cat.name}
-                onChange={() => handleCategoryChange(cat.name)}
-                checked={editProduct.categoryNames.has(cat.name)}
-              />
-              {cat.name}
-            </label>
-          ))}
-        </div>
-        <label>Toppings:</label>
-        <div className="checkbox-group">
-          {allToppings.map((top) => (
-            <label key={top.id} className="checkbox-label">
-              <input
-                type="checkbox"
-                value={top.name}
-                onChange={() => handleToppingChange(top.name)}
-                checked={editProduct.toppingNames.has(top.name)}
-              />
-              {top.name}
-            </label>
-          ))}
-        </div>
-        <div className="modal-buttons">
-          <button type="submit">Cập nhật</button>
-          <button type="button" onClick={() => navigate("/admin/products")}>
-            Hủy bỏ
-          </button>
-        </div>
-      </form>
+      <h2>Thay đổi sản phẩm</h2>
+      <Spin spinning={loading}>
+        <Form
+          form={form}
+          onFinish={handleSubmit}
+          layout="vertical"
+          className="product-form"
+        >
+          <Form.Item
+            name="name"
+            label="Tên sản phẩm"
+            rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm" }]}
+          >
+            <Input placeholder="Product Name" />
+          </Form.Item>
+
+          <Form.Item name="description" label="Mô tả">
+            <Input.TextArea rows={4} placeholder="Description" />
+          </Form.Item>
+
+          <Form.Item
+            name="availableQuantity"
+            label="Số lượng có sẵn"
+            rules={[
+              { required: true, message: "Vui lòng nhập số lượng" },
+              { type: "number", min: 0, message: "Số lượng phải lớn hơn hoặc bằng 0" },
+            ]}
+            normalize={(value) => (value ? Number(value) : value)}
+          >
+            <Input type="number" placeholder="Available Quantity" />
+          </Form.Item>
+
+          <Form.Item
+            name="price"
+            label="Giá"
+            rules={[
+              { required: true, message: "Vui lòng nhập giá" },
+              { type: "number", min: 0, message: "Giá phải lớn hơn hoặc bằng 0" },
+            ]}
+            normalize={(value) => (value ? Number(value) : value)}
+          >
+            <Input type="number" step="0.01" placeholder="Price" />
+          </Form.Item>
+
+          <Form.Item name="categoryNames" label="Danh mục">
+            <Checkbox.Group>
+              {allCategories.map((cat) => (
+                <Checkbox key={cat.id} value={cat.name}>
+                  {cat.name}
+                </Checkbox>
+              ))}
+            </Checkbox.Group>
+          </Form.Item>
+
+          <Form.Item name="toppingNames" label="Toppings">
+            <Checkbox.Group>
+              {allToppings.map((top) => (
+                <Checkbox key={top.id} value={top.name}>
+                  {top.name}
+                </Checkbox>
+              ))}
+            </Checkbox.Group>
+          </Form.Item>
+
+          <Form.Item label="Ảnh sản phẩm">
+            <Upload {...uploadProps}>
+              <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+            </Upload>
+            {imagePreview && (
+              <img src={imagePreview} alt="Preview" className="image-preview" />
+            )}
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Cập nhật
+            </Button>
+            <Button
+              style={{ marginLeft: 8 }}
+              onClick={() => navigate("/admin/products")}
+            >
+              Hủy bỏ
+            </Button>
+          </Form.Item>
+        </Form>
+      </Spin>
     </div>
   );
 };

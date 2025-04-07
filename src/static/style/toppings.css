@@ -1,8 +1,4 @@
-.admin-product-list {
-    padding: 16px;
-  }
-  
-  .product-header {
+.topping-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -16,11 +12,6 @@
   .ant-table {
     background: #fff;
     border-radius: 8px;
-  }
-  
-  .dropdown-cell {
-    width: 100%;
-    padding: 4px;
   }
   
   .ant-btn-primary {

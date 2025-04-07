@@ -112,7 +112,6 @@ const ProductList = ({ products }) => {
       const orderLineRequest = { productId: product.id, quantity: orderLine.quantity + 1 }
       await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest)
 
-      // Notify cart changed
       window.dispatchEvent(new Event("cartChanged"))
       await fetchCart()
     } catch (error) {

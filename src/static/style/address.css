@@ -1,115 +1,71 @@
 .address-page {
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-    text-align: center;
-    transition: all 0.3s ease;
+  max-width: 600px;
+  margin: 24px auto;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.address-form {
+  width: 100%;
+}
+
+.ant-typography {
+  color: #ff6f61;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.ant-form-item {
+  margin-bottom: 16px;
+}
+
+.ant-input {
+  border-radius: 4px;
+  padding: 8px 12px;
+  transition: border-color 0.3s ease;
+}
+
+.ant-input:focus {
+  border-color: #ff9f1c;
+  box-shadow: 0 0 5px rgba(255, 159, 28, 0.3);
+}
+
+.ant-btn-primary {
+  background-color: #ff6f61;
+  border-color: #ff6f61;
+  border-radius: 4px;
+  padding: 8px 16px;
+  height: auto;
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.ant-btn-default {
+  border-radius: 4px;
+  padding: 8px 16px;
+  height: auto;
+  transition: all 0.3s ease;
+}
+
+.ant-btn-default:hover {
+  color: #ff6f61;
+  border-color: #ff6f61;
+}
+
+@media (max-width: 768px) {
+  .address-page {
+    margin: 16px;
+    padding: 16px;
   }
-  
-  .address-page:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+
+  .ant-form-item {
+    margin-bottom: 12px;
   }
-  
-  .address-page h2 {
-    font-size: 26px;
-    color: #2c3e50;
-    margin-bottom: 25px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
-  
-  .address-page form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .address-page label {
-    font-weight: 600;
-    font-size: 16px;
-    text-align: left;
-    display: block;
-    color: #34495e;
-    margin-bottom: 5px;
-  }
-  
-  .address-page input {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #fafafa;
-    transition: all 0.3s ease;
-    margin-top: 5px;
-  }
-  
-  .address-page input:focus {
-    border-color: #f68b1e;
-    background-color: #ffffff;
-    box-shadow: 0 0 8px rgba(246, 139, 30, 0.25);
-    outline: none;
-  }
-  
-  .address-page button[type="submit"] {
-    padding: 14px;
-    background: linear-gradient(135deg, #ff9f43 0%, #f68b1e 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 15px;
-  }
-  
-  .address-page button[type="submit"]:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(246, 139, 30, 0.3);
-    background: linear-gradient(135deg, #ffa959 0%, #ff7f0e 100%);
-  }
-  
-  .address-page button[type="submit"]:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(246, 139, 30, 0.2);
-  }
-  
-  .address-page .cancel-button {
-    padding: 14px;
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-  }
-  
-  .address-page .cancel-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3);
-    background: linear-gradient(135deg, #ff6655 0%, #e74c3c 100%);
-  }
-  
-  .address-page .cancel-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(231, 76, 60, 0.2);
-  }
-  
-  .error-message {
-    color: #c0392b;
-    font-size: 14px;
-    margin: 15px 0;
-    padding: 10px 15px;
-    background-color: #fef1f0;
-    border: 1px solid #f9ccc7;
-    border-radius: 6px;
-    font-weight: 500;
-    text-align: center;
-  }
+}

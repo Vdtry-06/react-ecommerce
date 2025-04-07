@@ -27,6 +27,7 @@ import AddProduct from './component/admin/AddProduct';
 import EditProduct from './component/admin/EditProductPage';
 import AdminUserPage from './component/admin/AdminUserPage';
 import UserDetailPage from './component/admin/UserDetailPage';
+import ToppingManagement from './component/admin/ToppingManagement';
 
 function Layout({ children }) {
   const location = useLocation();
@@ -75,6 +76,7 @@ function App() {
                   <Route path="edit-product/:productId" element={<EditProduct />} />
                   <Route path="users" element={<AdminUserPage />} />
                   <Route path="user-detail/:userId" element={<UserDetailPage />} />
+                  <Route path="toppings" element={<ToppingManagement />} />
                   {/* Thêm các route khác như orders, users, toppings nếu cần */}
                 </Route>
               </Routes>

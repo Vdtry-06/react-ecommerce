@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
@@ -24,7 +22,6 @@ const CartPage = () => {
       const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
       const orders = ordersResponse.data || [];
 
-      // Only fetch items from PENDING orders
       const pendingOrder = orders.find((order) => order.status === "PENDING") || { orderLines: [] };
 
       if (pendingOrder.orderLines.length === 0) {
