@@ -11,9 +11,9 @@ const ProductList = ({ products }) => {
   const fetchCart = async () => {
     try {
       if (ApiService.isAuthenticated()) {
-        const userInfo = await ApiService.getMyInfo()
+        const userInfo = await ApiService.User.getMyInfo()
         const userId = userInfo.data.id
-        const ordersResponse = await ApiService.getAllOrdersOfUser(userId)
+        const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId)
         const orders = ordersResponse.data || []
         const pendingOrder = orders.find((order) => order.status === "PENDING")
 
@@ -41,9 +41,9 @@ const ProductList = ({ products }) => {
       if (!ApiService.isAuthenticated()) {
         return null
       }
-      const userInfo = await ApiService.getMyInfo()
+      const userInfo = await ApiService.User.getMyInfo()
       const userId = userInfo.data.id
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId)
+      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId)
       const orders = ordersResponse.data || []
       return orders.find((order) => order.status === "PENDING")
     } catch (error) {
@@ -65,7 +65,7 @@ const ProductList = ({ products }) => {
         return
       }
 
-      const userInfo = await ApiService.getMyInfo()
+      const userInfo = await ApiService.User.getMyInfo()
       const userId = userInfo.data.id
       const pendingOrder = await getPendingOrder()
 
@@ -77,16 +77,16 @@ const ProductList = ({ products }) => {
           orderLines: [orderLineRequest],
           paymentMethod: "CASH_ON_DELIVERY",
         }
-        await ApiService.createOrder(orderRequest)
+        await ApiService.Order.createOrder(orderRequest)
       } else {
         const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id)
         if (existingLine) {
-          await ApiService.updateOrderLine(pendingOrder.id, existingLine.id, {
+          await ApiService.Order.updateOrderLine(pendingOrder.id, existingLine.id, {
             productId: product.id,
             quantity: existingLine.quantity + 1,
           })
         } else {
-          await ApiService.addOrderLine(pendingOrder.id, orderLineRequest)
+          await ApiService.Order.addOrderLine(pendingOrder.id, orderLineRequest)
         }
       }
 
@@ -110,7 +110,7 @@ const ProductList = ({ products }) => {
       if (!orderLine) return
 
       const orderLineRequest = { productId: product.id, quantity: orderLine.quantity + 1 }
-      await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest)
+      await ApiService.Order.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest)
 
       window.dispatchEvent(new Event("cartChanged"))
       await fetchCart()
@@ -133,9 +133,9 @@ const ProductList = ({ products }) => {
 
       if (orderLine.quantity > 1) {
         const orderLineRequest = { productId: product.id, quantity: orderLine.quantity - 1 }
-        await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest)
+        await ApiService.Order.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest)
       } else {
-        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
+        await ApiService.Order.deleteOrderLine(pendingOrder.id, orderLine.id)
       }
 
       window.dispatchEvent(new Event("cartChanged"))
@@ -177,8 +177,9 @@ const ProductList = ({ products }) => {
                 className="product-image"
               />
               <h3>{product.name}</h3>
+              <p>{product.availableQuantity}</p>
               <p>{product.description}</p>
-              <span>${product.price.toFixed(2)}</span>
+              <span>{product.price.toFixed(2)} VNĐ</span>
             </Link>
             {cartItem ? (
               <div className="quantity-controls">

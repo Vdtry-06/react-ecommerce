@@ -17,7 +17,7 @@ const UserDetailPage = () => {
   const fetchUserInfo = async (id) => {
     setLoading(true);
     try {
-      const response = await ApiService.getUserInfoById(id);
+      const response = await ApiService.User.getUserInfoById(id);
       console.log("User info response:", response);
       setUser(response.data);
     } catch (error) {

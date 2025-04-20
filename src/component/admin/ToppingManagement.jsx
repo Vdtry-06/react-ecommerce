@@ -18,7 +18,7 @@ const ToppingManagement = () => {
   const fetchToppings = async () => {
     setLoading(true);
     try {
-      const response = await ApiService.getAllToppings();
+      const response = await ApiService.Topping.getAllToppings();
       setToppings(response.data || []);
     } catch (error) {
       message.error("Failed to load toppings");
@@ -34,12 +34,12 @@ const ToppingManagement = () => {
     try {
       if (editingTopping) {
         // Update existing topping
-        const response = await ApiService.updateTopping(editingTopping.id, values);
+        const response = await ApiService.Topping.updateTopping(editingTopping.id, values);
         setToppings(toppings.map((t) => (t.id === editingTopping.id ? response.data : t)));
         message.success("Topping updated successfully");
       } else {
         // Add new topping
-        const response = await ApiService.addTopping(values);
+        const response = await ApiService.Topping.addTopping(values);
         setToppings([...toppings, response.data]);
         message.success("Topping added successfully");
       }
@@ -58,7 +58,7 @@ const ToppingManagement = () => {
   const handleDelete = async (toppingId) => {
     setLoading(true);
     try {
-      await ApiService.deleteTopping(toppingId);
+      await ApiService.Topping.deleteTopping(toppingId);
       setToppings(toppings.filter((t) => t.id !== toppingId));
       message.success("Topping deleted successfully");
     } catch (error) {

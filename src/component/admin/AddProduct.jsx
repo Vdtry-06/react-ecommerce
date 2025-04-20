@@ -26,7 +26,7 @@ const AddProduct = () => {
 
   const fetchAllCategories = async () => {
     try {
-      const response = await ApiService.getAllCategories();
+      const response = await ApiService.Category.getAllCategories();
       setAllCategories(response.data || []);
     } catch (error) {
       console.error("Error fetching all categories:", error);
@@ -35,7 +35,7 @@ const AddProduct = () => {
 
   const fetchAllToppings = async () => {
     try {
-      const response = await ApiService.getAllToppings();
+      const response = await ApiService.Topping.getAllToppings();
       setAllToppings(response.data || []);
     } catch (error) {
       console.error("Error fetching all toppings:", error);
@@ -85,13 +85,20 @@ const AddProduct = () => {
       const formData = new FormData();
       formData.append("name", newProduct.name);
       formData.append("description", newProduct.description);
-      formData.append("availableQuantity", parseFloat(newProduct.availableQuantity));
+      formData.append(
+        "availableQuantity",
+        parseFloat(newProduct.availableQuantity)
+      );
       formData.append("price", newProduct.price);
-      newProduct.categoryNames.forEach((name) => formData.append("categoryNames", name));
-      newProduct.toppingNames.forEach((name) => formData.append("toppingNames", name));
+      newProduct.categoryNames.forEach((name) =>
+        formData.append("categoryNames", name)
+      );
+      newProduct.toppingNames.forEach((name) =>
+        formData.append("toppingNames", name)
+      );
       if (newProduct.image) formData.append("file", newProduct.image);
 
-      const response = await ApiService.addProduct(formData);
+      const response = await ApiService.Product.addProduct(formData);
       if (response.status === 200) {
         setMessage("Product added successfully!");
         setNewProduct({
@@ -121,7 +128,9 @@ const AddProduct = () => {
       <form onSubmit={handleAddProductSubmit} className="product-form">
         <label>Cập nhật ảnh:</label>
         <input type="file" onChange={handleImageChange} />
-        {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+        {imagePreview && (
+          <img src={imagePreview} alt="Preview" className="image-preview" />
+        )}
         <input
           type="text"
           name="name"

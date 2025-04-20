@@ -28,7 +28,7 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await ApiService.registerUser(formData);
+            const response = await ApiService.User.registerUser(formData); // ????
             if (response.status === 200) {
                 setMessage("User Successfully Registered");
                 setTimeout(() => {

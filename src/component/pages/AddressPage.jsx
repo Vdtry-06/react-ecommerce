@@ -22,7 +22,7 @@ const AddressPage = () => {
   const fetchUserInfo = async () => {
     setLoading(true);
     try {
-      const response = await ApiService.getMyInfo();
+      const response = await ApiService.User.getMyInfo();
       const userAddress = response?.data?.address || {
         country: "",
         city: "",
@@ -42,7 +42,7 @@ const AddressPage = () => {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      await (isEditMode ? ApiService.updateAddress(values) : ApiService.addAddress(values));
+      await (isEditMode ? ApiService.Address.updateAddress(values) : ApiService.Address.addAddress(values));
       message.success(isEditMode ? "Address updated successfully" : "Address added successfully");
       const returnUrl = location.state?.returnUrl || "/account";
       navigate(returnUrl, { state: location.state?.checkoutState });

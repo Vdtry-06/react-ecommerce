@@ -23,7 +23,7 @@ const Account = () => {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await ApiService.getMyInfo()
+      const response = await ApiService.User.getMyInfo()
       setUserInfo(response.data)
     } catch (error) {
       setError(error.response?.data?.message || error.message || "Unable to fetch user info")
@@ -38,13 +38,13 @@ const Account = () => {
         console.log(pair[0] + ": " + pair[1])
       }
 
-      const updateResponse = await ApiService.updateUser(userId, formData)
+      const updateResponse = await ApiService.User.updateUser(userId, formData)
       console.log("Update response:", updateResponse)
 
       if (updateResponse && updateResponse.data) {
         setUserInfo(updateResponse.data)
       } else {
-        const userResponse = await ApiService.getUser(userId)
+        const userResponse = await ApiService.User.getUser(userId)
         if (userResponse && userResponse.data) {
           setUserInfo(userResponse.data)
         } else {

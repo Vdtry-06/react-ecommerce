@@ -20,7 +20,7 @@ const AdminCategoryPage = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await ApiService.getAllCategories();
+      const response = await ApiService.Category.getAllCategories();
       setCategories(response.data || []);
     } catch (error) {
       message.error("Failed to load categories");
@@ -34,11 +34,11 @@ const AdminCategoryPage = () => {
     setLoading(true);
     try {
       if (editingCategory) {
-        const response = await ApiService.updateCategory(editingCategory.id, values);
+        const response = await ApiService.Category.updateCategory(editingCategory.id, values);
         setCategories(categories.map((c) => (c.id === editingCategory.id ? response.data : c)));
         message.success("Category updated successfully");
       } else {
-        const response = await ApiService.addCategory(values);
+        const response = await ApiService.Category.addCategory(values);
         setCategories([...categories, response.data]);
         message.success("Category added successfully");
       }
@@ -60,7 +60,7 @@ const AdminCategoryPage = () => {
       onOk: async () => {
         setLoading(true);
         try {
-          await ApiService.deleteCategory(categoryId);
+          await ApiService.Category.deleteCategory(categoryId);
           setCategories(categories.filter((c) => c.id !== categoryId));
           message.success("Category deleted successfully");
         } catch (error) {

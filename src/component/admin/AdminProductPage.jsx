@@ -16,7 +16,7 @@ const AdminProductPage = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await ApiService.getAllProduct();
+      const response = await ApiService.Product.getAllProduct();
       setProducts(response.data || []);
     } catch (error) {
       message.error(error.response?.data?.message || "Không thể tải danh sách sản phẩm");
@@ -33,7 +33,7 @@ const AdminProductPage = () => {
       onOk: async () => {
         setLoading(true);
         try {
-          await ApiService.deleteProduct(productId);
+          await ApiService.Product.deleteProduct(productId);
           setProducts(products.filter((p) => p.id !== productId));
           message.success("Xóa sản phẩm thành công");
         } catch (error) {

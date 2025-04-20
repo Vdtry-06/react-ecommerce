@@ -31,10 +31,10 @@ const CheckoutPage = () => {
 
   const fetchUserAddress = async () => {
     try {
-      const userInfo = await ApiService.getMyInfo()
+      const userInfo = await ApiService.User.getMyInfo()
       const addressId = userInfo.data.address?.id
       if (addressId) {
-        const response = await ApiService.getAddress(addressId)
+        const response = await ApiService.Address.getAddress(addressId)
         setUserAddress(response.data)
       } else {
         setUserAddress(null)
@@ -55,7 +55,7 @@ const CheckoutPage = () => {
 
   const handleConfirmCheckout = async () => {
     try {
-      const userInfo = await ApiService.getMyInfo()
+      const userInfo = await ApiService.User.getMyInfo()
       const userId = userInfo.data.id
 
       const selectedOrderLines = selectedItems.map((item) => ({
@@ -64,7 +64,7 @@ const CheckoutPage = () => {
         price: item.price * item.qty,
       }))
 
-      const response = await ApiService.createVNPayPaymentForSelectedItems({
+      const response = await ApiService.Payment.createVNPayPaymentForSelectedItems({
         orderLines: selectedOrderLines,
         userId: userId,
         bankCode: "NCB",
@@ -103,9 +103,9 @@ const CheckoutPage = () => {
 
   const removePaidItemsFromPendingOrder = async () => {
     try {
-      const userInfo = await ApiService.getMyInfo()
+      const userInfo = await ApiService.User.getMyInfo()
       const userId = userInfo.data.id
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId)
+      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId)
       const orders = ordersResponse.data || []
       const pendingOrder = orders.find((order) => order.status === "PENDING")
 
@@ -113,7 +113,7 @@ const CheckoutPage = () => {
         for (const item of selectedItems) {
           const orderLine = pendingOrder.orderLines.find((line) => line.productId === item.id)
           if (orderLine) {
-            await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
+            await ApiService.Order.deleteOrderLine(pendingOrder.id, orderLine.id)
           }
         }
         window.dispatchEvent(new Event("cartChanged"))

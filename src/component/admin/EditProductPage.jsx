@@ -24,7 +24,7 @@ const EditProduct = () => {
   const fetchProduct = async (id) => {
     setLoading(true);
     try {
-      const response = await ApiService.getProduct(id);
+      const response = await ApiService.Product.getProduct(id);
       const productData = response.data;
       form.setFieldsValue({
         name: productData.name || "",
@@ -48,7 +48,7 @@ const EditProduct = () => {
 
   const fetchAllCategories = async () => {
     try {
-      const response = await ApiService.getAllCategories();
+      const response = await ApiService.Category.getAllCategories();
       setAllCategories(response.data || []);
     } catch (error) {
       console.error("Error fetching all categories:", error);
@@ -57,7 +57,7 @@ const EditProduct = () => {
 
   const fetchAllToppings = async () => {
     try {
-      const response = await ApiService.getAllToppings();
+      const response = await ApiService.Topping.getAllToppings();
       setAllToppings(response.data || []);
     } catch (error) {
       console.error("Error fetching all toppings:", error);
@@ -87,7 +87,7 @@ const EditProduct = () => {
         formData.append("file", fileList[0].originFileObj);
       }
 
-      const response = await ApiService.updateProduct(productId, formData);
+      const response = await ApiService.Product.updateProduct(productId, formData);
       if (response.status === 200) {
         message.success("Product updated successfully!");
         setTimeout(() => navigate("/admin/products"), 1000);

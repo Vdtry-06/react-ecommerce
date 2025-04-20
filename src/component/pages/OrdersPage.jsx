@@ -15,9 +15,9 @@ const OrdersPage = () => {
 
   const fetchOrders = async () => {
     try {
-      const userInfo = await ApiService.getMyInfo()
+      const userInfo = await ApiService.User.getMyInfo()
       const userId = userInfo.data.id
-      const response = await ApiService.getAllOrdersOfUser(userId)
+      const response = await ApiService.Order.getAllOrdersOfUser(userId)
 
       const paidOrders = response.data.filter(order => order.status === "PAID")
       setOrders(paidOrders)

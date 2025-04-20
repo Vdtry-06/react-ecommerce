@@ -16,7 +16,7 @@ const AdminUserPage = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await ApiService.getAllUsers();
+      const response = await ApiService.User.getAllUsers();
       setUsers(response.data || []);
     } catch (error) {
       message.error(error.response?.data?.message || "Failed to fetch users");
@@ -33,7 +33,7 @@ const AdminUserPage = () => {
       onOk: async () => {
         setLoading(true);
         try {
-          await ApiService.deleteUser(userId);
+          await ApiService.User.deleteUser(userId);
           setUsers(users.filter((user) => user.id !== userId));
           message.success("User deleted successfully");
         } catch (error) {

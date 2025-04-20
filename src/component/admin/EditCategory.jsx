@@ -16,7 +16,7 @@ const EditCategory = () => {
 
   const fetchCategory = async (id) => {
     try {
-      const response = await ApiService.getCategory(id);
+      const response = await ApiService.Category.getCategory(id);
       if (response.data) {
         setName(response.data.name || "");
         setDescription(response.data.description || "");
@@ -30,7 +30,7 @@ const EditCategory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await ApiService.updateCategory(categoryId, { name, description });
+      const response = await ApiService.Category.updateCategory(categoryId, { name, description });
       if (response.data && response.data.id) {
         setMessage("Update Successfully!");
         setTimeout(() => {

@@ -16,7 +16,7 @@ const CategoryListPage = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await ApiService.getAllCategories();
+            const response = await ApiService.Category.getAllCategories();
             setCategories(response.data || []);
         } catch (err) {
             setError(err.response?.data?.message || 'Lỗi khi tải danh mục');

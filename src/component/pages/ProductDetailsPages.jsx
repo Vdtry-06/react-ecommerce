@@ -43,8 +43,8 @@ const ProductDetailsPages = () => {
   const fetchData = async () => {
     try {
       if (ApiService.isAuthenticated()) {
-        const userInfo = await ApiService.getMyInfo()
-        const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
+        const userInfo = await ApiService.User.getMyInfo()
+        const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userInfo.data.id)
         const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
 
         if (pendingOrder?.orderLines) {
@@ -66,7 +66,7 @@ const ProductDetailsPages = () => {
     const loadData = async () => {
       setIsLoading(true)
       try {
-        const response = await ApiService.getProduct(productId)
+        const response = await ApiService.Product.getProduct(productId)
         setProduct(response.data)
         await fetchData()
       } catch (error) {
@@ -91,13 +91,13 @@ const ProductDetailsPages = () => {
         return
       }
 
-      const userInfo = await ApiService.getMyInfo()
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
+      const userInfo = await ApiService.User.getMyInfo()
+      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userInfo.data.id)
       const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
       const orderLineRequest = { productId: product.id, quantity: quantity }
 
       if (!pendingOrder) {
-        const result = await ApiService.createOrder({
+        const result = await ApiService.Order.createOrder({
           userId: userInfo.data.id,
           orderLines: [orderLineRequest],
           paymentMethod: "CASH_ON_DELIVERY",
@@ -107,7 +107,7 @@ const ProductDetailsPages = () => {
       } else {
         const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id)
         if (existingLine) {
-          await ApiService.updateOrderLine(pendingOrder.id, existingLine.id, {
+          await ApiService.Order.updateOrderLine(pendingOrder.id, existingLine.id, {
             ...orderLineRequest,
             quantity: existingLine.quantity + quantity,
           })
@@ -124,7 +124,7 @@ const ProductDetailsPages = () => {
             return updatedCart
           })
         } else {
-          const result = await ApiService.addOrderLine(pendingOrder.id, orderLineRequest)
+          const result = await ApiService.Order.addOrderLine(pendingOrder.id, orderLineRequest)
           // Update local cart state
           setCart((prevCart) => [
             ...prevCart,
@@ -162,8 +162,8 @@ const ProductDetailsPages = () => {
 
     try {
       setIsProcessing(true)
-      const userInfo = await ApiService.getMyInfo()
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userInfo.data.id)
+      const userInfo = await ApiService.User.getMyInfo()
+      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userInfo.data.id)
       const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING")
 
       if (!pendingOrder) return
@@ -193,12 +193,12 @@ const ProductDetailsPages = () => {
       })
 
       if (newQuantity > 0) {
-        await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, {
+        await ApiService.Order.updateOrderLine(pendingOrder.id, orderLine.id, {
           productId: product.id,
           quantity: newQuantity,
         })
       } else {
-        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id)
+        await ApiService.Order.deleteOrderLine(pendingOrder.id, orderLine.id)
       }
     } catch (error) {
       message.error(increment ? "Lỗi khi tăng số lượng!" : "Lỗi khi giảm số lượng!")

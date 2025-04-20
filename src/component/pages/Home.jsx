@@ -31,7 +31,7 @@ const Home = () => {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const categoryResponse = await ApiService.getAllCategories();
+        const categoryResponse = await ApiService.Category.getAllCategories();
         setCategories(categoryResponse.data || []);
 
         let allProducts = [];
@@ -40,14 +40,14 @@ const Home = () => {
         const categoryFilter = searchParams.get("categories");
 
         if (searchItem) {
-          const response = await ApiService.getProductByName(searchItem);
+          const response = await ApiService.Product.getProductByName(searchItem);
           allProducts = response.data || [];
         } else if (categoryFilter) {
           const categoryArray = categoryFilter.split(",");
-          const response = await ApiService.getProductsByCategories(categoryArray);
+          const response = await ApiService.Product.getProductsByCategories(categoryArray); // ????
           allProducts = response.data || [];
         } else {
-          const response = await ApiService.getAllProduct(currentPage, itemsPerPage);
+          const response = await ApiService.Product.getAllProduct(currentPage, itemsPerPage);
           allProducts = response.data || [];
         }
 

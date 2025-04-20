@@ -11,7 +11,7 @@ const AddCategory = () => {
   const handleAddCategorySubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await ApiService.addCategory(newCategory);
+      const response = await ApiService.Category.addCategory(newCategory);
       if (response.code === 1000) {
         setMessage("Category added successfully!");
         setNewCategory({ name: "", description: "" });

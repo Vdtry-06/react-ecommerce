@@ -17,9 +17,9 @@ const CartPage = () => {
         throw new Error("Bạn cần đăng nhập!");
       }
       setLoading(true);
-      const userInfo = await ApiService.getMyInfo();
+      const userInfo = await ApiService.User.getMyInfo();
       const userId = userInfo.data.id;
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
+      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId);
       const orders = ordersResponse.data || [];
 
       const pendingOrder = orders.find((order) => order.status === "PENDING") || { orderLines: [] };
@@ -33,7 +33,7 @@ const CartPage = () => {
       const cartItems = await Promise.all(
         pendingOrder.orderLines.map(async (line) => {
           try {
-            const productResponse = await ApiService.getProduct(line.productId);
+            const productResponse = await ApiService.Product.getProduct(line.productId);
             const product = productResponse.data || {};
             return {
               id: line.productId,
@@ -102,9 +102,9 @@ const CartPage = () => {
   const incrementItem = async (product) => {
     try {
       setLoading(true);
-      const userInfo = await ApiService.getMyInfo();
+      const userInfo = await ApiService.User.getMyInfo();
       const userId = userInfo.data.id;
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
+      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId);
       const pendingOrder = ordersResponse.data.find((order) => order.status === "PENDING");
 
       const orderLineRequest = { productId: product.id, quantity: product.qty + 1 };
@@ -115,13 +115,13 @@ const CartPage = () => {
           orderLines: [{ productId: product.id, quantity: 1 }],
           paymentMethod: "CASH_ON_DELIVERY",
         };
-        await ApiService.createOrder(orderRequest);
+        await ApiService.Order.createOrder(orderRequest);
       } else {
         const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
         if (existingLine) {
-          await ApiService.updateOrderLine(pendingOrder.id, existingLine.id, orderLineRequest);
+          await ApiService.Order.updateOrderLine(pendingOrder.id, existingLine.id, orderLineRequest);
         } else {
-          await ApiService.addOrderLine(pendingOrder.id, orderLineRequest);
+          await ApiService.Order.addOrderLine(pendingOrder.id, orderLineRequest);
         }
       }
       window.dispatchEvent(new Event("cartChanged"));
@@ -136,9 +136,9 @@ const CartPage = () => {
   const decrementItem = async (product) => {
     try {
       setLoading(true);
-      const userInfo = await ApiService.getMyInfo();
+      const userInfo = await ApiService.User.getMyInfo();
       const userId = userInfo.data.id;
-      const ordersResponse = await ApiService.getAllOrdersOfUser(userId);
+      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId);
       const pendingOrder = ordersResponse.data.find((order) => order.status === "PENDING");
 
       if (!pendingOrder) return;
@@ -148,9 +148,9 @@ const CartPage = () => {
 
       if (orderLine.quantity > 1) {
         const orderLineRequest = { productId: product.id, quantity: product.qty - 1 };
-        await ApiService.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest);
+        await ApiService.Order.updateOrderLine(pendingOrder.id, orderLine.id, orderLineRequest);
       } else {
-        await ApiService.deleteOrderLine(pendingOrder.id, orderLine.id);
+        await ApiService.Order.deleteOrderLine(pendingOrder.id, orderLine.id);
       }
       window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
