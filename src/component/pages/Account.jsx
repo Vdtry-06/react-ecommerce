@@ -1,86 +1,86 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Card, Button, Spin, Empty, Pagination, Tabs, message } from "antd"
-import { EditOutlined } from "@ant-design/icons"
-import ApiService from "../../service/ApiService"
-import UpdateProfile from "./UpdateProfile"
-import "../../static/style/profile.css"
-import "../../static/style/account.css"
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Card, Button, Spin, Empty, Tabs, message } from "antd";
+import { EditOutlined } from "@ant-design/icons";
+import ApiService from "../../service/ApiService";
+import UpdateProfile from "./UpdateProfile";
+import "../../static/style/profile.css";
+import "../../static/style/account.css";
 
-const { TabPane } = Tabs
+const { TabPane } = Tabs;
 
 const Account = () => {
-  const [userInfo, setUserInfo] = useState(null)
-  const [error, setError] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isEditing, setIsEditing] = useState(false)
-  const itemsPerPage = 5
-  const navigate = useNavigate()
+  const [userInfo, setUserInfo] = useState(null);
+  const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState("1"); // Default to "Thông tin cá nhân"
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    fetchUserInfo()
-  }, [])
+    fetchUserInfo();
+    // Set active tab based on navigation state
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+  }, [location.state]);
 
   const fetchUserInfo = async () => {
     try {
-      const response = await ApiService.User.getMyInfo()
-      setUserInfo(response.data)
+      const response = await ApiService.User.getMyInfo();
+      setUserInfo(response.data);
     } catch (error) {
-      setError(error.response?.data?.message || error.message || "Unable to fetch user info")
-      message.error("Không thể tải thông tin người dùng")
+      setError(error.response?.data?.message || error.message || "Unable to fetch user info");
+      message.error("Không thể tải thông tin người dùng");
     }
-  }
+  };
 
   const handleUpdateProfile = async (userId, formData) => {
     try {
-      console.log("Sending update for user ID:", userId)
+      console.log("Sending update for user ID:", userId);
       for (const pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1])
+        console.log(pair[0] + ": " + pair[1]);
       }
 
-      const updateResponse = await ApiService.User.updateUser(userId, formData)
-      console.log("Update response:", updateResponse)
+      const updateResponse = await ApiService.User.updateUser(userId, formData);
+      console.log("Update response:", updateResponse);
 
       if (updateResponse && updateResponse.data) {
-        setUserInfo(updateResponse.data)
+        setUserInfo(updateResponse.data);
       } else {
-        const userResponse = await ApiService.User.getUser(userId)
+        const userResponse = await ApiService.User.getUser(userId);
         if (userResponse && userResponse.data) {
-          setUserInfo(userResponse.data)
+          setUserInfo(userResponse.data);
         } else {
-          await fetchUserInfo()
+          await fetchUserInfo();
         }
       }
 
-      setIsEditing(false)
-      message.success("Cập nhật thông tin thành công")
-      return updateResponse
+      setIsEditing(false);
+      message.success("Cập nhật thông tin thành công");
+      return updateResponse;
     } catch (error) {
-      console.error("Error updating profile:", error)
-      message.error(error.response?.data?.message || error.message || "Cập nhật thông tin thất bại")
-      throw error
+      console.error("Error updating profile:", error);
+      message.error(error.response?.data?.message || error.message || "Cập nhật thông tin thất bại");
+      throw error;
     }
-  }
+  };
 
   const handleAddressClick = () => {
-    navigate(userInfo.address ? "/edit-address" : "/add-address", { state: { returnUrl: "/account" } })
-  }
+    navigate(userInfo.address ? "/edit-address" : "/add-address", { state: { returnUrl: "/account" } });
+  };
 
   if (!userInfo) {
     return (
       <div className="loading-container">
         <Spin size="large" />
       </div>
-    )
+    );
   }
-
-  const orderItemList = userInfo.orders || []
-  const totalOrders = orderItemList.length
-  const paginatedOrders = orderItemList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   const renderPersonalInfo = () => {
     if (isEditing) {
-      return <UpdateProfile userInfo={userInfo} onUpdate={handleUpdateProfile} onCancel={() => setIsEditing(false)} />
+      return <UpdateProfile userInfo={userInfo} onUpdate={handleUpdateProfile} onCancel={() => setIsEditing(false)} />;
     }
 
     return (
@@ -111,8 +111,8 @@ const Account = () => {
           </div>
         </div>
       </Card>
-    )
-  }
+    );
+  };
 
   const renderAddressInfo = () => {
     return (
@@ -155,47 +155,8 @@ const Account = () => {
           <Empty description="Chưa có thông tin địa chỉ" />
         )}
       </Card>
-    )
-  }
-
-  const renderOrderHistory = () => {
-    return (
-      <Card title="Lịch sử đặt hàng">
-        {paginatedOrders.length === 0 ? (
-          <Empty description="Chưa có đơn hàng nào" />
-        ) : (
-          <>
-            <div className="order-list">
-              {paginatedOrders.map((order) => (
-                <Card key={order.id} className="order-card">
-                  {order.orderLines.map((item) => (
-                    <div key={item.id} className="order-item">
-                      <div className="order-item-details">
-                        <span className="order-product-name">{item.name}</span>
-                        <span className="order-product-quantity">Số lượng: {item.quantity}</span>
-                      </div>
-                      <span className="order-product-price">${item.price.toFixed(2)}</span>
-                    </div>
-                  ))}
-                </Card>
-              ))}
-            </div>
-
-            {totalOrders > 0 && (
-              <div className="pagination-wrapper">
-                <Pagination
-                  current={currentPage}
-                  total={totalOrders}
-                  pageSize={itemsPerPage}
-                  onChange={(page) => setCurrentPage(page)}
-                />
-              </div>
-            )}
-          </>
-        )}
-      </Card>
-    )
-  }
+    );
+  };
 
   return (
     <div className="account-container">
@@ -212,21 +173,17 @@ const Account = () => {
       </div>
 
       <div className="account-sections">
-        <Tabs defaultActiveKey="1">
+        <Tabs activeKey={activeTab} onChange={setActiveTab}>
           <TabPane tab="Thông tin cá nhân" key="1">
             {renderPersonalInfo()}
           </TabPane>
           <TabPane tab="Địa chỉ" key="2">
             {renderAddressInfo()}
           </TabPane>
-          <TabPane tab="Lịch sử đặt hàng" key="3">
-            {renderOrderHistory()}
-          </TabPane>
         </Tabs>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Account
-
+export default Account;

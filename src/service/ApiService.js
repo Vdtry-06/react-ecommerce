@@ -6,31 +6,29 @@ import * as PaymentService from "./PaymentService";
 import * as ProductService from "./ProductService";
 import * as ToppingService from "./ToppingService";
 import * as UserService from "./UserService";
-
-export const KEY_TOKEN = "accessToken";
-export const KEY_ROLE = "role";
+import { getToken, removeToken, getRole, removeRole, removeIsLoggedIn } from "./localStorage";
 
 export default class ApiService {
   static BASE_URL = "http://localhost:8080";
 
   static getHeader() {
-    const token = localStorage.getItem(KEY_TOKEN);
+    const token = getToken();
     return token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : {};
   }
 
   static logout() {
-    localStorage.removeItem(KEY_TOKEN);
-    localStorage.removeItem(KEY_ROLE);
-    localStorage.removeItem("isLoggedIn");
+    removeToken();
+    removeRole();
+    removeIsLoggedIn();
     window.dispatchEvent(new Event("authChanged"));
   }
 
   static isAuthenticated() {
-    return Boolean(localStorage.getItem(KEY_TOKEN));
+    return Boolean(getToken());
   }
 
   static isAdmin() {
-    return localStorage.getItem(KEY_ROLE)?.toUpperCase() === "ADMIN";
+    return getRole()?.toUpperCase() === "ADMIN";
   }
 
   /* Axios Interceptors */

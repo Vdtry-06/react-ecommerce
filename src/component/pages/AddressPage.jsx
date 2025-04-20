@@ -45,7 +45,12 @@ const AddressPage = () => {
       await (isEditMode ? ApiService.Address.updateAddress(values) : ApiService.Address.addAddress(values));
       message.success(isEditMode ? "Address updated successfully" : "Address added successfully");
       const returnUrl = location.state?.returnUrl || "/account";
-      navigate(returnUrl, { state: location.state?.checkoutState });
+      navigate(returnUrl, { 
+        state: { 
+          checkoutState: location.state?.checkoutState,
+          ...(returnUrl === "/account" ? { activeTab: "2" } : {})
+        }
+      });
     } catch (err) {
       message.error("Failed to save address information");
     } finally {
@@ -111,11 +116,15 @@ const AddressPage = () => {
               {isEditMode ? "Cập nhật" : "Lưu"}
             </Button>
             <Button
-              onClick={() =>
-                navigate(location.state?.returnUrl || "/account", {
-                  state: location.state?.checkoutState,
-                })
-              }
+              onClick={() => {
+                const returnUrl = location.state?.returnUrl || "/account";
+                navigate(returnUrl, {
+                  state: {
+                    checkoutState: location.state?.checkoutState,
+                    ...(returnUrl === "/account" ? { activeTab: "2" } : {})
+                  },
+                });
+              }}
               disabled={loading}
             >
               Hủy bỏ

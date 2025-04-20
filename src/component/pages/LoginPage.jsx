@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getToken, setToken } from "../../service/localStorage";
+import ApiService from "../../service/ApiService";
+import { getToken, setToken, setRole, setIsLoggedIn } from "../../service/localStorage";
 import '../../static/style/login.css';
 
 const LoginPage = () => {
@@ -34,8 +35,8 @@ const LoginPage = () => {
                 .then((data) => {
                     if (data.data && data.data.token) {
                         setToken(data.data.token);
-                        localStorage.setItem("isLoggedIn", "true");
-                        localStorage.setItem("role", data.data.nameRole);
+                        setIsLoggedIn("true");
+                        setRole(data.data.nameRole);
                         window.dispatchEvent(new Event("authChanged"));
                         navigate("/");
                     } else {
@@ -49,34 +50,23 @@ const LoginPage = () => {
         }
     }, [navigate]);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        fetch("http://localhost:8080/api/v1/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-            }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (!data.data || !data.data.token) {
-                    throw new Error(data.message || "Login failed");
-                }
-                setToken(data.data.token);
-                localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("role", data.data.nameRole);
-                window.dispatchEvent(new Event("authChanged"));
-                navigate("/");
-            })
-            .catch((error) => {
-                setMessage(error.message);
-                setOpen(true);
-            });
+        try {
+            const data = await ApiService.User.login(email, password);
+            if (!data.data || !data.data.token) {
+                throw new Error(data.message || "Login failed");
+            }
+            setToken(data.data.token);
+            setIsLoggedIn("true");
+            setRole(data.data.nameRole);
+            window.dispatchEvent(new Event("authChanged"));
+            navigate("/");
+        } catch (error) {
+            setMessage(error.message);
+            setOpen(true);
+        }
     };
 
     const handleOAuthLogin = (provider) => {

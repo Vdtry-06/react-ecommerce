@@ -194,7 +194,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                     }}
                   >
-                    Đơn hàng của tôi
+                    Đơn hàng đã mua
                   </NavLink>
                 </li>
                 <li>
