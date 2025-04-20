@@ -11,14 +11,16 @@ html, body {
 
 .home-layout {
   min-height: 100vh;
-  background-color: #fff5e6;
+  width: 99.87%;
+  background-color: #ffffff;
 }
 
 .home-header {
-  background-color: #ff4d4f;
+  width: 100%;
+  background-color: #b038382e;
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  padding: 16px 48px;
+  /* padding: 16px 48px; */
   text-align: center;
 }
 
@@ -43,7 +45,7 @@ html, body {
 
 .sider-button {
   width: 100%;
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; */
   background-color: #fff;
   border: none;
   color: #ff6f61;
