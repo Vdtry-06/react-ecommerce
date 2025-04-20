@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import "../../static/style/checkout.css";
+import "../../static/style/cart.css";
 
 const CheckoutPage = () => {
   const { state } = useLocation();
@@ -151,24 +152,23 @@ const CheckoutPage = () => {
       <div className="cart-page">
         <div className="cart-header">
           <h1>Xác nhận đơn hàng</h1>
-          <span className="cart-icon">🛒</span>
+          <span className="checkout-icon">🛒</span>
         </div>
 
         <div className="cart-content">
-          {/* Left Section: Selected Products */}
-          <div className="cart-items-container">
+          <div className="checkout-items-container">
             <ul className="cart-items">
               {selectedItems.map((item) => (
-                <li key={item.id} className="cart-item">
-                  <div className="item-image">
+                <li key={item.id} className="checkout-item">
+                  <div className="item-image dif">
                     <img
                       src={item.imageUrl || "/placeholder.svg?height=100&width=100"}
                       alt={item.name}
                     />
                   </div>
-                  <div className="item-details">
+                  <div className="item-details dif">
                     <h2 style={{ color: "#9e7b14" }}>{item.name}</h2>
-                    <div className="item-actions">
+                    <div className="item-actions dif">
                       <div className="quantity-controls">
                         <span className="quantity">Số lượng: {item.qty}</span>
                       </div>
@@ -184,10 +184,9 @@ const CheckoutPage = () => {
             </ul>
           </div>
 
-          {/* Right Section: Address, Summary, and Buttons */}
           <div className="cart-summary">
             <div className="summary-header">
-              <h2 style={{ color: "#7c5e0b" }}>Địa chỉ giao hàng</h2>
+              <h2>Địa chỉ giao hàng</h2>
             </div>
             {loadingAddress ? (
               <div className="loading-container">
@@ -195,12 +194,12 @@ const CheckoutPage = () => {
                 <p>Đang tải địa chỉ...</p>
               </div>
             ) : userAddress ? (
-              <p style={{ color: "#e0a800" }}>
+              <p  style={{ color: "#52c41a" }}>
                 {userAddress.houseNumber} {userAddress.street}, {userAddress.ward},{" "}
                 {userAddress.district}, {userAddress.city}, {userAddress.country}
               </p>
             ) : (
-              <p style={{ color: "#666" }}>Chưa có địa chỉ. Vui lòng cập nhật!</p>
+              <p>Chưa có địa chỉ. Vui lòng cập nhật!</p>
             )}
             <button
               className="continue-shopping update-address-btn"
@@ -210,28 +209,28 @@ const CheckoutPage = () => {
             </button>
 
             <div className="summary-header">
-              <h2 style={{ color: "#7c5e0b" }}>Tổng đơn hàng</h2>
+              <h2>Tổng đơn hàng</h2>
             </div>
             <div className="summary-details">
               <div className="summary-row">
-                <span style={{ color: "#7c5e0b" }}>Số lượng sản phẩm đã chọn:</span>
-                <span style={{ color: "#52c41a" }}>{selectedItems.length}</span>
+                <span>Số lượng sản phẩm đã chọn:</span>
+                <span>{selectedItems.length}</span>
               </div>
               <div className="summary-row subtotal">
-                <span style={{ color: "#7c5e0b" }}>Tạm tính:</span>
-                <span style={{ color: "#52c41a" }}>{totalPrice} VNĐ</span>
+                <span>Tạm tính:</span>
+                <span>{totalPrice} VNĐ</span>
               </div>
               <div className="summary-row shipping">
-                <span style={{ color: "#7c5e0b" }}>Phí vận chuyển:</span>
-                <span style={{ color: "#52c41a" }}>Miễn phí</span>
+                <span>Phí vận chuyển:</span>
+                <span>Miễn phí</span>
               </div>
               <div className="summary-row total">
-                <span style={{ color: "#7c5e0b" }}>Tổng cộng:</span>
-                <span style={{ color: "#52c41a" }}>{totalPrice} VNĐ</span>
+                <span>Tổng cộng:</span>
+                <span>{totalPrice} VNĐ</span>
               </div>
             </div>
 
-            <button className="checkout-button" onClick={handleConfirmCheckout}>
+            <button className="checkout-button dif" onClick={handleConfirmCheckout}>
               Xác nhận thanh toán
             </button>
             <button className="continue-shopping" onClick={() => navigate("/cart")}>

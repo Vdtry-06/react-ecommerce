@@ -85,7 +85,6 @@ const CartPage = () => {
     window.addEventListener("cartChanged", handleCartChange);
     window.addEventListener("paymentSuccess", handlePaymentSuccess);
 
-    // Check for redirect from payment success
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.get("payment") === "success") {
       fetchCart();
