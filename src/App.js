@@ -28,6 +28,7 @@ import EditProduct from './component/admin/EditProductPage';
 import AdminUserPage from './component/admin/AdminUserPage';
 import UserDetailPage from './component/admin/UserDetailPage';
 import ToppingManagement from './component/admin/ToppingManagement';
+import Chatbot from './component/common/Chatbot';
 
 function Layout({ children }) {
   const location = useLocation();
@@ -38,6 +39,7 @@ function Layout({ children }) {
       <Navbar/>
       <div className="main-content">{children}</div>
       {!isAdminPage && <Footer />}
+      {!isAdminPage && <Chatbot />}
     </>
   );
 }

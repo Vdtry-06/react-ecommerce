@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Layout, Breadcrumb, theme, Button, Dropdown, Space, Carousel, Card, Checkbox, Typography, Row, Col,
 } from "antd";
-import 'antd/dist/reset.css'; // Ant Design v5 styles
+import 'antd/dist/reset.css';
 import ProductList from "../common/ProductList";
 import Pagination from "../common/Pagination";
 import ApiService from "../../service/ApiService";
