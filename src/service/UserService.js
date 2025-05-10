@@ -1,11 +1,6 @@
 import axios from "axios";
 import ApiService from "./ApiService";
 
-export const login = async (email, password) => {
-  const response = await axios.post(`${ApiService.BASE_URL}/api/v1/auth/login`, { email, password });
-  return response.data;
-};
-
 export const getMyInfo = async () => {
   try {
     const response = await axios.get(
@@ -84,7 +79,7 @@ export const sendMessage = async (message) => {
     console.log("API URL:", `${ApiService.BASE_URL}/api/v1/chatbot/ask`)
 
     const response = await axios.post(
-      `${ApiService.BASE_URL}/api/v1/chatbot/ask`, // Correct URL format
+      `${ApiService.BASE_URL}/api/v1/chatbot/ask`,
       { text: message },
       {
         headers: {
