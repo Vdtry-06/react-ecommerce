@@ -1,140 +1,203 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ApiService from "../../service/ApiService";
 import { getToken, setToken, setRole, setIsLoggedIn } from "../../service/localStorage";
-import '../../static/style/login.css';
+import { Form, Input, Button, Alert } from "antd";
+import "../../static/style/login.css";
 
 const LoginPage = () => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [open, setOpen] = useState(false);
-    const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [errorVisible, setErrorVisible] = useState(false);
 
-    const handleClose = (event, reason) => {
-        if (reason === "clickaway") {
-            return;
-        }
-        setOpen(false);
-    };
+  useEffect(() => {
+    const accessToken = getToken();
+    if (accessToken) {
+      navigate("/");
+    }
 
-    useEffect(() => {
-        const accessToken = getToken();
-        if (accessToken) {
-            navigate("/");
-        }
-
-        // Handle OAuth2 redirect
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get("oauth2") === "true") {
-            fetch("http://localhost:8080/api/v1/auth/oauth2/success", {
-                method: "GET",
-                credentials: "include",
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.data && data.data.token) {
-                        setToken(data.data.token);
-                        setIsLoggedIn("true");
-                        setRole(data.data.nameRole);
-                        window.dispatchEvent(new Event("authChanged"));
-                        navigate("/");
-                    } else {
-                        throw new Error("OAuth2 login failed");
-                    }
-                })
-                .catch((error) => {
-                    setMessage(error.message);
-                    setOpen(true);
-                });
-        }
-    }, [navigate]);
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        try {
-            const data = await ApiService.User.login(email, password);
-            if (!data.data || !data.data.token) {
-                throw new Error(data.message || "Login failed");
-            }
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("oauth2") === "true") {
+      fetch("http://localhost:8080/api/v1/auth/oauth2/success", {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.data && data.data.token) {
             setToken(data.data.token);
             setIsLoggedIn("true");
             setRole(data.data.nameRole);
             window.dispatchEvent(new Event("authChanged"));
             navigate("/");
-        } catch (error) {
-            setMessage(error.message);
-            setOpen(true);
+          } else {
+            throw new Error("OAuth2 login failed");
+          }
+        })
+        .catch((error) => {
+          setError(error.message);
+          setErrorVisible(true);
+        });
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (error) {
+      setErrorVisible(true);
+      const timer = setTimeout(() => setErrorVisible(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  const handleSubmit = async (values) => {
+    setError("");
+    try {
+      const response = await fetch("http://localhost:8080/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data && data.message) {
+          throw new Error(data.message);
+        } else {
+          throw new Error("Đăng nhập thất bại. Vui lòng thử lại.");
         }
-    };
+      }
 
-    const handleOAuthLogin = (provider) => {
-        window.location.href = `http://localhost:8080/api/v1/oauth2/authorization/${provider}`;
-    };
+      if (data.code !== 1000) {
+        throw new Error(data.message || "Đăng nhập thất bại");
+      }
 
-    return (
-        <div className="login-container">
-            {open && <div className="snackbar">{message}</div>}
+      if (!data.data || !data.data.token) {
+        throw new Error("Đăng nhập thất bại, vui lòng thử lại");
+      }
 
-            <div className="login-box">
-                <h2 className="login-title">Đăng nhập</h2>
+      setToken(data.data.token);
+      setIsLoggedIn("true");
+      setRole(data.data.nameRole);
+      window.dispatchEvent(new Event("authChanged"));
+      navigate("/");
+    } catch (error) {
+      setError(error.message || "Đã xảy ra lỗi khi đăng nhập");
+    }
+  };
 
-                <form onSubmit={handleSubmit} className="login-form">
-                    <div className="input-group">
-                        <label>Email:</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
+  const handleOAuthLogin = (provider) => {
+    window.location.href = `http://localhost:8080/api/v1/oauth2/authorization/${provider}`;
+  };
 
-                    <div className="input-group">
-                        <label>Mật khẩu:</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div className="forgot-password">
-                        <a href="/forgot-password" onClick={(e) => {
-                            e.preventDefault();
-                            navigate("/forgot-password");
-                        }}>Quên mật khẩu?</a>
-                    </div>
-
-                    <button type="submit" className="login-button">Gửi</button>
-                </form>
-
-                <div className="divider"></div>
-
-                <button
-                    className="google-login-button"
-                    onClick={() => handleOAuthLogin("google")}
-                >
-                    <img src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-1024.png" alt="Google" className="google-icon" />
-                    Continue with Google
-                </button>
-
-                <button
-                    className="github-login-button"
-                    onClick={() => handleOAuthLogin("github")}
-                >
-                    <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub" className="github-icon" />
-                    Continue with GitHub
-                </button>
-
-                <button className="register-button" onClick={() => navigate("/register")}>
-                    Tạo tài khoản
-                </button>
-            </div>
-        </div>
-    );
+  return (
+    <div className="login-container">
+      <div className="login-box">
+        <h2 className="login-title">Đăng nhập</h2>
+        <Form
+          name="login"
+          onFinish={handleSubmit}
+          layout="vertical"
+          className="login-form"
+        >
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Email không hợp lệ!" },
+            ]}
+            required={false}
+          >
+            <Input
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError("");
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+            required={false}
+          >
+            <Input.Password
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError("");
+              }}
+            />
+          </Form.Item>
+          <div className="forgot-password">
+            <a
+              href="/forgot-password"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/forgot-password");
+              }}
+            >
+              Quên mật khẩu?
+            </a>
+          </div>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-button"
+            >
+              Gửi
+            </Button>
+          </Form.Item>
+          {error && errorVisible && (
+            <Alert
+              message={error}
+              type="error"
+              className="error-message"
+              showIcon
+            />
+          )}
+        </Form>
+        <div className="divider" />
+        <Button
+          className="google-login-button"
+          onClick={() => handleOAuthLogin("google")}
+        >
+          <img
+            src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-1024.png"
+            alt="Google"
+            className="google-icon"
+          />
+          Continue with Google
+        </Button>
+        <Button
+          className="github-login-button"
+          onClick={() => handleOAuthLogin("github")}
+        >
+          <img
+            src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png"
+            alt="GitHub"
+            className="github-icon"
+          />
+          Continue with GitHub
+        </Button>
+        <Button
+          className="register-button"
+          onClick={() => navigate("/register")}
+        >
+          Tạo tài khoản
+        </Button>
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;
