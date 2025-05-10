@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ProtectedRoute, AdminRoute  } from "./service/Guard";
 import Navbar from './component/common/Navbar';
 import Footer from './component/common/Footer'; 
@@ -9,6 +9,8 @@ import Home from './component/pages/Home';
 import ProductDetailsPages from './component/pages/ProductDetailsPages';
 import RegisterPage from './component/pages/RegisterPage';
 import LoginPage from './component/pages/LoginPage';
+import RequestVerificationCode from './component/pages/RequestVerificationCode';
+import VerifyAccount from './component/pages/VerifyAccount';
 import Account from './component/pages/Account';
 import UpdateProfile from './component/pages/UpdateProfile';
 import CategoryListPage from './component/pages/CategoryListPage';
@@ -61,6 +63,8 @@ function App() {
                   <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/request-verification" element={<RequestVerificationCode />} />
+                  <Route path="/verify-account" element={<VerifyAccount />} />
                   <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/update-profile" element={<UpdateProfile />} />

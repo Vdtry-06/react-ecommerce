@@ -31,11 +31,9 @@ export default class ApiService {
     return getRole()?.toUpperCase() === "ADMIN";
   }
 
-  /* Axios Interceptors */
   static setupInterceptors() {
     axios.interceptors.response.use(
       (response) => {
-        // Check for HTML response indicating unauthorized access
         if (
           response.headers["content-type"]?.includes("text/html") &&
           typeof response.data === "string" &&
@@ -49,7 +47,6 @@ export default class ApiService {
       },
       (error) => {
         if (error.response) {
-          // Handle 401 or HTML response
           if (
             error.response.status === 401 ||
             (error.response.headers["content-type"]?.includes("text/html") &&
@@ -65,7 +62,6 @@ export default class ApiService {
     );
   }
 
-  // Export domain-specific services
   static Address = AddressService;
   static Category = CategoryService;
   static Order = OrderService;
@@ -75,5 +71,4 @@ export default class ApiService {
   static User = UserService;
 }
 
-// Set up Axios interceptors
 ApiService.setupInterceptors();
