@@ -14,7 +14,6 @@ export const getMyInfo = async () => {
         headers: ApiService.getHeader(),
       }
     );
-    // Check if response is HTML (indicating unauthorized redirect)
     if (typeof response.data === "string" && response.data.includes("<!DOCTYPE html")) {
       throw new Error("Unauthorized: HTML login page received");
     }
@@ -96,7 +95,6 @@ export const sendMessage = async (message) => {
 
     console.log("Chatbot response:", response.data)
 
-    // Check if response is HTML (indicating unauthorized redirect)
     if (typeof response.data === "string" && response.data.includes("<!DOCTYPE html")) {
       throw new Error("Unauthorized: HTML login page received")
     }
@@ -106,7 +104,6 @@ export const sendMessage = async (message) => {
     console.error("Chatbot error:", error)
     console.error("Error details:", error.response?.data || error.message)
 
-    // Provide a more user-friendly error message
     if (error.response?.status === 401) {
       throw new Error("Bạn cần đăng nhập để sử dụng chatbot")
     } else if (error.response?.status === 429) {
