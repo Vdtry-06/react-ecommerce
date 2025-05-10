@@ -1,93 +1,173 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import ApiService from "../../service/ApiService";
-import "../../static/style/register.css";
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { Form, Input, Button, Alert } from "antd"
+import "../../static/style/register.css"
 
 const RegisterPage = () => {
-    const [formData, setFormData] = useState({
-        email: "",
-        username: "",
-        password: "",
-    });
+  const [formData, setFormData] = useState({
+    email: "",
+    username: "",
+    password: "",
+  })
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState("error")
+  const [messageVisible, setMessageVisible] = useState(false)
+  const navigate = useNavigate()
 
-    const [message, setMessage] = useState(null);
-    const navigate = useNavigate();
+  useEffect(() => {
+    document.body.classList.add("register-body")
+    return () => {
+      document.body.classList.remove("register-body")
+    }
+  }, [])
 
-    useEffect(() => {
-        document.body.classList.add("register-body");
-        return () => {
-            document.body.classList.remove("register-body");
-        };
-    }, []);
+  useEffect(() => {
+    if (message) {
+      setMessageVisible(true)
+      if (messageType === "success") {
+        const timer = setTimeout(() => setMessageVisible(false), 3000)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [message, messageType])
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const handleSubmit = async (values) => {
+    setMessage(null)
+    setMessageVisible(false)
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await ApiService.User.registerUser(formData); // ????
-            if (response.status === 200) {
-                setMessage("User Successfully Registered");
-                setTimeout(() => {
-                    navigate("/login");
-                }, 4000);
-            }
-            setMessage(response.message);
-        } catch (error) {
-            setMessage(error.response?.data?.message || error.message || "An error occurred");
+    try {
+      const response = await fetch("http://localhost:8080/api/v1/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        if (data && data.message) {
+          setMessage(data.message)
+          setMessageType("error")
+        } else {
+          setMessage("Đăng ký thất bại. Vui lòng thử lại.")
+          setMessageType("error")
         }
-    };
+        return
+      }
 
-    return (
-        <div className="register-container">
-            <div className="register-box">
-                <h2>Đăng ký</h2>
-                {message && <p className={`message ${message.includes("Successfully") ? "success" : "error"}`}>{message}</p>}
-                <form onSubmit={handleSubmit} className="register-form">
-                    <div className="input-group">
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            name="username"
-                            placeholder="Username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="input-group">
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="submit-button">Gửi</button>
-                    <p className="login-link">
-                        Bạn đã có tài khoản?{" "}
-                        <a href="/login" onClick={(e) => { e.preventDefault(); navigate("/login"); }}>
-                            Đăng nhập
-                        </a>
-                    </p>
-                </form>
-            </div>
-        </div>
-    );
-};
+      if (data.code !== 1000 && data.code !== undefined) {
+        setMessage(data.message || "Đăng ký thất bại")
+        setMessageType("error")
+        return
+      }
 
-export default RegisterPage;
+      setMessage("Đăng ký thành công! Vui lòng xác thực tài khoản của bạn.")
+      setMessageType("success")
+      localStorage.setItem("verificationEmail", values.email)
+      setTimeout(() => {
+        navigate("/verify-account")
+      }, 3000)
+    } catch (error) {
+      setMessage("Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau.")
+      setMessageType("error")
+    }
+  }
+
+  const handleInputChange = (e, field) => {
+    setFormData({ ...formData, [field]: e.target.value })
+    if (messageVisible && messageType === "error") {
+      setMessageVisible(false)
+    }
+  }
+
+  return (
+    <div className="register-container">
+      <div className="register-box">
+        <h2 className="register-title">Đăng ký</h2>
+        <Form name="register" onFinish={handleSubmit} layout="vertical" className="register-form">
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Email không hợp lệ!" },
+            ]}
+            required={false}
+          >
+            <Input placeholder="Email" value={formData.email} onChange={(e) => handleInputChange(e, "email")} />
+          </Form.Item>
+          <Form.Item
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: "Vui lòng nhập username!" }]}
+            required={false}
+          >
+            <Input
+              placeholder="Username"
+              value={formData.username}
+              onChange={(e) => handleInputChange(e, "username")}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={[
+              { required: true, message: "Vui lòng nhập mật khẩu!" },
+              { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự!" },
+            ]}
+            required={false}
+          >
+            <Input.Password
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) => handleInputChange(e, "password")}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" className="submit-button">
+              Gửi
+            </Button>
+          </Form.Item>
+          {message && messageVisible && (
+            <Alert
+              message={message}
+              type={messageType}
+              className="message"
+              showIcon
+              closable
+              onClose={() => setMessageVisible(false)}
+            />
+          )}
+        </Form>
+        <p className="login-link">
+          Bạn đã có tài khoản?{" "}
+          <a
+            href="/login"
+            onClick={(e) => {
+              e.preventDefault()
+              navigate("/login")
+            }}
+          >
+            Đăng nhập
+          </a>
+        </p>
+        <p className="login-link">
+          Bạn đã xác thực tài khoản?{" "}
+          <a
+            href="/login"
+            onClick={(e) => {
+              e.preventDefault()
+              navigate("/request-verification")
+            }}
+          >
+            Xác thực
+          </a>
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default RegisterPage

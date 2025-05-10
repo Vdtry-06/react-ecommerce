@@ -4,10 +4,10 @@
     align-items: center;
     height: 90vh;
     background: linear-gradient(135deg, #40cdcb, #217a80);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.register-box {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .register-box {
     background: white;
     padding: 30px;
     border-radius: 12px;
@@ -15,24 +15,24 @@
     width: 400px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.register-box:hover {
+  }
+  
+  .register-box:hover {
     transform: translateY(-5px);
     box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
-}
-
-.register-box h2 {
+  }
+  
+  .register-title {
     font-size: 24px;
     font-weight: 600;
     margin-bottom: 20px;
     color: #217a80;
     position: relative;
     display: inline-block;
-}
-
-.register-box h2::after {
-    content: '';
+  }
+  
+  .register-title::after {
+    content: "";
     position: absolute;
     bottom: -8px;
     left: 50%;
@@ -41,51 +41,50 @@
     background: linear-gradient(to right, #40cdcb, #217a80);
     transition: all 0.5s ease;
     transform: translateX(-50%);
-}
-
-.register-box:hover h2::after {
+  }
+  
+  .register-box:hover .register-title::after {
     width: 80%;
-}
-
-.register-form {
+  }
+  
+  .register-form {
     margin-bottom: 15px;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    margin-bottom: 15px;
-    position: relative;
-    overflow: hidden;
-}
-
-.input-group input {
+  }
+  
+  .ant-form-item-label > label {
+    font-weight: 500;
+    color: #444;
+    font-size: 14px;
+  }
+  
+  .ant-form-item-required::before {
+    display: none !important;
+  }
+  
+  .ant-input,
+  .ant-input-password .ant-input {
     padding: 10px 12px;
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     font-size: 14px;
-    outline: none;
-    transition: all 0.3s ease;
     background-color: #f9f9f9;
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.input-group input:focus {
+    transition: all 0.3s ease;
+  }
+  
+  .ant-input:focus,
+  .ant-input-password .ant-input:focus {
     border-color: #40cdcb;
     box-shadow: 0px 0px 6px rgba(64, 205, 203, 0.4);
     background-color: #fff;
-}
-
-.input-group input::placeholder {
+  }
+  
+  .ant-input::placeholder,
+  .ant-input-password .ant-input::placeholder {
     color: #999;
     font-style: italic;
-}
-
-.submit-button {
+  }
+  
+  .submit-button {
     width: 100%;
     padding: 10px;
     border: none;
@@ -94,74 +93,41 @@
     color: white;
     font-size: 15px;
     font-weight: 600;
-    cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 5px;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.submit-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, #217a80, #40cdcb);
-    transition: all 0.5s ease;
-    z-index: -1;
-}
-
-.submit-button:hover::before {
-    left: 0;
-}
-
-.submit-button:hover {
+    height: auto;
+  }
+  
+  .submit-button:hover {
     box-shadow: 0px 4px 10px rgba(33, 122, 128, 0.3);
     transform: translateY(-2px);
-}
-
-.submit-button:active {
+    background: linear-gradient(45deg, #217a80, #40cdcb);
+  }
+  
+  .submit-button:active {
     transform: translateY(1px);
-}
-
-.message {
+  }
+  
+  .message {
+    margin-top: 10px;
     font-size: 14px;
-    margin: 10px 0;
-    padding: 8px 12px;
-    border-radius: 6px;
-    animation: fadeIn 0.5s ease;
-}
-
-.message.success {
-    color: #217a80;
-    background: rgba(64, 205, 203, 0.1);
-    border-left: 4px solid #40cdcb;
-}
-
-.message.error {
-    color: #f44336;
-    background: rgba(244, 67, 54, 0.1);
-    border-left: 4px solid #f44336;
-}
-
-.login-link {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .login-link {
     font-size: 13px;
     color: #444;
     margin-top: 15px;
-}
-
-.login-link a {
+  }
+  
+  .login-link a {
     color: #217a80;
     text-decoration: none;
-    transition: all 0.3s ease;
     position: relative;
-}
-
-.login-link a::after {
-    content: '';
+  }
+  
+  .login-link a::after {
+    content: "";
     position: absolute;
     width: 0;
     height: 1px;
@@ -169,40 +135,29 @@
     left: 0;
     background-color: #40cdcb;
     transition: width 0.3s ease;
-}
-
-.login-link a:hover {
+  }
+  
+  .login-link a:hover {
     color: #40cdcb;
-}
-
-.login-link a:hover::after {
+  }
+  
+  .login-link a:hover::after {
     width: 100%;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (max-width: 480px) {
+  }
+  
+  @media (max-width: 480px) {
     .register-box {
-        width: 85%;
-        padding: 25px 15px;
+      width: 85%;
+      padding: 25px 15px;
     }
-
-    .register-box h2 {
-        font-size: 20px;
-        margin-bottom: 15px;
+  
+    .register-title {
+      font-size: 20px;
+      margin-bottom: 15px;
     }
-
+  
     .submit-button {
-        font-size: 14px;
-        padding: 8px;
+      font-size: 14px;
+      padding: 8px;
     }
-}
+  }
