@@ -1,0 +1,138 @@
+.verify-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  background: linear-gradient(135deg, #40cdcb, #217a80);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.verify-box {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+  width: 400px;
+  text-align: center;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.verify-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.verify-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #217a80;
+  position: relative;
+  display: inline-block;
+}
+
+.verify-title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(to right, #40cdcb, #217a80);
+  transition: all 0.5s ease;
+  transform: translateX(-50%);
+}
+
+.verify-box:hover .verify-title::after {
+  width: 80%;
+}
+
+.verify-description {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.verify-form {
+  margin-bottom: 15px;
+}
+
+.verify-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(45deg, #40cdcb, #217a80);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  height: auto;
+}
+
+.verify-button:hover {
+  box-shadow: 0px 4px 10px rgba(33, 122, 128, 0.3);
+  transform: translateY(-2px);
+  background: linear-gradient(45deg, #217a80, #40cdcb);
+}
+
+.verify-button:active {
+  transform: translateY(1px);
+}
+
+.verify-message {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.resend-code {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-link {
+  font-size: 13px;
+  color: #444;
+  margin-top: 15px;
+}
+
+.login-link a {
+  color: #217a80;
+  text-decoration: none;
+  position: relative;
+}
+
+.login-link a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: #40cdcb;
+  transition: width 0.3s ease;
+}
+
+.login-link a:hover {
+  color: #40cdcb;
+}
+
+.login-link a:hover::after {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .verify-box {
+    width: 85%;
+    padding: 25px 15px;
+  }
+
+  .verify-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+}
