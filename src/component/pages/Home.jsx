@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   Layout, Breadcrumb, theme, Button, Dropdown, Space, Carousel, Card, Checkbox, Typography, Row, Col,
 } from "antd";
@@ -14,15 +14,15 @@ const { Title, Text } = Typography;
 
 const Home = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState(new Set());
+  const [tempSelectedCategories, setTempSelectedCategories] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const itemsPerPage = 4;
+  const itemsPerPage = 8;
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -30,6 +30,9 @@ const Home = () => {
 
   useEffect(() => {
     const fetchHomeData = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
         const categoryResponse = await ApiService.Category.getAllCategories();
         setCategories(categoryResponse.data || []);
@@ -37,14 +40,13 @@ const Home = () => {
         let allProducts = [];
         const searchParams = new URLSearchParams(location.search);
         const searchItem = searchParams.get("search");
-        const categoryFilter = searchParams.get("categories");
 
         if (searchItem) {
           const response = await ApiService.Product.getProductByName(searchItem);
           allProducts = response.data || [];
-        } else if (categoryFilter) {
-          const categoryArray = categoryFilter.split(",");
-          const response = await ApiService.Product.getProductsByCategories(categoryArray); // ????
+        } else if (selectedCategories.size > 0) {
+          const categoryArray = Array.from(selectedCategories);
+          const response = await ApiService.Product.FilterProductByCategories(categoryArray);
           allProducts = response.data || [];
         } else {
           const response = await ApiService.Product.getAllProduct(currentPage, itemsPerPage);
@@ -61,10 +63,10 @@ const Home = () => {
     };
 
     fetchHomeData();
-  }, [location.search, currentPage]);
+  }, [location.search, selectedCategories, currentPage]);
 
   const toggleCategory = (categoryId) => {
-    setSelectedCategories((prev) => {
+    setTempSelectedCategories((prev) => {
       const newCategories = new Set(prev);
       newCategories.has(categoryId) ? newCategories.delete(categoryId) : newCategories.add(categoryId);
       return newCategories;
@@ -72,69 +74,67 @@ const Home = () => {
   };
 
   const applyFilter = () => {
-    const categoryArray = Array.from(selectedCategories);
-    if (categoryArray.length > 0) {
-      navigate(`/category-products?categories=${categoryArray.join(",")}`);
-    }
+    setSelectedCategories(new Set(tempSelectedCategories));
+    setCurrentPage(1);
   };
 
   const functionItems = [
-    { key: "1-1", label: "Sắp xếp theo giá tăng dần", onClick: () => navigate("/home?sort=price-asc") },
-    { key: "1-2", label: "Sắp xếp theo giá giảm dần", onClick: () => navigate("/home?sort=price-desc") },
+    { key: "1-1", label: "Sắp xếp theo giá tăng dần", onClick: () => window.location.href = "/home?sort=price-asc" },
+    { key: "1-2", label: "Sắp xếp theo giá giảm dần", onClick: () => window.location.href = "/home?sort=price-desc" },
     {
       key: "1-3",
       label: "Lọc theo tính năng",
       children: [
-        { key: "1-3-1", label: "Giao hàng nhanh", onClick: () => navigate("/home?feature=fast") },
-        { key: "1-3-2", label: "Bền lâu", onClick: () => navigate("/home?feature=durable") },
+        { key: "1-3-1", label: "Giao hàng nhanh", onClick: () => window.location.href = "/home?feature=fast" },
+        { key: "1-3-2", label: "Bền lâu", onClick: () => window.location.href = "/home?feature=durable" },
       ],
     },
   ];
 
   const utilityItems = [
-    { key: "2-1", label: "Sản phẩm mới nhất", onClick: () => navigate("/home?filter=new") },
+    { key: "2-1", label: "Sản phẩm mới nhất", onClick: () => window.location.href = "/home?filter=new" },
     {
       key: "2-2",
       label: "Tiện ích đặc biệt",
       children: [
-        { key: "2-2-1", label: "Thân thiện môi trường", onClick: () => navigate("/home?utility=eco") },
-        { key: "2-2-2", label: "Thông minh", onClick: () => navigate("/home?utility=smart") },
+        { key: "2-2-1", label: "Thân thiện môi trường", onClick: () => window.location.href = "/home?utility=eco" },
+        { key: "2-2-2", label: "Thông minh", onClick: () => window.location.href = "/home?utility=smart" },
       ],
     },
   ];
 
   const reviewItems = [
-    { key: "3-1", label: "Sản phẩm phổ biến", onClick: () => navigate("/home?filter=popular") },
+    { key: "3-1", label: "Sản phẩm phổ biến", onClick: () => window.location.href = "/home?filter=popular" },
     {
       key: "3-2",
       label: "Đánh giá chi tiết",
       children: [
-        { key: "3-2-1", label: "5 sao", onClick: () => navigate("/home?review=5star") },
-        { key: "3-2-2", label: "Đánh giá cao", onClick: () => navigate("/home?review=high") },
+        { key: "3-2-1", label: "5 sao", onClick: () => window.location.href = "/home?review=5star" },
+        { key: "3-2-2", label: "Đánh giá cao", onClick: () => window.location.href = "/home?review=high" },
       ],
     },
   ];
 
   const orderItems = [
-    { key: "4-1", label: "Sản phẩm giảm giá", onClick: () => navigate("/home?extra=discount") },
+    { key: "4-1", label: "Sản phẩm giảm giá", onClick: () => window.location.href = "/home?extra=discount" },
     {
       key: "4-2",
       label: "Ưu đãi từ 2 lần đặt trở lên",
       children: [
-        { key: "4-2-1", label: "Giảm 10% sản phẩm", onClick: () => navigate("/home?promo=discount-10") },
-        { key: "4-2-2", label: "Thêm 1 đồ uống", onClick: () => navigate("/home?promo=free-drink") },
+        { key: "4-2-1", label: "Giảm 10% sản phẩm", onClick: () => window.location.href = "/home?promo=discount-10" },
+        { key: "4-2-2", label: "Thêm 1 đồ uống", onClick: () => window.location.href = "/home?promo=free-drink" },
       ],
     },
   ];
 
   const extraItems = [
-    { key: "5-1", label: "Sản phẩm giảm giá", onClick: () => navigate("/home?extra=discount") },
+    { key: "5-1", label: "Sản phẩm giảm giá", onClick: () => window.location.href = "/home?extra=discount" },
     {
       key: "5-2",
       label: "Khuyến mãi",
       children: [
-        { key: "5-2-1", label: "Miễn phí vận chuyển", onClick: () => navigate("/home?promo=free-shipping") },
-        { key: "5-2-2", label: "Gói ưu đãi", onClick: () => navigate("/home?promo=bundle") },
+        { key: "5-2-1", label: "Miễn phí vận chuyển", onClick: () => window.location.href = "/home?promo=free-shipping" },
+        { key: "5-2-2", label: "Gói ưu đãi", onClick: () => window.location.href = "/home?promo=bundle" },
       ],
     },
   ];
@@ -194,7 +194,7 @@ const Home = () => {
               </div>
               <img src="https://foodking.windstripedesign.ro/images/offer/50percent-off-2.png" alt="Offer" className="banner-image" />
               <img src="https://foodking.windstripedesign.ro/images/delivery-man.png" alt="Delivery" className="banner-image" />
-              <Button className="order-button" onClick={() => navigate("/cart")}>
+              <Button className="order-button" onClick={() => window.location.href = "/cart"}>
                 Mua ngay
               </Button>
             </div>
@@ -213,8 +213,8 @@ const Home = () => {
               ) : (
                 <Space direction="vertical" size="middle">
                   <Checkbox.Group
-                    value={Array.from(selectedCategories)}
-                    onChange={(checkedValues) => setSelectedCategories(new Set(checkedValues))}
+                    value={Array.from(tempSelectedCategories)}
+                    onChange={(checkedValues) => setTempSelectedCategories(new Set(checkedValues))}
                   >
                     {categories.map((category) => (
                       <Checkbox key={category.id} value={category.id}>
@@ -225,7 +225,7 @@ const Home = () => {
                   <Button
                     type="primary"
                     onClick={applyFilter}
-                    disabled={selectedCategories.size === 0}
+                    disabled={tempSelectedCategories.size === 0}
                     block
                   >
                     Lọc sản phẩm

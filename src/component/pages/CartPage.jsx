@@ -40,7 +40,7 @@ const CartPage = () => {
               qty: line.quantity,
               price: line.price / line.quantity, // Unit price
               name: product.name || `Product ${line.productId}`,
-              imageUrl: product.imageUrl || "",
+              imageUrl: product.imageUrls[0] || "",
               description: product.description || "",
               orderLineId: line.id,
             };
@@ -296,7 +296,7 @@ const CartPage = () => {
                         </div>
 
                         <div className="item-price">
-                          <span className="price-value">${(item.price * item.qty).toFixed(2)}</span>
+                          <span className="price-value">{(item.price * item.qty).toFixed(2)} VNĐ</span>
                         </div>
                       </div>
                     </div>
@@ -318,7 +318,7 @@ const CartPage = () => {
 
                 <div className="summary-row subtotal">
                   <span>Tạm tính:</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>{totalPrice.toFixed(2)} VNĐ</span>
                 </div>
 
                 <div className="summary-row shipping">
@@ -328,7 +328,7 @@ const CartPage = () => {
 
                 <div className="summary-row total">
                   <span>Tổng cộng:</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>{totalPrice.toFixed(2)} VNĐ</span>
                 </div>
               </div>
 

@@ -136,7 +136,7 @@ const CheckoutPage = () => {
         <div className="cart-page">
           <div className="empty-cart">
             <div className="empty-cart-icon">🛒</div>
-            <p>Không có sản phẩm nào để thanh toán. Vui lòng quay lại giỏ hàng!</p>
+            <p>Bạn vừa hủy thanh toán. Vui lòng quay lại giỏ hàng!</p>
             <button className="continue-shopping" onClick={() => navigate("/cart")}>
               Quay lại giỏ hàng
             </button>
@@ -232,6 +232,9 @@ const CheckoutPage = () => {
 
             <button className="checkout-button dif" onClick={handleConfirmCheckout}>
               Xác nhận thanh toán
+            </button>
+            <button className="checkout-button dif" onClick={() => navigate("/orders-status")}>
+              Thanh toán khi nhận hàng
             </button>
             <button className="continue-shopping" onClick={() => navigate("/cart")}>
               Hủy

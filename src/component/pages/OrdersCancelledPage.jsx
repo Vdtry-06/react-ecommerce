@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
 
-const OrdersPage = () => {
+const OrdersCancelledPage = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ const OrdersPage = () => {
       const userId = userInfo.data.id;
       const response = await ApiService.Order.getAllOrdersOfUser(userId);
 
-      const paidOrders = response.data.filter(order => order.status === "PAID");
+      const paidOrders = response.data.filter(order => order.status === "CANCELLED");
       const enrichedOrders = await Promise.all(
         paidOrders.map(async (order) => {
           const enrichedOrderLines = await Promise.all(
@@ -91,7 +91,7 @@ const OrdersPage = () => {
       dataIndex: "status",
       key: "status",
       render: (status) => (
-        <Text className={status.toLowerCase()}>{status}</Text>
+        <Text strong className={status.toLowerCase()}>{status}</Text>
       ),
     },
     {
@@ -101,7 +101,7 @@ const OrdersPage = () => {
       render: (totalPrice) => `${totalPrice.toFixed(2)} VNĐ`,
     },
     {
-      title: "Thời gian thanh toán",
+      title: "Thời gian hủy thanh toán",
       dataIndex: "createdDate",
       key: "createdDate",
       render: (createdDate) => (
@@ -129,14 +129,14 @@ const OrdersPage = () => {
   if (orders.length === 0) {
     return (
       <div className="orders-page">
-        <Text>Bạn chưa có đơn hàng nào đã thanh toán.</Text>
+        <Text>Bạn chưa có đơn hàng nào đã hủy.</Text>
       </div>
     );
   }
 
   return (
     <div className="orders-page">
-      <Title level={2}>Đơn hàng đã mua</Title>
+      <Title level={2}>Đơn hàng đã hủy</Title>
       <Table
         columns={columns}
         dataSource={orders}
@@ -160,4 +160,4 @@ const OrdersPage = () => {
   );
 };
 
-export default OrdersPage;
+export default OrdersCancelledPage;

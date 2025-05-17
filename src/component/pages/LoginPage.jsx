@@ -14,7 +14,7 @@ const LoginPage = () => {
   useEffect(() => {
     const accessToken = getToken();
     if (accessToken) {
-      navigate("/");
+      navigate("/beverage");
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -30,7 +30,7 @@ const LoginPage = () => {
             setIsLoggedIn("true");
             setRole(data.data.nameRole);
             window.dispatchEvent(new Event("authChanged"));
-            navigate("/");
+            navigate("/beverage");
           } else {
             throw new Error("OAuth2 login failed");
           }
@@ -86,7 +86,7 @@ const LoginPage = () => {
       setIsLoggedIn("true");
       setRole(data.data.nameRole);
       window.dispatchEvent(new Event("authChanged"));
-      navigate("/");
+      navigate("/beverage");
     } catch (error) {
       setError(error.message || "Đã xảy ra lỗi khi đăng nhập");
     }
