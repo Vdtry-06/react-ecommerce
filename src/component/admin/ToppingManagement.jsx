@@ -88,7 +88,7 @@ const ToppingManagement = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (price) => `$${price.toFixed(2)}`,
+      render: (price) => `${price.toFixed(2)} VNĐ`,
     },
     {
       title: "Actions",
@@ -96,10 +96,10 @@ const ToppingManagement = () => {
       render: (_, record) => (
         <>
           <Button type="link" onClick={() => showModal(record)}>
-            Edit
+            Sửa
           </Button>
           <Button type="link" danger onClick={() => handleDelete(record.id)}>
-            Delete
+            Xóa
           </Button>
         </>
       ),
@@ -109,9 +109,9 @@ const ToppingManagement = () => {
   return (
     <div>
       <div className="topping-header">
-        <h2>Topping Management</h2>
+        <h2>Quản lý Toppings</h2>
         <Button type="primary" onClick={() => showModal()}>
-            Add Topping
+            Thêm topping
         </Button>
       </div>
       <Table

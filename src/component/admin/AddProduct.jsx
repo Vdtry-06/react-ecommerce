@@ -12,9 +12,9 @@ const AddProduct = () => {
     price: "",
     categoryNames: new Set(),
     toppingNames: new Set(),
-    image: null,
+    images: [],
   });
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allToppings, setAllToppings] = useState([]);
   const [message, setMessage] = useState("");
@@ -48,9 +48,9 @@ const AddProduct = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setNewProduct((prev) => ({ ...prev, image: file }));
-    setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    setNewProduct((prev) => ({ ...prev, images: files }));
+    setImagePreviews(files.map((file) => URL.createObjectURL(file)));
   };
 
   const handleCategoryChange = (name) => {
@@ -96,7 +96,9 @@ const AddProduct = () => {
       newProduct.toppingNames.forEach((name) =>
         formData.append("toppingNames", name)
       );
-      if (newProduct.image) formData.append("file", newProduct.image);
+      newProduct.images.forEach((file, index) =>
+        formData.append("files", file)
+      );
 
       const response = await ApiService.Product.addProduct(formData);
       if (response.status === 200) {
@@ -108,9 +110,9 @@ const AddProduct = () => {
           price: "",
           categoryNames: new Set(),
           toppingNames: new Set(),
-          image: null,
+          images: [],
         });
-        setImagePreview(null);
+        setImagePreviews([]);
         setTimeout(() => {
           navigate("/admin/products");
           setMessage("");
@@ -127,9 +129,18 @@ const AddProduct = () => {
       {message && <p className="message">{message}</p>}
       <form onSubmit={handleAddProductSubmit} className="product-form">
         <label>Cập nhật ảnh:</label>
-        <input type="file" onChange={handleImageChange} />
-        {imagePreview && (
-          <img src={imagePreview} alt="Preview" className="image-preview" />
+        <input type="file" multiple onChange={handleImageChange} />
+        {imagePreviews.length > 0 && (
+          <div className="image-preview-container">
+            {imagePreviews.map((preview, index) => (
+              <img
+                key={index}
+                src={preview}
+                alt={`Preview ${index + 1}`}
+                className="image-preview"
+              />
+            ))}
+          </div>
         )}
         <input
           type="text"

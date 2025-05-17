@@ -10,7 +10,7 @@ const EditProduct = () => {
   const { productId } = useParams();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
   const [allToppings, setAllToppings] = useState([]);
   const [fileList, setFileList] = useState([]);
@@ -34,9 +34,16 @@ const EditProduct = () => {
         categoryNames: productData.categories?.map((cat) => cat.name) || [],
         toppingNames: productData.toppings?.map((top) => top.name) || [],
       });
-      setImagePreview(productData.imageUrl || null);
-      if (productData.imageUrl) {
-        setFileList([{ uid: "-1", name: "image", status: "done", url: productData.imageUrl }]);
+      setImagePreviews(productData.imageUrls || []);
+      if (productData.imageUrls && productData.imageUrls.length > 0) {
+        setFileList(
+          productData.imageUrls.map((url, index) => ({
+            uid: `-${index}`,
+            name: `image${index + 1}`,
+            status: "done",
+            url,
+          }))
+        );
       }
     } catch (error) {
       message.error("Failed to load product data");
@@ -66,11 +73,10 @@ const EditProduct = () => {
 
   const handleImageChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
-    if (newFileList.length > 0 && newFileList[0].originFileObj) {
-      setImagePreview(URL.createObjectURL(newFileList[0].originFileObj));
-    } else if (newFileList.length === 0) {
-      setImagePreview(null);
-    }
+    const previews = newFileList.map((file) =>
+      file.url || (file.originFileObj ? URL.createObjectURL(file.originFileObj) : null)
+    ).filter(Boolean);
+    setImagePreviews(previews);
   };
 
   const handleSubmit = async (values) => {
@@ -83,9 +89,11 @@ const EditProduct = () => {
       formData.append("price", values.price);
       (values.categoryNames || []).forEach((name) => formData.append("categoryNames", name));
       (values.toppingNames || []).forEach((name) => formData.append("toppingNames", name));
-      if (fileList.length > 0 && fileList[0].originFileObj) {
-        formData.append("file", fileList[0].originFileObj);
-      }
+      fileList.forEach((file, index) => {
+        if (file.originFileObj) {
+          formData.append("files", file.originFileObj);
+        }
+      });
 
       const response = await ApiService.Product.updateProduct(productId, formData);
       if (response.status === 200) {
@@ -104,7 +112,7 @@ const EditProduct = () => {
     onChange: handleImageChange,
     fileList,
     beforeUpload: () => false,
-    maxCount: 1,
+    multiple: true,
     listType: "picture",
   };
 
@@ -178,8 +186,17 @@ const EditProduct = () => {
             <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
             </Upload>
-            {imagePreview && (
-              <img src={imagePreview} alt="Preview" className="image-preview" />
+            {imagePreviews.length > 0 && (
+              <div className="image-preview-container">
+                {imagePreviews.map((preview, index) => (
+                  <img
+                    key={index}
+                    src={preview}
+                    alt={`Preview ${index + 1}`}
+                    className="image-preview"
+                  />
+                ))}
+              </div>
             )}
           </Form.Item>
 

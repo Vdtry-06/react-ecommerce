@@ -84,15 +84,24 @@ const AdminCategoryPage = () => {
   };
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name" },
     {
-      title: "Description",
+      title: "ID", 
+      dataIndex: "id", 
+      key: "id" 
+    },
+    { 
+      title: "Tên", 
+      dataIndex: "name", 
+      key: "name" 
+    },
+    {
+      title: "Mô tả",
       dataIndex: "description",
       key: "description",
       render: (text) => text || "-",
     },
     {
-      title: "Actions",
+      title: "Thao tác",
       key: "actions",
       render: (_, record) => (
         <>
@@ -110,9 +119,9 @@ const AdminCategoryPage = () => {
   return (
     <div className="admin-category-list">
       <div className="category-header">
-        <h2>Category Management</h2>
+        <h2>Quản lý danh mục</h2>
         <Button type="primary" onClick={() => showModal()}>
-          Add Category
+          Thêm danh mục
         </Button>
       </div>
       <Table

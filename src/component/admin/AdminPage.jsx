@@ -18,6 +18,7 @@ const AdminPage = () => {
     { key: "products", label: "Products", icon: NotificationOutlined, path: "/admin/products" },
     { key: "orders", label: "Orders", icon: LaptopOutlined, path: "/admin/orders" },
     { key: "users", label: "Users", icon: UserOutlined, path: "/admin/users" },
+    { key: "reviews", label: "Reviews", icon: LaptopOutlined, path: "/admin/reviews" },
     { key: "toppings", label: "Toppings", icon: NotificationOutlined, path: "/admin/toppings" },
   ];
 

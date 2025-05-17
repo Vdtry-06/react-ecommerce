@@ -40,15 +40,17 @@ const UserDetailPage = () => {
     { title: "ID", dataIndex: "id", key: "id" },
     {
       title: "Ngày đặt",
-      dataIndex: "orderDate",
-      key: "orderDate",
-      render: (text) => text || "-",
+      dataIndex: "lastModifiedDate",
+      key: "lastModifiedDate",
+      render: (text) => {
+        return text ? new Date(text).toLocaleString("vi-VN") : "-";
+      },
     },
     {
       title: "Tổng tiền",
       dataIndex: "totalPrice",
       key: "totalPrice",
-      render: (price) => (price !== undefined ? `$${price.toFixed(2)}` : "-"),
+      render: (price) => (price !== undefined ? `${price.toFixed(2)} VNĐ` : "-"),
     },
     {
       title: "Trạng thái",
@@ -71,20 +73,20 @@ const UserDetailPage = () => {
           <div className="user-detail">
             <Descriptions title="Thông tin cơ bản" bordered column={1}>
               <Descriptions.Item label="ID">{user.id}</Descriptions.Item>
-              <Descriptions.Item label="Username">{user.username}</Descriptions.Item>
+              <Descriptions.Item label="Tên đăng nhập">{user.username}</Descriptions.Item>
               <Descriptions.Item label="Email">{user.email}</Descriptions.Item>
-              <Descriptions.Item label="First Name">{user.firstName || "-"}</Descriptions.Item>
-              <Descriptions.Item label="Last Name">{user.lastName || "-"}</Descriptions.Item>
-              <Descriptions.Item label="Date of Birth">{user.dateOfBirth || "-"}</Descriptions.Item>
-              <Descriptions.Item label="Image">
+              <Descriptions.Item label="Tên">{user.firstName || "-"}</Descriptions.Item>
+              <Descriptions.Item label="Họ">{user.lastName || "-"}</Descriptions.Item>
+              <Descriptions.Item label="Ngày sinh">{user.dateOfBirth || "-"}</Descriptions.Item>
+              <Descriptions.Item label="Ảnh">
                 {user.imageUrl ? (
                   <img src={user.imageUrl} alt={user.username} className="image-preview" />
                 ) : (
                   "-"
                 )}
               </Descriptions.Item>
-              <Descriptions.Item label="Roles">
-                {user.roles ? user.roles.map((role) => role.name).join(", ") : "-"}
+              <Descriptions.Item label="Vai trò">
+                {user.role ? user.role.name : "-"}
               </Descriptions.Item>
             </Descriptions>
 

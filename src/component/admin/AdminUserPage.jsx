@@ -37,7 +37,9 @@ const AdminUserPage = () => {
           setUsers(users.filter((user) => user.id !== userId));
           message.success("User deleted successfully");
         } catch (error) {
-          message.error(error.response?.data?.message || "Failed to delete user");
+          message.error(
+            error.response?.data?.message || "Failed to delete user"
+          );
           console.error("Error deleting user:", error);
         } finally {
           setLoading(false);
@@ -47,38 +49,45 @@ const AdminUserPage = () => {
   };
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Username", dataIndex: "username", key: "username" },
-    { title: "Email", dataIndex: "email", key: "email" },
+    { 
+      title: "ID", 
+      dataIndex: "id", 
+      key: "id" 
+    },
+    { 
+      title: "Tên đăng nhập", 
+      dataIndex: "username", 
+      key: "username" 
+    },
+    { 
+      title: "Email", 
+      dataIndex: "email", 
+      key: "email" 
+    },
     {
-      title: "Name",
+      title: "Tên",
       dataIndex: "firstName",
       key: "firstName",
       render: (text) => text || "-",
     },
     {
-      title: "Last Name",
+      title: "Họ",
       dataIndex: "lastName",
       key: "lastName",
       render: (text) => text || "-",
     },
     {
-      title: "Date of Birth",
+      title: "Ngày sinh",
       dataIndex: "dateOfBirth",
       key: "dateOfBirth",
       render: (text) => text || "-",
     },
     {
-      title: "Image",
+      title: "Ảnh",
       dataIndex: "imageUrl",
       key: "imageUrl",
-      render: (url) => (
-        url ? (
-          <img src={url} alt="user" className="image-preview" />
-        ) : (
-          "-"
-        )
-      ),
+      render: (url) =>
+        url ? <img src={url} alt="user" className="image-preview" /> : "-",
     },
     {
       title: "Thao tác",

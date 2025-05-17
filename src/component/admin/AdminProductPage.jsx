@@ -52,14 +52,23 @@ const AdminProductPage = () => {
     });
   };
 
-  // Table columns
   const columns = [
-    { title: "Tên", dataIndex: "name", key: "name" },
+    { 
+      title: "ID", 
+      dataIndex: "id", 
+      key: "id" 
+    },
+
+    { 
+      title: "Tên", 
+      dataIndex: "name", 
+      key: "name" 
+    },
     {
       title: "Giá",
       dataIndex: "price",
       key: "price",
-      render: (price) => `$${price.toFixed(2)}`,
+      render: (price) => `${price.toFixed(2)} VNĐ`,
     },
     {
       title: "Mô tả",
@@ -91,10 +100,14 @@ const AdminProductPage = () => {
     },
     {
       title: "Ảnh",
-      dataIndex: "imageUrl",
-      key: "imageUrl",
-      render: (url) => (
-        <img src={url || "/placeholder.svg?height=60&width=60"} alt="product" width="60" />
+      dataIndex: "imageUrls",
+      key: "imageUrls",
+      render: (imageUrls) => (
+        <img
+          src={imageUrls && imageUrls.length > 0 ? imageUrls[0] : "/placeholder.svg?height=60&width=60"}
+          alt="product"
+          width="60"
+        />
       ),
     },
     {
@@ -115,7 +128,7 @@ const AdminProductPage = () => {
         ),
     },
     {
-      title: "Chỉnh sửa",
+      title: "Thao tác",
       key: "actions",
       render: (_, record) => (
         <>
