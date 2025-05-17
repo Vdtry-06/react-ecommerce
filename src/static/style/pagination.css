@@ -1,33 +1,27 @@
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    margin-top: 20px;
+  text-align: center;
+  padding: 16px 0;
+  justify-content: center;
+  align-items: center; 
 }
 
-.pagination button {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    color: #333;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+.pagination .ant-pagination-item-active {
+  background: #ff5722;
+  border-color: #ff5722;
 }
 
-.pagination button.active {
-    background-color: #21c7c1;
-    color: #fff;
-    border-color: #21c7c1;
+.pagination .ant-pagination-item-active a {
+  color: #fff;
 }
 
-.pagination button:hover:not(.active) {
-    background-color: #f0f0f0;
+.pagination .ant-pagination-item:hover,
+.pagination .ant-pagination-prev:hover,
+.pagination .ant-pagination-next:hover {
+  border-color: #ff5722;
 }
 
-.pagination button:disabled {
-    cursor: default;
-    background-color: #fff;
-    color: #999;
+.pagination .ant-pagination-item:hover a,
+.pagination .ant-pagination-prev:hover a,
+.pagination .ant-pagination-next:hover a {
+  color: #ff5722;
 }

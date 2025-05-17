@@ -1,0 +1,52 @@
+.table-row-light {
+  background: #fff;
+}
+
+.table-row-dark {
+  background: #fafafa;
+}
+
+.ant-table-thead > tr > th {
+  background: #1890ff;
+  color: white;
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #e6f7ff;
+}
+
+.ant-table-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-modal-content {
+  border-radius: 8px;
+}
+
+.ant-modal-header {
+  border-radius: 8px 8px 0 0;
+  background: #1890ff;
+  color: white;
+}
+
+.ant-modal-title {
+  color: white;
+  font-weight: bold;
+}
+
+.ant-form-item-label > label {
+  font-weight: bold;
+  color: #333;
+}
+
+.ant-input-number, .ant-input {
+  border-radius: 5px;
+}
+
+.ant-switch-checked {
+  background: #1890ff;
+}
