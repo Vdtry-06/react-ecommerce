@@ -124,7 +124,7 @@ const Navbar = () => {
         </div>
 
         <div className="navbar-brand">
-          <NavLink to="/">
+          <NavLink to="/beverage">
             <img src="./logo2.png" alt="logo" className="navbar-logo" />
           </NavLink>
         </div>
@@ -151,10 +151,10 @@ const Navbar = () => {
             <span className="nav-text">Trang chủ</span>
           </NavLink>
 
-          <NavLink to="/categories" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} onClick={() => setIsMobileMenuOpen(false)}>
+          {/* <NavLink to="/categories" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} onClick={() => setIsMobileMenuOpen(false)}>
             <img src={categoryImage || "/placeholder.svg"} alt="categories" className="navbar-icon" />
             <span className="nav-text">Danh mục</span>
-          </NavLink>
+          </NavLink> */}
 
           <NavLink to="/cart" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")} onClick={() => setIsMobileMenuOpen(false)}>
             <div className={`cart-icon-container ${cartUpdated ? 'cart-updated' : ''}`}>
@@ -195,6 +195,18 @@ const Navbar = () => {
                     }}
                   >
                     Đơn hàng đã mua
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    className="dropdown-item"
+                    to="/orders-cancelled"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Đơn hàng đã hủy
                   </NavLink>
                 </li>
                 <li>
