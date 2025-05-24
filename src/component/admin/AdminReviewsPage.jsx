@@ -186,7 +186,7 @@ const AdminReviewsPage = () => {
 
   return (
     <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-      <h2 style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20, color: "#333" }}>Manage Reviews</h2>
+      <h2 style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20, color: "#333" }}>Quản lý đánh giá của khách hàng</h2>
 
       <div style={{ marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
