@@ -90,7 +90,7 @@ const FirstPage = () => {
     <Layout className="firt-layout">
       <Header className="firt-header">
         <Text strong style={{ fontSize: 16 }}>
-          Chào bạn đến với website bán đồ ăn nhanh của chúng tôi!
+          Chào bạn đến với website bán đồ uống của chúng tôi!
         </Text>
       </Header>
 

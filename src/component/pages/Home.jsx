@@ -142,7 +142,7 @@ const Home = () => {
   return (
     <Layout className="home-layout">
       <Header className="home-header">
-        <Text strong>Chào bạn đến với website bán đồ ăn nhanh của chúng tôi!</Text>
+        <Text strong>Chào bạn đến với website bán đồ uống của chúng tôi!</Text>
       </Header>
       <Layout className="sider-content-layout">
         <Sider className="home-sider">
