@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="footer-grid">
           {/* Brand Section */}
           <div className="footer-brand">
-            <h2 className="footer-brand-title">FastFood</h2>
+            <h2 className="footer-brand-title">Beverage</h2>
             <p className="footer-social-text">KẾT NỐI VỚI CHÚNG TÔI</p>
             <div className="footer-social-links">
               <Link to="#" className="social-link facebook">
@@ -34,7 +34,7 @@ const Footer = () => {
             <ul className="footer-list">
               <li>Số ĐKKD: 0123456789</li>
               <li>Địa chỉ: Học viện Công nghệ Bưu Chính Viễn Thông, Hà Nội</li>
-              <li>Email: fastfood24@vdt.vn</li>
+              <li>Email: beverage24@vdt.vn</li>
               <li>Hotline: 1900 6750</li>
             </ul>
           </div>
@@ -87,7 +87,7 @@ const Footer = () => {
       <div className="footer-bottom">
         <div className="container">
           <p className="footer-copyright">
-            © 2025 FastFood Ecommerce by Trọng and Cảnh. All rights reserved.
+            © 2025 Bevarage Ecommerce by Trọng. All rights reserved.
           </p>
         </div>
       </div>
