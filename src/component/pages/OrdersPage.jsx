@@ -104,9 +104,7 @@ const OrdersPage = () => {
       title: "Thời gian thanh toán",
       dataIndex: "createdDate",
       key: "createdDate",
-      render: (createdDate) => (
-        <Text>{dayjs(createdDate).format("DD/MM/YYYY HH:mm:ss")}</Text>
-      ),
+       render: (date) => new Date(date).toLocaleString("vi-VN"),
     }
   ];
 

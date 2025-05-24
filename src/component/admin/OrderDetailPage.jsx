@@ -40,15 +40,15 @@ const OrderDetailPage = () => {
       dataIndex: "quantity",
       key: "quantity",
     },
-    {
-      title: "Toppings",
-      dataIndex: "selectedToppings",
-      key: "selectedToppings",
-      render: (toppings) => {
-        if (!toppings || toppings.length === 0) return "-";
-        return toppings.map((topping) => `${topping.name} (${topping.price.toLocaleString()} VNĐ)`).join(", ");
-      },
-    },
+    // {
+    //   title: "Toppings",
+    //   dataIndex: "selectedToppings",
+    //   key: "selectedToppings",
+    //   render: (toppings) => {
+    //     if (!toppings || toppings.length === 0) return "-";
+    //     return toppings.map((topping) => `${topping.name} (${topping.price.toLocaleString()} VNĐ)`).join(", ");
+    //   },
+    // },
     {
       title: "Giá",
       dataIndex: "price",
