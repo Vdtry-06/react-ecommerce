@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Form, Input, Button, Typography, message, Space } from "antd";
+import { Form, Input, Button, Typography, Space } from "antd";
 import ApiService from "../../service/ApiService";
 import "../../static/style/address.css";
+import Notification from "../common/Notification";
 
 const { Title } = Typography;
 
 const AddressPage = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+
   const isEditMode = location.pathname === "/edit-address";
 
   useEffect(() => {
@@ -19,8 +22,13 @@ const AddressPage = () => {
     }
   }, [location.pathname]);
 
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+  };
+
   const fetchUserInfo = async () => {
     setLoading(true);
+    showNotification("Lấy thông tin địa chỉ thành công", "success");
     try {
       const response = await ApiService.User.getMyInfo();
       const userAddress = response?.data?.address || {
@@ -33,7 +41,7 @@ const AddressPage = () => {
       };
       form.setFieldsValue(userAddress);
     } catch (err) {
-      message.error("Unable to fetch user information");
+      showNotification("Không thể tải thông tin người dùng", "error");
     } finally {
       setLoading(false);
     }
@@ -43,16 +51,20 @@ const AddressPage = () => {
     setLoading(true);
     try {
       await (isEditMode ? ApiService.Address.updateAddress(values) : ApiService.Address.addAddress(values));
-      message.success(isEditMode ? "Address updated successfully" : "Address added successfully");
-      const returnUrl = location.state?.returnUrl || "/account";
-      navigate(returnUrl, { 
-        state: { 
-          checkoutState: location.state?.checkoutState,
-          ...(returnUrl === "/account" ? { activeTab: "2" } : {})
-        }
-      });
+      const successMessage = isEditMode ? "Cập nhật địa chỉ thành công" : "Thêm địa chỉ thành công";
+      showNotification(successMessage, "success");
+
+      setTimeout(() => {
+        const returnUrl = location.state?.returnUrl || "/account";
+        navigate(returnUrl, {
+          state: {
+            checkoutState: location.state?.checkoutState,
+            ...(returnUrl === "/account" ? { activeTab: "2" } : {})
+          }
+        });
+      }, 2000);
     } catch (err) {
-      message.error("Failed to save address information");
+      showNotification("Lỗi khi lưu địa chỉ", "error");
     } finally {
       setLoading(false);
     }
@@ -60,6 +72,13 @@ const AddressPage = () => {
 
   return (
     <div className="address-page">
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <Title level={2}>{isEditMode ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ"}</Title>
       <Form
         form={form}
