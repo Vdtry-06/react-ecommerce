@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Card, Button, Spin, Empty, Tabs, message } from "antd";
+import { Card, Button, Spin, Empty, Tabs } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ApiService from "../../service/ApiService";
 import UpdateProfile from "./UpdateProfile";
 import "../../static/style/profile.css";
 import "../../static/style/account.css";
+import Notification from "../common/Notification";
 
 const { TabPane } = Tabs;
 
@@ -13,13 +14,17 @@ const Account = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState("1"); // Default to "Thông tin cá nhân"
+  const [activeTab, setActiveTab] = useState("1");
+  const [notification, setNotification] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+  };
+
   useEffect(() => {
     fetchUserInfo();
-    // Set active tab based on navigation state
     if (location.state?.activeTab) {
       setActiveTab(location.state.activeTab);
     }
@@ -29,9 +34,10 @@ const Account = () => {
     try {
       const response = await ApiService.User.getMyInfo();
       setUserInfo(response.data);
+      showNotification("Tải thông tin người dùng thành công", "success");
     } catch (error) {
       setError(error.response?.data?.message || error.message || "Unable to fetch user info");
-      message.error("Không thể tải thông tin người dùng");
+      showNotification("Không thể tải thông tin người dùng", "error");
     }
   };
 
@@ -45,24 +51,17 @@ const Account = () => {
       const updateResponse = await ApiService.User.updateUser(userId, formData);
       console.log("Update response:", updateResponse);
 
-      if (updateResponse && updateResponse.data) {
-        setUserInfo(updateResponse.data);
-      } else {
-        const userResponse = await ApiService.User.getUser(userId);
-        if (userResponse && userResponse.data) {
-          setUserInfo(userResponse.data);
-        } else {
-          await fetchUserInfo();
-        }
-      }
+      const userResponse = await ApiService.User.getMyInfo();
+      setUserInfo(userResponse.data);
 
-      setIsEditing(false);
-      message.success("Cập nhật thông tin thành công");
+      showNotification("Cập nhật thông tin thành công", "success");
       return updateResponse;
     } catch (error) {
       console.error("Error updating profile:", error);
-      message.error(error.response?.data?.message || error.message || "Cập nhật thông tin thất bại");
+      showNotification(error.response?.data?.message || error.message || "Cập nhật thông tin thất bại", "error");
       throw error;
+    } finally {
+      setIsEditing(false);
     }
   };
 
@@ -70,7 +69,7 @@ const Account = () => {
     navigate(userInfo.address ? "/edit-address" : "/add-address", { state: { returnUrl: "/account" } });
   };
 
-  if (!userInfo) {
+  if (!userInfo && !error) {
     return (
       <div className="loading-container">
         <Spin size="large" />
@@ -160,6 +159,13 @@ const Account = () => {
 
   return (
     <div className="account-container">
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <div className="account-header">
         <div className="header-content">
           <div className="profile-image-wrapper">
