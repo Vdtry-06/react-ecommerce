@@ -88,15 +88,54 @@
   background: #e5e5e5;
 }
 
-.product-details-container .toppings-container .ant-checkbox-wrapper {
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #333;
+.product-details-container .toppings-list {
+  margin: 0.5rem 0;
+  padding: 0.8rem;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #eee;
 }
 
-.product-details-container .toppings-container .ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #1890ff;
-  border-color: #1890ff;
+.product-details-container .toppings-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.product-details-container .topping-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.product-details-container .topping-item {
+  padding: 0.3rem 0;
+}
+
+.product-details-container .topping-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+}
+
+.product-details-container .topping-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.product-details-container .topping-price {
+  color: #f68b1e;
+  font-weight: 600;
+}
+
+.product-details-container .no-toppings {
+  font-size: 0.9rem;
+  color: #888;
+  font-style: italic;
 }
 
 .product-details-container .add-to-cart-button,
@@ -184,7 +223,7 @@
 .related-products-section .wishlist-button {
   position: absolute;
   top: 0.625rem; /* 10px */
-  right: 0.625rem; /* 10px */
+  right: 0.625rem; /*  */
 }
 
 .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
@@ -213,7 +252,7 @@
 .ant-input-number,
 .ant-form-item-control-input .ant-input {
   border: 1px solid #ddd;
-  border-radius: 0.3125rem; /* 5px */
+  border-radius: 0.3125rem;
 }
 
 .ant-form-item-label > label {

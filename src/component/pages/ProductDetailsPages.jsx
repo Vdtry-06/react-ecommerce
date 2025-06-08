@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import ApiService from "../../service/ApiService";
 import {
   Row,
@@ -16,14 +17,11 @@ import {
   Form,
   Input,
   Avatar,
-  Divider,
   Popconfirm,
   Checkbox,
 } from "antd";
 import {
   CheckOutlined,
-  HeartOutlined,
-  HeartFilled,
   UserOutlined,
   EditOutlined,
   DeleteOutlined,
@@ -38,11 +36,11 @@ const { TextArea } = Input;
 const ProductDetailsPages = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { cart, syncCartWithBackend, isLoading } = useCart();
   const [product, setProduct] = useState(null);
-  const [cart, setCart] = useState([]);
   const [comments, setComments] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [selectedImage, setSelectedImage] = useState(0);
@@ -62,24 +60,6 @@ const ProductDetailsPages = () => {
       if (ApiService.isAuthenticated()) {
         const userInfo = await ApiService.User.getMyInfo();
         setUserId(userInfo.data.id);
-        const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userInfo.data.id);
-        const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING");
-
-        if (pendingOrder?.orderLines) {
-          setCart(
-            pendingOrder.orderLines.map((line) => ({
-              id: line.productId,
-              qty: line.quantity,
-              orderLineId: line.id,
-              toppingIds: line.selectedToppings?.map((topping) => topping.id) || [],
-            }))
-          );
-          // Initialize selectedToppings from cart
-          const cartItem = pendingOrder.orderLines.find((line) => line.productId === parseInt(productId));
-          if (cartItem) {
-            setSelectedToppings(cartItem.selectedToppings?.map((topping) => topping.id) || []);
-          }
-        }
       }
     } catch (error) {
       console.log(error.message || error);
@@ -90,7 +70,6 @@ const ProductDetailsPages = () => {
     try {
       const response = await ApiService.Review.getReviewsByProductId(productId);
       setComments(response.data || []);
-      // Check if the current user has commented
       if (userId) {
         const userComment = response.data.find((comment) => comment.userId === userId);
         setHasCommented(!!userComment);
@@ -113,24 +92,37 @@ const ProductDetailsPages = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true);
+      setLoading(true);
       try {
         const response = await ApiService.Product.getProduct(productId);
         setProduct(response.data);
         await fetchData();
         await fetchComments();
         await fetchAllProducts();
+
+        const cartItem = cart.find((item) => item.id === parseInt(productId));
+        if (cartItem) {
+          setSelectedToppings(cartItem.toppingIds || []);
+        }
       } catch (error) {
         console.log(error.message || error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
     loadData();
-  }, [productId]);
 
-  // Recheck hasCommented when userId or comments change
+    if (location.search.includes("payment=success")) {
+      fetchData();
+    }
+
+    window.addEventListener("cartChanged", fetchData);
+    return () => {
+      window.removeEventListener("cartChanged", fetchData);
+    };
+  }, [productId, location.search, cart]);
+
   useEffect(() => {
     if (userId) {
       const userComment = comments.find((comment) => comment.userId === userId);
@@ -138,14 +130,13 @@ const ProductDetailsPages = () => {
     }
   }, [userId, comments]);
 
-  // Calculate total price including selected toppings
   const calculateTotalPrice = () => {
     if (!product) return 0;
     let total = product.price;
     if (selectedToppings.length > 0) {
       const toppingPrices = product.toppings
-        .filter((topping) => selectedToppings.includes(topping.id))
-        .reduce((sum, topping) => sum + topping.price, 0);
+        ?.filter((topping) => selectedToppings.includes(topping.id))
+        ?.reduce((sum, topping) => sum + topping.price, 0) || 0;
       total += toppingPrices;
     }
     return total;
@@ -167,70 +158,34 @@ const ProductDetailsPages = () => {
       setSelectedToppings(newToppings);
 
       const userInfo = await ApiService.User.getMyInfo();
-      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userInfo.data.id);
-      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING");
-      const orderLineRequest = {
-        productId: product.id,
-        quantity: 1,
-        toppingIds: newToppings,
-      };
+      const userId = userInfo.data.id;
+      const cartItem = cart.find((item) => item.id === parseInt(productId));
 
-      if (!pendingOrder) {
-        if (newToppings.length > 0) {
-          const result = await ApiService.Order.createOrder({
-            userId: userInfo.data.id,
-            orderLines: [orderLineRequest],
-            paymentMethod: "CASH_ON_DELIVERY",
-          });
-          setCart([
-            {
-              id: product.id,
-              qty: 1,
-              orderLineId: result.data.orderLines[0].id,
-              toppingIds: newToppings,
-            },
-          ]);
-        }
+      console.log("Sending topping change:", { productId: parseInt(productId), toppingIds: newToppings }); // Debug
+
+      if (cartItem) {
+        await syncCartWithBackend(userId, "UPDATE_ITEM", {
+          id: parseInt(productId),
+          qty: cartItem.qty,
+          toppingIds: newToppings,
+        });
+        message.success("Topping đã được cập nhật!");
+      } else if (newToppings.length > 0) {
+        await syncCartWithBackend(userId, "ADD_ITEM", {
+          id: parseInt(productId),
+          qty: 1,
+          toppingIds: newToppings,
+        });
+        message.success("Sản phẩm và topping đã được thêm vào giỏ hàng!");
       } else {
-        const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
-        if (existingLine) {
-          if (newToppings.length > 0) {
-            await ApiService.Order.updateOrderLine(pendingOrder.id, existingLine.id, {
-              productId: product.id,
-              quantity: existingLine.quantity,
-              toppingIds: newToppings,
-            });
-            setCart((prevCart) => {
-              const updatedCart = [...prevCart];
-              const itemIndex = updatedCart.findIndex((item) => item.id === product.id);
-              if (itemIndex >= 0) {
-                updatedCart[itemIndex] = {
-                  ...updatedCart[itemIndex],
-                  toppingIds: newToppings,
-                };
-              }
-              return updatedCart;
-            });
-          } else {
-            await ApiService.Order.deleteOrderLine(pendingOrder.id, existingLine.id);
-            setCart((prevCart) => prevCart.filter((item) => item.id !== product.id));
-          }
-        } else if (newToppings.length > 0) {
-          const result = await ApiService.Order.addOrderLine(pendingOrder.id, orderLineRequest);
-          setCart((prevCart) => [
-            ...prevCart,
-            {
-              id: product.id,
-              qty: 1,
-              orderLineId: result.data.id,
-              toppingIds: newToppings,
-            },
-          ]);
-        }
+        await syncCartWithBackend(userId, "REMOVE_ITEM", { id: parseInt(productId) });
+        message.info("Sản phẩm đã được xóa khỏi giỏ hàng!");
       }
+
+      window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
+      console.error("Error in handleToppingChange:", error);
       message.error(error.response?.data?.message || "Lỗi khi cập nhật toppings!");
-      // Revert topping change on error
       setSelectedToppings(selectedToppings);
     } finally {
       setIsProcessing(false);
@@ -246,64 +201,28 @@ const ProductDetailsPages = () => {
         if (confirmLogin) navigate("/login");
         return;
       }
-      const userInfo = await ApiService.User.getMyInfo();
-      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userInfo.data.id);
-      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING");
-      const orderLineRequest = {
-        productId: product.id,
-        quantity: 1,
-        toppingIds: selectedToppings,
-      };
 
-      if (!pendingOrder) {
-        const result = await ApiService.Order.createOrder({
-          userId: userInfo.data.id,
-          orderLines: [orderLineRequest],
-          paymentMethod: "CASH_ON_DELIVERY",
+      const userInfo = await ApiService.User.getMyInfo();
+      const userId = userInfo.data.id;
+      const cartItem = cart.find((item) => item.id === parseInt(productId));
+
+      if (cartItem) {
+        await syncCartWithBackend(userId, "INCREMENT_ITEM", {
+          id: parseInt(productId),
+          qty: cartItem.qty,
+          toppingIds: selectedToppings,
         });
-        setCart([
-          {
-            id: product.id,
-            qty: 1,
-            orderLineId: result.data.orderLines[0].id,
-            toppingIds: selectedToppings,
-          },
-        ]);
+        message.success("Số lượng sản phẩm đã được tăng!");
       } else {
-        const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
-        if (existingLine) {
-          const newQuantity = existingLine.quantity + 1;
-          await ApiService.Order.updateOrderLine(pendingOrder.id, existingLine.id, {
-            productId: product.id,
-            quantity: newQuantity,
-            toppingIds: selectedToppings,
-          });
-          setCart((prevCart) => {
-            const updatedCart = [...prevCart];
-            const itemIndex = updatedCart.findIndex((item) => item.id === product.id);
-            if (itemIndex >= 0) {
-              updatedCart[itemIndex] = {
-                ...updatedCart[itemIndex],
-                qty: newQuantity,
-                toppingIds: selectedToppings,
-              };
-            }
-            return updatedCart;
-          });
-        } else {
-          const result = await ApiService.Order.addOrderLine(pendingOrder.id, orderLineRequest);
-          setCart((prevCart) => [
-            ...prevCart,
-            {
-              id: product.id,
-              qty: 1,
-              orderLineId: result.data.id,
-              toppingIds: selectedToppings,
-            },
-          ]);
-        }
+        await syncCartWithBackend(userId, "ADD_ITEM", {
+          id: parseInt(productId),
+          qty: 1,
+          toppingIds: selectedToppings,
+        });
+        message.success("Sản phẩm đã được thêm vào giỏ hàng!");
       }
-      message.success("Sản phẩm đã được thêm vào giỏ hàng!");
+
+      window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
       message.error(error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng!");
     } finally {
@@ -315,6 +234,13 @@ const ProductDetailsPages = () => {
     try {
       setIsProcessing(true);
       await addToCart();
+      const userInfo = await ApiService.User.getMyInfo();
+      await ApiService.Cart.toggleSelectItem(userInfo.data.id, {
+        productId: parseInt(productId),
+        selected: true,
+      });
+      message.success("Sản phẩm đã được chọn để mua ngay!");
+      window.dispatchEvent(new Event("cartChanged"));
       navigate("/cart");
     } catch (error) {
       message.error(error.response?.data?.message || "Lỗi khi mua hàng!");
@@ -328,36 +254,25 @@ const ProductDetailsPages = () => {
     try {
       setIsProcessing(true);
       const userInfo = await ApiService.User.getMyInfo();
-      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userInfo.data.id);
-      const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING");
-      if (!pendingOrder) return;
-      const orderLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
-      if (!orderLine) return;
-      const newQuantity = orderLine.quantity + (increment ? 1 : -1);
-      setCart((prevCart) => {
-        const updatedCart = [...prevCart];
-        const itemIndex = updatedCart.findIndex((item) => item.id === product.id);
-        if (itemIndex >= 0) {
-          if (newQuantity > 0) {
-            updatedCart[itemIndex] = {
-              ...updatedCart[itemIndex],
-              qty: newQuantity,
-            };
-          } else {
-            updatedCart.splice(itemIndex, 1);
-          }
-        }
-        return updatedCart;
-      });
+      const userId = userInfo.data.id;
+      const cartItem = cart.find((item) => item.id === parseInt(productId));
+      if (!cartItem) return;
+
+      const newQuantity = cartItem.qty + (increment ? 1 : -1);
       if (newQuantity > 0) {
-        await ApiService.Order.updateOrderLine(pendingOrder.id, orderLine.id, {
-          productId: product.id,
-          quantity: newQuantity,
+        await syncCartWithBackend(userId, "UPDATE_ITEM", {
+          id: parseInt(productId),
+          qty: newQuantity,
           toppingIds: selectedToppings,
         });
+        message.success(increment ? "Số lượng đã được tăng!" : "Số lượng đã được giảm!");
       } else {
-        await ApiService.Order.deleteOrderLine(pendingOrder.id, orderLine.id);
+        await syncCartWithBackend(userId, "REMOVE_ITEM", { id: parseInt(productId) });
+        setSelectedToppings([]);
+        message.info("Sản phẩm đã được xóa khỏi giỏ hàng!");
       }
+
+      window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
       message.error(increment ? "Lỗi khi tăng số lượng!" : "Lỗi khi giảm số lượng!");
       fetchData();
@@ -379,7 +294,7 @@ const ProductDetailsPages = () => {
       setIsProcessing(true);
       const userInfo = await ApiService.User.getMyInfo();
       const request = {
-        productId: product.id,
+        productId: parseInt(productId),
         userId: userInfo.data.id,
         ratingScore: values.rating,
         comment: values.comment,
@@ -388,7 +303,7 @@ const ProductDetailsPages = () => {
       message.success("Bình luận đã được gửi thành công!");
       form.resetFields();
       setComments((prevComments) => [...prevComments, { ...response.data, visible: true }]);
-      setHasCommented(true); // Hide post comment tab
+      setHasCommented(true);
     } catch (error) {
       message.error(error.response?.data?.message || "Không thể gửi bình luận!");
     } finally {
@@ -423,7 +338,7 @@ const ProductDetailsPages = () => {
       await ApiService.Review.deleteReview(commentId);
       message.success("Bình luận đã được xóa thành công!");
       setComments((prevComments) => prevComments.filter((c) => c.id !== commentId));
-      setHasCommented(false); // Show post comment tab again
+      setHasCommented(false);
       setEditingComment(null);
       form.resetFields();
     } catch (error) {
@@ -445,7 +360,7 @@ const ProductDetailsPages = () => {
     return <div className="error-container">Không tìm thấy sản phẩm</div>;
   }
 
-  const cartItem = cart.find((item) => item.id === product.id);
+  const cartItem = cart.find((item) => item.id === parseInt(productId));
 
   const displayProduct = {
     ...product,
@@ -458,221 +373,202 @@ const ProductDetailsPages = () => {
     categories: product.categories?.map((cat) => cat.name).join(", ") || "Không có danh mục",
     categoriesDescription: product.categories?.map((cat) => cat.description).join(", ") || "Không có mô tả danh mục",
     toppings: product.toppings?.map((top) => top.name).join(", ") || "Không có toppings",
-    toppingsPrice: product.toppings?.map((top) => top.price).join(", ") || "Không có giá toppings",
+    toppingsPrice: product.toppings?.map((top) => top.price).join(", ") || "",
   };
 
   return (
-    <div className="product-details-container" style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-      <div className="product-detail-top">
-        <div className="product-detail-layout" style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
-          <div className="product-images-container" style={{ flex: "1", minWidth: "300px" }}>
-            <div className="main-image-container" style={{ position: "relative", marginBottom: "10px" }}>
-              <img
-                src={
-                  hoveredImage !== null && product.imageUrls && product.imageUrls[hoveredImage]
-                    ? product.imageUrls[hoveredImage]
-                    : product.imageUrls && product.imageUrls[selectedImage]
-                    ? product.imageUrls[selectedImage]
-                    : "/placeholder.svg?height=300&width=300"
-                }
-                alt={displayProduct.name}
-                style={{ width: "100%", height: "auto", borderRadius: "8px" }}
-              />
-              {displayProduct.discount > 0 && (
-                <div
-                  className="discount-badge"
-                  style={{
-                    position: "absolute",
-                    top: "10px",
-                    left: "10px",
-                    background: "#f50",
-                    color: "white",
-                    padding: "5px 10px",
-                    borderRadius: "5px",
-                  }}
-                >
-                  -{displayProduct.discount}%
-                </div>
-              )}
-            </div>
-            <div className="thumbnails-container" style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              {product.imageUrls && product.imageUrls.length > 0 ? (
-                product.imageUrls.map((url, index) => (
+    <div>
+      <div className="product-details-container" style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+        <div className="product-detail-top">
+          <div className="product-detail-layout" style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+            <div className="product-images-container" style={{ flex: "1", minWidth: "300px" }}>
+              <div className="main-image-container" style={{ position: "relative", marginBottom: "20px" }}></div>
+              <div className="main-image" style={{ position: "relative", marginBottom: "10px" }}>
+                <img
+                  src={
+                    hoveredImage !== null && product.imageUrls?.[hoveredImage]
+                      ? product.imageUrls[hoveredImage]
+                      : product.imageUrls?.[selectedImage] || "/placeholder.svg?height=300&width=300"
+                  }
+                  alt={displayProduct.name}
+                  style={{ width: "100%", height: "auto", borderRadius: "8px" }}
+                />
+                {displayProduct.discount > 0 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      left: "10px",
+                      background: "#f50",
+                      color: "white",
+                      padding: "5px 10px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    -{displayProduct.discount}%
+                  </div>
+                )}
+              </div>
+              <div className="thumbnails" style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                {product.imageUrls?.map((url, index) => (
                   <div
                     key={index}
-                    className={`thumbnail-image ${selectedImage === index ? "active" : ""}`}
+                    className={`thumbnail ${selectedImage === index ? "active" : ""}`}
                     onClick={() => setSelectedImage(index)}
                     onMouseEnter={() => setHoveredImage(index)}
                     onMouseLeave={() => setHoveredImage(null)}
                     style={{
                       width: "60px",
                       height: "60px",
-                      border: selectedImage === index ? "2px solid #1890ff" : "1px solid #ddd",
-                      borderRadius: "5px",
+                      border: `2px solid ${selectedImage === index ? "#1890ff" : "#ddd"}`,
+                      borderRadius: "4px",
                       cursor: "pointer",
                     }}
                   >
                     <img
-                      src={url || "/placeholder.svg"}
-                      alt={`Hình ảnh sản phẩm ${index + 1}`}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "5px" }}
+                      src={url || "/placeholder.svg?height=60&width=60"}
+                      alt={`Thumbnail ${index + 1}`}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "4px" }}
                     />
                   </div>
-                ))
+                )) || (
+                  <div className="thumbnail">
+                    <img src="/placeholder.svg?height=60&width=60" alt="No thumbnail" style={{ width: "60px", height: "60px" }} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="product-info" style={{ flex: "1", minWidth: "300px" }}>
+              <Rate disabled value={5} style={{ color: "#FFD700", fontSize: 16, marginBottom: "16px" }} />
+
+              <Title level={2} style={{ margin: "0 0 16px", fontWeight: "600", color: "#333" }}>
+                {displayProduct.name}
+              </Title>
+
+              <Paragraph style={{ marginBottom: "24px", color: "#666", lineHeight: "1.6" }}>
+                {displayProduct.description}
+              </Paragraph>
+
+              <div className="price" style={{ marginBottom: "20px" }}>
+                <Tag color="#f50" style={{ marginRight: "8px", fontSize: "14px" }}>
+                  -{displayProduct.discount}%
+                </Tag>
+                <span style={{ fontSize: "24px", fontWeight: "700", color: "#f50" }}>
+                  {displayProduct.price.toFixed(2)} VNĐ
+                </span>
+                {displayProduct.originalPrice > 0 && (
+                  <span style={{ fontSize: "16px", color: "#999", textDecoration: "line-through", marginLeft: "10px" }}>
+                    {displayProduct.originalPrice.toFixed(2)} VNĐ
+                  </span>
+                )}
+              </div>
+
+              <div className="toppings-list">
+                <h3 className="toppings-title">Chọn Toppings:</h3>
+                {product.toppings?.length > 0 ? (
+                  <ul className="topping-items">
+                    {product.toppings
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((topping) => (
+                        <li key={topping.id} className="topping-item">
+                          <label className="topping-label">
+                            <Checkbox
+                              checked={selectedToppings.includes(topping.id)}
+                              onChange={() => handleToppingChange(topping.id)}
+                              disabled={isProcessing || isLoading}
+                            />
+                            <span className="topping-name">{topping.name}</span>
+                            <span className="topping-price">+{topping.price.toFixed(2)} VNĐ</span>
+                          </label>
+                        </li>
+                      ))}
+                  </ul>
+                ) : (
+                  <p className="no-toppings">Không có topping nào.</p>
+                )}
+              </div>
+
+              {cartItem ? (
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+                  <Button
+                    onClick={() => updateQuantity(false)}
+                    disabled={isProcessing || isLoading}
+                    style={{ background: "#ff5722", color: "#fff", border: "none", borderRadius: "4px" }}
+                  >
+                    <span style={{ fontSize: "20px" }}>−</span>
+                  </Button>
+                  <span style={{ fontSize: "16px", minWidth: "30px", textAlign: "center" }}>
+                    {isProcessing || isLoading ? "..." : cartItem.qty}
+                  </span>
+                  <Button
+                    onClick={() => updateQuantity(true)}
+                    disabled={isProcessing || isLoading}
+                    style={{ background: "#ff5722", color: "#fff", border: "none", borderRadius: "4px" }}
+                  >
+                    <span style={{ fontSize: "20px" }}>+</span>
+                  </Button>
+                </div>
               ) : (
-                <div className="thumbnail-image">
-                  <img src="/placeholder.svg?height=60&width=60" alt="Không có hình ảnh" style={{ width: "60px", height: "60px" }} />
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <Button
+                    type="primary"
+                    size="large"
+                    onClick={addToCart}
+                    disabled={isProcessing || isLoading || product.availableQuantity <= 0}
+                    style={{ background: "#007bff", borderColor: "#007bff", borderRadius: "4px" }}
+                  >
+                    {isProcessing || isLoading ? "Đang xử lý..." : "Thêm vào giỏ hàng"}
+                  </Button>
+                  <Button
+                    type="primary"
+                    size="large"
+                    onClick={buyNow}
+                    disabled={isProcessing || isLoading || product.availableQuantity <= 0}
+                    style={{ background: "#ff4500", borderColor: "#ff4500", borderRadius: "4px" }}
+                  >
+                    {isProcessing || isLoading ? "Đang xử lý..." : "Mua ngay"}
+                  </Button>
                 </div>
               )}
-            </div>
-          </div>
 
-          <div className="product-info" style={{ flex: "1", minWidth: "300px" }}>
-            <Rate disabled defaultValue={5} style={{ color: "#FFD700", fontSize: 16, marginBottom: 16 }} />
-
-            <Title level={2} style={{ margin: "0 0 16px 0", fontWeight: "bold", color: "#333" }}>
-              {displayProduct.name}
-            </Title>
-
-            <Paragraph style={{ marginBottom: 24, color: "#666", lineHeight: 1.6 }}>
-              {displayProduct.description}
-            </Paragraph>
-
-            <div className="product-price" style={{ marginBottom: 20 }}>
-              <Tag color="#f50" style={{ marginRight: 8, fontSize: 14 }}>
-                -{displayProduct.discount}%
-              </Tag>
-              <span className="current-price" style={{ fontSize: 24, fontWeight: "bold", color: "#f50" }}>
-                {displayProduct.price?.toFixed(2)} VNĐ
-              </span>
-              {displayProduct.originalPrice && (
-                <span className="original-price" style={{ fontSize: 16, color: "#999", textDecoration: "line-through", marginLeft: 10 }}>
-                  {displayProduct.originalPrice.toFixed(2)} VNĐ
-                </span>
-              )}
-            </div>
-
-            <div className="toppings-container" style={{ marginBottom: 20 }}>
-              <Text strong style={{ display: "block", marginBottom: 10 }}>Chọn Toppings:</Text>
-              {product.toppings && product.toppings.length > 0 ? (
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(3, 1fr)",
-                    gap: 10,
-                  }}
-                >
-                  {product.toppings.map((topping) => (
-                    <Checkbox
-                      key={topping.id}
-                      checked={selectedToppings.includes(topping.id)}
-                      onChange={() => handleToppingChange(topping.id)}
-                      disabled={isProcessing}
-                    >
-                      {topping.name} (+{topping.price.toFixed(2)} VNĐ)
-                    </Checkbox>
-                  ))}
+              <div className="meta" style={{ marginTop: "20px" }}>
+                <div style={{ marginBottom: "8px" }}>
+                  <Text strong style={{ color: "#333" }}>Danh mục:</Text>
+                  <span style={{ marginLeft: "8px", color: "#666" }}>{displayProduct.categories}</span>
                 </div>
-              ) : (
-                <Text type="secondary">Không có toppings nào.</Text>
-              )}
-            </div>
-
-
-            {cartItem && cartItem.qty > 0 ? (
-              <div
-                className="quantity-controls"
-                style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}
-              >
-                <Button
-                  onClick={() => updateQuantity(false)}
-                  disabled={isProcessing}
-                  style={{ background: "#ff5722", color: "#fff", border: "none", borderRadius: "5px" }}
-                >
-                  <span style={{ color: "#fff", fontSize: 20 }}>−</span>
-                </Button>
-                <span style={{ fontSize: 16, minWidth: 30, textAlign: "center" }}>
-                  {isProcessing ? "..." : cartItem.qty}
-                </span>
-                <Button
-                  onClick={() => updateQuantity(true)}
-                  disabled={isProcessing}
-                  style={{ background: "#ff5722", color: "#fff", border: "none", borderRadius: "5px" }}
-                >
-                  <span style={{ color: "#fff", fontSize: 20 }}>+</span>
-                </Button>
-              </div>
-            ) : (
-              <div style={{ display: "flex", gap: 10 }}>
-                <Button
-                  type="primary"
-                  size="large"
-                  onClick={addToCart}
-                  disabled={isProcessing || product.availableQuantity <= 0}
-                  style={{ background: "#1890ff", borderColor: "#1890ff" }}
-                >
-                  {isProcessing ? "Đang xử lý..." : "Thêm vào giỏ hàng"}
-                </Button>
-                <Button
-                  type="primary"
-                  size="large"
-                  onClick={buyNow}
-                  disabled={isProcessing || product.availableQuantity <= 0}
-                  style={{ background: "#ff4d4f", borderColor: "#ff4d4f" }}
-                >
-                  {isProcessing ? "Đang xử lý..." : "Mua ngay"}
-                </Button>
-              </div>
-            )}
-
-            <div className="product-meta" style={{ marginTop: 20 }}>
-              <div className="meta-item" style={{ marginBottom: 8 }}>
-                <Text strong style={{ color: "#333" }}>Danh mục:</Text>
-                <Text style={{ marginLeft: 8, color: "#666" }}>{displayProduct.categories}</Text>
-              </div>
-              <div className="meta-item" style={{ marginBottom: 8 }}>
-                <Text strong style={{ color: "#333" }}>Mô tả danh mục:</Text>
-                <Text style={{ marginLeft: 8, color: "#666" }}>{displayProduct.categoriesDescription}</Text>
+                <div style={{ marginBottom: "8px" }}>
+                  <Text strong style={{ color: "#333" }}>Mô tả:</Text>
+                  <span style={{ marginLeft: "8px", color: "#666" }}>{displayProduct.categoriesDescription}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="product-detail-content" style={{ marginTop: 40 }}>
-        <Tabs activeKey={activeTab} onChange={setActiveTab} type="card" className="product-tabs">
-          <TabPane tab="MÔ TẢ" key="description">
-            <div className="tab-content">
-              <Title level={3} style={{ fontWeight: "bold", marginBottom: 24, color: "#333" }}>
-                TRẢI NGHIỆM ẨM THỰC ĐỈNH CAO
-              </Title>
-              <Paragraph style={{ color: "#666", lineHeight: 1.6 }}>
-                {displayProduct.description}
-              </Paragraph>
-            </div>
-          </TabPane>
-          <TabPane tab={`BÌNH LUẬN (${comments.length})`} key="comment">
-            <div className="tab-content">
-              <div className="comments-section">
+        <div style={{ marginTop: "40px" }}>
+          <Tabs activeKey={activeTab} onChange={setActiveTab} type="card">
+            <TabPane tab="MÔ TẢ" key="description">
+              <Title level={4}>TRẢI NGHIỆM ẨM THỰC ĐỈNH CAO</Title>
+              <Paragraph>{displayProduct.description}</Paragraph>
+            </TabPane>
+            <TabPane tab={`BÌNH LUẬN (${comments.length})`} key="comment">
+              <div className="comments">
                 {comments.length > 0 ? (
-                  comments.map((comment, index) => (
-                    <div key={index} className="comment-item" style={{ display: "flex", gap: 15, padding: "15px 0", borderBottom: "1px solid #eee" }}>
-                      <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#1890ff" }} />
+                  comments.map((comment) => (
+                    <div key={comment.id} style={{ display: "flex", gap: "15px", padding: "15px 0", borderBottom: "1px solid #eee" }}>
+                      <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#007bff" }} />
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <h3 className="comment-author" style={{ margin: 0, fontSize: 16, color: "#333" }}>
-                            {`Người dùng ${comment.userId}`}
-                          </h3>
-                          <div className="comment-date" style={{ color: "#999", fontSize: 12 }}>
+                          <strong style={{ fontSize: "16px", color: "#333" }}>{`Người dùng ${comment.userId}`}</strong>
+                          <span style={{ color: "#999", fontSize: "12px" }}>
                             {new Date(comment.reviewDate).toLocaleString()}
-                          </div>
+                          </span>
                         </div>
                         <Rate disabled value={comment.ratingScore} style={{ margin: "5px 0" }} />
-                        <p className="comment-content" style={{ margin: 0, color: "#666", lineHeight: 1.5 }}>
-                          {comment.comment}
-                        </p>
+                        <p style={{ color: "#666", lineHeight: "1.5" }}>{comment.comment}</p>
                         {userId === comment.userId && !editingComment && (
-                          <Space style={{ marginTop: 10 }}>
+                          <Space>
                             <Button
                               icon={<EditOutlined />}
                               onClick={() => {
@@ -683,7 +579,6 @@ const ProductDetailsPages = () => {
                                 });
                                 setActiveTab("edit-comment");
                               }}
-                              style={{ borderRadius: "5px" }}
                             >
                               Sửa
                             </Button>
@@ -693,11 +588,7 @@ const ProductDetailsPages = () => {
                               okText="Có"
                               cancelText="Không"
                             >
-                              <Button
-                                icon={<DeleteOutlined />}
-                                danger
-                                style={{ borderRadius: "5px" }}
-                              >
+                              <Button icon={<DeleteOutlined />} danger>
                                 Xóa
                               </Button>
                             </Popconfirm>
@@ -710,98 +601,81 @@ const ProductDetailsPages = () => {
                   <p style={{ color: "#999", fontStyle: "italic" }}>Chưa có bình luận nào.</p>
                 )}
               </div>
-            </div>
-          </TabPane>
-          {!hasCommented && (
-            <TabPane tab="ĐĂNG BÌNH LUẬN" key="post-comment">
-              <div className="tab-content">
-                <div className="post-comment-section" style={{ maxWidth: "600px" }}>
-                  <div className="rating-section" style={{ marginBottom: 20 }}>
-                    <div className="rating-label" style={{ fontWeight: "bold", color: "#333" }}>
-                      Đánh giá:
-                    </div>
-                    <Rate value={userRating} onChange={setUserRating} style={{ marginTop: 5 }} />
+            </TabPane>
+            {!hasCommented && (
+              <TabPane tab="ĐĂNG BÌNH LUẬN" key="post-comment">
+                <div style={{ maxWidth: "600px" }}>
+                  <div style={{ marginBottom: "16px" }}>
+                    <strong style={{ color: "#333" }}>Đánh giá:</strong>
+                    <Rate value={userRating} onChange={setUserRating} style={{ marginLeft: "8px" }} />
                   </div>
-
-                  <Form form={form} onFinish={handleReviewSubmit} layout="vertical" className="comment-form">
-                    <h3 className="form-title" style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20, color: "#333" }}>
-                      Chia sẻ ý kiến của bạn về sản phẩm này:
+                  <Form form={form} onFinish={handleReviewSubmit} layout="vertical">
+                    <h3 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "16px" }}>
+                      Chia sẻ ý kiến của bạn:
                     </h3>
-
                     <Form.Item
                       name="rating"
                       label="Đánh giá"
-                      rules={[{ required: true, message: "Vui lòng chọn số sao đánh giá!" }]}
+                      rules={[{ required: true, message: "Vui lòng chọn số sao!" }]}
                     >
                       <Rate onChange={setUserRating} value={userRating} />
                     </Form.Item>
-
                     <Form.Item
                       name="comment"
                       label="Bình luận"
                       rules={[{ required: true, message: "Vui lòng nhập bình luận!" }]}
                     >
-                      <TextArea rows={6} placeholder="Viết bình luận của bạn..." style={{ borderRadius: "5px" }} />
+                      <TextArea rows={6} placeholder="Viết bình luận..." />
                     </Form.Item>
-
                     <Form.Item>
                       <Button
                         type="primary"
                         htmlType="submit"
                         loading={isProcessing}
-                        style={{ background: "#1890ff", borderColor: "#1890ff", borderRadius: "5px" }}
+                        style={{ background: "#007bff", borderColor: "#007bff" }}
                       >
                         {isProcessing ? "Đang xử lý..." : "Gửi bình luận"}
                       </Button>
                     </Form.Item>
                   </Form>
                 </div>
-              </div>
-            </TabPane>
-          )}
-          {editingComment && (
-            <TabPane tab="SỬA BÌNH LUẬN" key="edit-comment">
-              <div className="tab-content">
-                <div className="post-comment-section" style={{ maxWidth: "600px" }}>
-                  <div className="rating-section" style={{ marginBottom: 20 }}>
-                    <div className="rating-label" style={{ fontWeight: "bold", color: "#333" }}>
-                      Đánh giá:
-                    </div>
-                    <Rate value={userRating} onChange={setUserRating} style={{ marginTop: 5 }} />
+              </TabPane>
+            )}
+            {editingComment && (
+              <TabPane tab="SỬA BÌNH LUẬN" key="edit-comment">
+                <div style={{ maxWidth: "600px" }}>
+                  <div style={{ marginBottom: "16px" }}>
+                    <strong style={{ color: "#333" }}>Đánh giá:</strong>
+                    <Rate value={userRating} onChange={setUserRating} style={{ marginLeft: "8px" }} />
                   </div>
-
                   <Form
                     form={form}
-                    onFinish={() => handleUpdateComment(editingComment.id, form.getFieldsValue())}
+                    onFinish={(values) => handleUpdateComment(editingComment.id, values)}
                     layout="vertical"
-                    className="comment-form"
                   >
-                    <h3 className="form-title" style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20, color: "#333" }}>
-                      Sửa bình luận của bạn:
+                    <h3 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "16px" }}>
+                      Sửa bình luận:
                     </h3>
-
                     <Form.Item
                       name="rating"
                       label="Đánh giá"
-                      rules={[{ required: true, message: "Vui lòng chọn số sao đánh giá!" }]}
+                      rules={[{ required: true, message: "Vui lòng chọn số sao!" }]}
                     >
                       <Rate onChange={setUserRating} value={userRating} />
                     </Form.Item>
-
                     <Form.Item
                       name="comment"
                       label="Bình luận"
                       rules={[{ required: true, message: "Vui lòng nhập bình luận!" }]}
                     >
-                      <TextArea rows={6} placeholder="Viết bình luận của bạn..." style={{ borderRadius: "5px" }} />
+                      <TextArea rows={6} placeholder="Viết bình luận..." />
                     </Form.Item>
-
                     <Form.Item>
                       <Button
                         type="primary"
                         htmlType="submit"
                         loading={isProcessing}
-                        style={{ background: "#1890ff", borderColor: "#1890ff", borderRadius: "5px" }}
+                        style={{ background: "#007bff", borderColor: "#007bff" }}
                       >
                         {isProcessing ? "Đang xử lý..." : "Cập nhật bình luận"}
                       </Button>
@@ -811,73 +685,65 @@ const ProductDetailsPages = () => {
                           form.resetFields();
                           setActiveTab("comment");
                         }}
-                        style={{ marginLeft: 10, borderRadius: "5px" }}
+                        style={{ marginLeft: "10px" }}
                       >
                         Hủy
                       </Button>
                     </Form.Item>
                   </Form>
                 </div>
-              </div>
-            </TabPane>
-          )}
-        </Tabs>
-      </div>
+              </TabPane>
+            )}
+          </Tabs>
+        </div>
 
-      <div className="product-detail-content" style={{ marginTop: 30 }}>
-        <Title level={3} style={{ fontWeight: "bold", marginBottom: 24 }}>
-          THÔNG TIN CHI TIẾT
-        </Title>
+        <div style={{ marginTop: "40px" }}>
+          <Title level={3}>THÔNG TIN CHI TIẾT</Title>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12}>
+              <List
+                itemLayout="horizontal"
+                dataSource={product.categories || []}
+                renderItem={(category) => (
+                  <List.Item>
+                    <Space>
+                      <CheckOutlined style={{ color: "#006241" }} />
+                      <strong>{category.name}</strong>
+                    </Space>
+                  </List.Item>
+                )}
+              />
+            </Col>
+            <Col xs={24} md={12}>
+              <List
+                itemLayout="horizontal"
+                dataSource={product.categories || []}
+                renderItem={(category) => (
+                  <List.Item>
+                    <Space>
+                      <CheckOutlined style={{ color: "#006241" }} />
+                      <span>{category.description || "N/A"}</span>
+                    </Space>
+                  </List.Item>
+                )}
+              />
+            </Col>
+          </Row>
+        </div>
 
-        <Row gutter={[32, 16]}>
-          <Col xs={24} md={12}>
-            <List
-              itemLayout="horizontal"
-              dataSource={product.categories || []}
-              renderItem={(category) => (
-                <List.Item>
-                  <Space>
-                    <CheckOutlined style={{ color: "#006241" }} />
-                    <Text strong>{category.name}</Text>
-                  </Space>
-                </List.Item>
-              )}
-            />
-          </Col>
-          <Col xs={24} md={12}>
-            <List
-              itemLayout="horizontal"
-              dataSource={product.categories || []}
-              renderItem={(category) => (
-                <List.Item>
-                  <Space>
-                    <CheckOutlined style={{ color: "#006241" }} />
-                    <Text>{category.description || "Không có mô tả"}</Text>
-                  </Space>
-                </List.Item>
-              )}
-            />
-          </Col>
-        </Row>
-      </div>
-
-      <div className="related-products-section" style={{ marginTop: 40 }}>
-        <Title level={2} className="section-title">
-          SẢN PHẨM LIÊN QUAN
-        </Title>
-        <div className="products-container-5">
-          {loading ? (
-            <Text>Đang tải sản phẩm...</Text>
-          ) : error ? (
-            <Text type="danger">{error}</Text>
-          ) : allProducts.length === 0 ? (
-            <Text>Không tìm thấy sản phẩm nào</Text>
-          ) : (
-            <ProductList
-              products={[...allProducts].sort(() => Math.random() - 0.5).slice(0, 4)}
-              gap="16px"
-            />
-          )}
+        <div style={{ marginTop: "40px" }}>
+          <Title level={2}>SẢN PHẨM LIÊN QUAN</Title>
+          <div>
+            {loading ? (
+              <Text>Đang tải...</Text>
+            ) : error ? (
+              <Text type="error">{error}</Text>
+            ) : allProducts.length === 0 ? (
+              <Text>Không có sản phẩm nào.</Text>
+            ) : (
+              <ProductList products={allProducts.slice(0, 4)} gap="16px" />
+            )}
+          </div>
         </div>
       </div>
     </div>
