@@ -72,7 +72,7 @@ const AdminOrdersPage = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Quản lý đơn hàng</h2>
+      <h2 style={{ marginBottom: 20, color: "#333" }}>Quản lý đơn hàng</h2>
       {loading ? (
         <Spin tip="Đang tải danh sách đơn hàng..." />
       ) : error ? (

@@ -19,3 +19,14 @@ export const payCallback = async (params) => {
   });
   return response.data;
 };
+
+export const cancelPayment = async(orderId) => {
+  const response = await axios.post(
+    `${ApiService.BASE_URL}/api/v1/payment/${orderId}/cancel`,
+    {},
+    {
+      headers: ApiService.getHeader(),
+    }
+  );
+  return response.data;
+}
