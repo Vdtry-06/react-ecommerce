@@ -114,7 +114,7 @@ const AdminUserPage = () => {
 
   return (
     <div className="admin-product-list">
-      <h2>Quản lý người dùng</h2>
+      <h2 style={{ marginBottom: 20, color: "#333" }}>Quản lý người dùng</h2>
       <Table
         columns={columns}
         dataSource={users}
