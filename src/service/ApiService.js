@@ -7,6 +7,7 @@ import * as ProductService from "./ProductService";
 import * as ToppingService from "./ToppingService";
 import * as UserService from "./UserService";
 import * as ReviewService from "./ReviewService";
+import * as CartService from "./CartService";
 import { getToken, removeToken, getRole, removeRole, removeIsLoggedIn } from "./localStorage";
 
 export default class ApiService {
@@ -71,6 +72,7 @@ export default class ApiService {
   static Topping = ToppingService;
   static User = UserService;
   static Review = ReviewService;
+  static Cart = CartService;
 }
 
 ApiService.setupInterceptors();
