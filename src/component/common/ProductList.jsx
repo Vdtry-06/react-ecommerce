@@ -1,146 +1,113 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { Link, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import "../../static/style/productList.css";
+import { useState } from "react";
+import Notification from "../common/Notification";
 
 const ProductList = ({ products }) => {
-  const [cart, setCart] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { cart, syncCartWithBackend, isLoading } = useCart();
   const [processingItem, setProcessingItem] = useState(null);
+  const navigate = useNavigate();
+  const [notification, setNotification] = useState(null);
 
-  const fetchCart = async () => {
-    try {
-      if (ApiService.isAuthenticated()) {
-        const userInfo = await ApiService.User.getMyInfo();
-        const userId = userInfo.data.id;
-        const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId);
-        const pendingOrder = ordersResponse.data?.find((order) => order.status === "PENDING");
-        const cartItems = pendingOrder?.orderLines?.map((line) => ({
-          id: line.productId,
-          qty: line.quantity,
-          orderLineId: line.id,
-        })) || [];
-        setCart(cartItems);
-      } else {
-        setCart([]);
-      }
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-      setCart([]);
-    }
-  };
-
-  const getPendingOrder = async () => {
-    try {
-      if (!ApiService.isAuthenticated()) return null;
-      const userInfo = await ApiService.User.getMyInfo();
-      const userId = userInfo.data.id;
-      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId);
-      return ordersResponse.data?.find((order) => order.status === "PENDING") || null;
-    } catch (error) {
-      console.error("Error fetching pending order:", error);
-      return null;
-    }
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
   };
 
   const addToCart = async (product) => {
+    if (!ApiService.isAuthenticated()) {
+      showNotification(
+        "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!", "warning");
+      // navigate("/login");
+      return;
+    }
+
     try {
       setProcessingItem(product.id);
-      if (!ApiService.isAuthenticated()) {
-        if (window.confirm("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng! Đến trang đăng nhập?")) {
-          window.location.href = "/login";
-        }
-        return;
-      }
-
       const userInfo = await ApiService.User.getMyInfo();
-      const userId = userInfo.data.id;
-      const pendingOrder = await getPendingOrder();
-      const orderLineRequest = { productId: product.id, quantity: 1 };
-
-      if (!pendingOrder) {
-        await ApiService.Order.createOrder({
-          userId,
-          orderLines: [orderLineRequest],
-          paymentMethod: "CASH_ON_DELIVERY",
-        });
-      } else {
-        const existingLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
-        if (existingLine) {
-          await ApiService.Order.updateOrderLine(pendingOrder.id, existingLine.id, {
-            productId: product.id,
-            quantity: existingLine.quantity + 1,
-          });
-        } else {
-          await ApiService.Order.addOrderLine(pendingOrder.id, orderLineRequest);
-        }
-      }
-
-      window.dispatchEvent(new Event("cartChanged"));
-      await fetchCart();
+      await syncCartWithBackend(userInfo.data.id, "ADD_ITEM", {
+        id: product.id,
+        toppingIds: [],
+      });
+      showNotification("Sản phẩm đã được thêm vào giỏ hàng!", "success");
     } catch (error) {
       console.error("Error adding to cart:", error);
-      alert(error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng!");
+      showNotification(
+        error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng!", "error");
     } finally {
       setProcessingItem(null);
     }
   };
 
   const incrementItem = async (product) => {
+    if (!ApiService.isAuthenticated()) {
+      showNotification(
+        "Vui lòng đăng nhập để cập nhật giỏ hàng!", "warning");
+      // navigate("/login");
+      return;
+    }
+
     try {
       setProcessingItem(product.id);
-      const pendingOrder = await getPendingOrder();
-      if (!pendingOrder) return;
-      const orderLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
-      if (!orderLine) return;
-      await ApiService.Order.updateOrderLine(pendingOrder.id, orderLine.id, {
-        productId: product.id,
-        quantity: orderLine.quantity + 1,
+      const userInfo = await ApiService.User.getMyInfo();
+      const cartItem = cart.find((item) => item.id === product.id);
+      await syncCartWithBackend(userInfo.data.id, "INCREMENT_ITEM", {
+        id: product.id,
+        qty: cartItem ? cartItem.qty : 0,
+        toppingIds: cartItem ? cartItem.toppingIds : [],
       });
-      window.dispatchEvent(new Event("cartChanged"));
-      await fetchCart();
+      showNotification("Số lượng sản phẩm đã được tăng!", "success");
     } catch (error) {
       console.error("Error incrementing item:", error);
-      alert(error.response?.data?.message || "Lỗi khi tăng số lượng!");
+      showNotification(
+        error.response?.data?.message || "Lỗi khi tăng số lượng!", "error");
     } finally {
       setProcessingItem(null);
     }
   };
 
   const decrementItem = async (product) => {
+    if (!ApiService.isAuthenticated()) {
+      showNotification(
+        "Vui lòng đăng nhập để cập nhật giỏ hàng!", "warning");
+      // navigate("/login");
+      return;
+    }
+
     try {
       setProcessingItem(product.id);
-      const pendingOrder = await getPendingOrder();
-      if (!pendingOrder) return;
-      const orderLine = pendingOrder.orderLines.find((line) => line.productId === product.id);
-      if (!orderLine) return;
-      if (orderLine.quantity > 1) {
-        await ApiService.Order.updateOrderLine(pendingOrder.id, orderLine.id, {
-          productId: product.id,
-          quantity: orderLine.quantity - 1,
+      const userInfo = await ApiService.User.getMyInfo();
+      const cartItem = cart.find((item) => item.id === product.id);
+      if (cartItem && cartItem.qty > 1) {
+        await syncCartWithBackend(userInfo.data.id, "DECREMENT_ITEM", {
+          id: product.id,
+          qty: cartItem.qty,
+          toppingIds: cartItem.toppingIds,
         });
-      } else {
-        await ApiService.Order.deleteOrderLine(pendingOrder.id, orderLine.id);
+      } else if (cartItem) {
+        await syncCartWithBackend(userInfo.data.id, "REMOVE_ITEM", { id: product.id });
       }
-      window.dispatchEvent(new Event("cartChanged"));
-      await fetchCart();
+      showNotification("Số lượng sản phẩm đã được giảm!", "success");
     } catch (error) {
       console.error("Error decrementing item:", error);
-      alert(error.response?.data?.message || "Lỗi khi giảm số lượng!");
+      showNotification(
+        error.response?.data?.message || "Lỗi khi giảm số lượng!", "error");
     } finally {
       setProcessingItem(null);
     }
   };
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetchCart().finally(() => setIsLoading(false));
-    window.addEventListener("cartChanged", fetchCart);
-    return () => window.removeEventListener("cartChanged", fetchCart);
-  }, []);
-
   return (
     <div className="product-list">
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
       {products.map((product) => {
         const cartItem = cart.find((item) => item.id === product.id);
         const isProcessing = processingItem === product.id;
@@ -165,13 +132,17 @@ const ProductList = ({ products }) => {
             <div className="product-actions">
               {cartItem ? (
                 <div className="quantity-controls">
-                  <button onClick={() => decrementItem(product)} disabled={isProcessing}>-</button>
-                  <span>{isProcessing ? "..." : cartItem.qty}</span>
-                  <button onClick={() => incrementItem(product)} disabled={isProcessing}>+</button>
+                  <button onClick={() => decrementItem(product)} disabled={isProcessing || isLoading}>
+                    -
+                  </button>
+                  <span>{isProcessing || isLoading ? "..." : cartItem.qty}</span>
+                  <button onClick={() => incrementItem(product)} disabled={isProcessing || isLoading}>
+                    +
+                  </button>
                 </div>
               ) : (
-                <button onClick={() => addToCart(product)} disabled={isProcessing}>
-                  {isProcessing ? "Đang thêm..." : "Thêm vào giỏ"}
+                <button onClick={() => addToCart(product)} disabled={isProcessing || isLoading}>
+                  {isProcessing || isLoading ? "Đang thêm..." : "Thêm vào giỏ"}
                 </button>
               )}
             </div>
