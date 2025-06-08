@@ -17,7 +17,14 @@ const CheckoutPage = () => {
     if (state) {
       const sourceState = state.checkoutState || state;
       setSelectedItems(sourceState.selectedItems || []);
-      setTotalPrice(sourceState.totalPrice || 0);
+      console.log(sourceState.selectedItems);
+      const calculatedTotal = sourceState.selectedItems.reduce((sum, item) => {
+        const toppingTotal = item.toppingIds.reduce((toppingSum, toppingId) => {
+          return toppingSum + (item.toppingPrices?.[toppingId] || 0);
+        }, 0);
+        return sum + (item.price + toppingTotal) * item.qty;
+      }, 0);
+      setTotalPrice(calculatedTotal || 0);
     }
     fetchUserAddress();
 
@@ -62,18 +69,27 @@ const CheckoutPage = () => {
 
   const handleConfirmCheckout = async () => {
     try {
+      if (!ApiService.isAuthenticated()) {
+        const sessionId = localStorage.getItem("sessionId");
+        if (sessionId) {
+          localStorage.setItem("postLoginRedirect", "/checkout");
+          localStorage.setItem("state", JSON.stringify({ selectedItems, totalPrice }));
+          navigate("/login");
+          return;
+        }
+        setMessage("Bạn cần đăng nhập để thanh toán!");
+        setTimeout(() => setMessage(""), 3000);
+        return;
+      }
+
       const userInfo = await ApiService.User.getMyInfo();
       const userId = userInfo.data.id;
-
-      const selectedOrderLines = selectedItems.map((item) => ({
-        productId: item.id,
-        quantity: item.qty,
-        price: item.price * item.qty,
-      }));
-
+      console.log(selectedItems);
+      console.log(totalPrice);
+      const selectedProductIds = selectedItems.map((item) => item.id);
       const response = await ApiService.Payment.createVNPayPaymentForSelectedItems({
-        orderLines: selectedOrderLines,
-        userId: userId,
+        userId,
+        selectedProductIds,
         bankCode: "NCB",
       });
 
@@ -93,9 +109,9 @@ const CheckoutPage = () => {
     try {
       if (responseCode === "00") {
         setMessage("Thanh toán thành công!");
-        setTimeout(() => setMessage(""), 3000);
-        await removePaidItemsFromPendingOrder();
+        window.dispatchEvent(new Event("cartChanged"));
         setTimeout(() => {
+          setMessage("");
           navigate("/");
         }, 3000);
       } else {
@@ -105,28 +121,6 @@ const CheckoutPage = () => {
     } catch (error) {
       setMessage("Lỗi khi xử lý callback từ VNPay!");
       setTimeout(() => setMessage(""), 3000);
-    }
-  };
-
-  const removePaidItemsFromPendingOrder = async () => {
-    try {
-      const userInfo = await ApiService.User.getMyInfo();
-      const userId = userInfo.data.id;
-      const ordersResponse = await ApiService.Order.getAllOrdersOfUser(userId);
-      const orders = ordersResponse.data || [];
-      const pendingOrder = orders.find((order) => order.status === "PENDING");
-
-      if (pendingOrder) {
-        for (const item of selectedItems) {
-          const orderLine = pendingOrder.orderLines.find((line) => line.productId === item.id);
-          if (orderLine) {
-            await ApiService.Order.deleteOrderLine(pendingOrder.id, orderLine.id);
-          }
-        }
-        window.dispatchEvent(new Event("cartChanged"));
-      }
-    } catch (error) {
-      console.error("Error removing paid items from pending order:", error);
     }
   };
 
@@ -158,29 +152,53 @@ const CheckoutPage = () => {
         <div className="cart-content">
           <div className="checkout-items-container">
             <ul className="cart-items">
-              {selectedItems.map((item) => (
-                <li key={item.id} className="checkout-item">
-                  <div className="item-image dif">
-                    <img
-                      src={item.imageUrl || "/placeholder.svg?height=100&width=100"}
-                      alt={item.name}
-                    />
-                  </div>
-                  <div className="item-details dif">
-                    <h2 style={{ color: "#9e7b14" }}>{item.name}</h2>
-                    <div className="item-actions dif">
-                      <div className="quantity-controls">
-                        <span className="quantity">Số lượng: {item.qty}</span>
-                      </div>
-                      <div className="item-price">
-                        <span className="price-value" style={{ color: "#e0a800" }}>
-                          Giá: {(item.price * item.qty).toFixed(2)} VNĐ
-                        </span>
+              {selectedItems.map((item) => {
+                const toppingTotal = item.toppingIds.reduce((sum, toppingId) => {
+                  return sum + (item.toppingPrices?.[toppingId] || 0);
+                }, 0);
+                const itemTotal = (item.price + toppingTotal) * item.qty;
+                return (
+                  <li key={item.productId} className="checkout-item">
+                    <div className="item-image dif">
+                      <img
+                        src={item.productImageUrl || "/placeholder.svg?height=100&width=100"}
+                        alt={item.productName}
+                      />
+                    </div>
+                    <div className="item-details dif">
+                      <h2 style={{ color: "#9e7b14" }}>{item.productName}</h2>
+                      <p className="item-description">{item.description || "Không có mô tả"}</p>
+                      {item.toppingIds && item.toppingIds.length > 0 && (
+                        <div className="toppings-list">
+                          <h3 className="toppings-title">Toppings</h3>
+                          <ul className="topping-items">
+                            {item.toppingIds.map((toppingId) => (
+                              <li key={toppingId} className="topping-item">
+                                <span className="topping-name">
+                                  {item.toppingNames?.[toppingId] || `Topping ${toppingId}`}
+                                </span>
+                                <span className="topping-price">
+                                  {(item.toppingPrices?.[toppingId] || 0).toFixed(2)} VNĐ
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      <div className="item-actions dif">
+                        <div className="quantity-controls">
+                          Số lượng: <span className="quantity">{item.qty}</span>
+                        </div>
+                        <div className="item-price">
+                          <span className="price-value" style={{ color: "#e0a800" }}>
+                            Tổng: {itemTotal.toFixed(2)} VNĐ
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -194,7 +212,7 @@ const CheckoutPage = () => {
                 <p>Đang tải địa chỉ...</p>
               </div>
             ) : userAddress ? (
-              <p  style={{ color: "#52c41a" }}>
+              <p style={{ color: "#52c41a" }}>
                 {userAddress.houseNumber} {userAddress.street}, {userAddress.ward},{" "}
                 {userAddress.district}, {userAddress.city}, {userAddress.country}
               </p>
@@ -218,7 +236,7 @@ const CheckoutPage = () => {
               </div>
               <div className="summary-row subtotal">
                 <span>Tạm tính:</span>
-                <span>{totalPrice} VNĐ</span>
+                <span>{totalPrice.toFixed(2)} VNĐ</span>
               </div>
               <div className="summary-row shipping">
                 <span>Phí vận chuyển:</span>
@@ -226,7 +244,7 @@ const CheckoutPage = () => {
               </div>
               <div className="summary-row total">
                 <span>Tổng cộng:</span>
-                <span>{totalPrice} VNĐ</span>
+                <span>{totalPrice.toFixed(2)} VNĐ</span>
               </div>
             </div>
 
