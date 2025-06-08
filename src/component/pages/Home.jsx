@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Layout, Breadcrumb, theme, Button, Dropdown, Space, Carousel, Card, Checkbox, Typography, Row, Col,
@@ -9,7 +9,7 @@ import Pagination from "../common/Pagination";
 import ApiService from "../../service/ApiService";
 import "../../static/style/home.css";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 const { Title, Text } = Typography;
 
 const Home = () => {
@@ -28,42 +28,54 @@ const Home = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  // Fetch categories once on mount
   useEffect(() => {
-    const fetchHomeData = async () => {
-      setLoading(true);
-      setError(null);
-
+    const fetchCategories = async () => {
       try {
         const categoryResponse = await ApiService.Category.getAllCategories();
         setCategories(categoryResponse.data || []);
-
-        let allProducts = [];
-        const searchParams = new URLSearchParams(location.search);
-        const searchItem = searchParams.get("search");
-
-        if (searchItem) {
-          const response = await ApiService.Product.getProductByName(searchItem);
-          allProducts = response.data || [];
-        } else if (selectedCategories.size > 0) {
-          const categoryArray = Array.from(selectedCategories);
-          const response = await ApiService.Product.FilterProductByCategories(categoryArray);
-          allProducts = response.data || [];
-        } else {
-          const response = await ApiService.Product.getAllProduct(currentPage, itemsPerPage);
-          allProducts = response.data || [];
-        }
-
-        setTotalPages(Math.ceil(allProducts.length / itemsPerPage));
-        setProducts(allProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
       } catch (error) {
-        setError(error.response?.data?.message || error.message || "Lỗi khi tải dữ liệu!");
-      } finally {
-        setLoading(false);
+        setError(error.response?.data?.message || error.message || "Lỗi khi tải danh mục!");
       }
     };
+    fetchCategories();
+  }, []);
 
-    fetchHomeData();
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      let allProducts = [];
+      const searchParams = new URLSearchParams(location.search);
+      const searchItem = searchParams.get("search");
+
+      if (searchItem) {
+        const response = await ApiService.Product.getProductByName(searchItem);
+        allProducts = response.data || [];
+      } else if (selectedCategories.size > 0) {
+        const categoryArray = Array.from(selectedCategories);
+        const response = await ApiService.Product.FilterProductByCategories(categoryArray);
+        allProducts = response.data || [];
+      } else {
+        const response = await ApiService.Product.getAllProduct(currentPage, itemsPerPage);
+        allProducts = response.data || [];
+        // Assume API returns total count for pagination
+        const totalCount = response.headers?.["x-total-count"] || allProducts.length;
+        setTotalPages(Math.ceil(totalCount / itemsPerPage));
+      }
+
+      setProducts(allProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+    } catch (error) {
+      setError(error.response?.data?.message || error.message || "Lỗi khi tải sản phẩm!");
+    } finally {
+      setLoading(false);
+    }
   }, [location.search, selectedCategories, currentPage]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const toggleCategory = (categoryId) => {
     setTempSelectedCategories((prev) => {
