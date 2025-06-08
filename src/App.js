@@ -14,13 +14,14 @@ import RequestVerificationCode from "./component/pages/RequestVerificationCode";
 import VerifyAccount from "./component/pages/VerifyAccount";
 import Account from "./component/pages/Account";
 import UpdateProfile from "./component/pages/UpdateProfile";
-import CategoryListPage from "./component/pages/CategoryListPage";
 import CategoryProductsPage from "./component/pages/CategoryProductsPage";
 import CartPage from "./component/pages/CartPage";
 import CheckoutPage from "./component/pages/CheckoutPage";
 import OrdersPage from "./component/pages/OrdersPage";
 import OrdersCancelledPage from "./component/pages/OrdersCancelledPage";
 import AddressPage from "./component/pages/AddressPage";
+import AdminDashboard from "./component/admin/Dashboard";
+import ChartView from "./component/admin/ChartView";
 import AdminPage from "./component/admin/AdminPage";
 import ForgotPasswordPage from "./component/pages/ForgotPasswordPage";
 import AdminCategoryPage from "./component/admin/AdminCategoryPage";
@@ -80,7 +81,8 @@ function App() {
                 <Route path="/add-address" element={<ProtectedRoute element={<AddressPage />} />} />
 
                 <Route path="/admin" element={<AdminRoute element={<AdminPage />} />} >
-                  <Route path="dashboard" element={ <p>Chào mừng bạn đến với Bảng điều khiển Quản trị!</p> } />
+                  <Route path="dashboard" element={<AdminDashboard/>} />
+                  <Route path="dashboard/charts" element={<ChartView />} />
                   <Route path="categories" element={<AdminCategoryPage />} />
                   <Route path="add-category" element={<AddCategory />} />
                   <Route path="edit-category/:categoryId" element={<EditCategory />} />
