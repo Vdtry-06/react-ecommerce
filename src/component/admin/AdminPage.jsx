@@ -22,7 +22,19 @@ const AdminPage = () => {
     { key: "toppings", label: "Toppings", icon: NotificationOutlined, path: "/admin/toppings" },
   ];
 
-  const activeSection = menuItems.find(item => item.path === location.pathname)?.key || "dashboard";
+  // Determine active section and breadcrumb title
+  let activeSection = "dashboard";
+  let breadcrumbTitle = "Dashboard";
+  if (location.pathname === "/admin/dashboard/charts") {
+    activeSection = "dashboard"; // Keep dashboard highlighted in menu
+    breadcrumbTitle = "Charts";
+  } else {
+    const matchedItem = menuItems.find(item => location.pathname === item.path);
+    if (matchedItem) {
+      activeSection = matchedItem.key;
+      breadcrumbTitle = matchedItem.label;
+    }
+  }
 
   const handleMenuClick = ({ key }) => {
     const item = menuItems.find(i => i.key === key);
@@ -49,7 +61,7 @@ const AdminPage = () => {
           <Breadcrumb
             items={[
               { title: "Home" },
-              { title: menuItems.find(item => item.key === activeSection)?.label || "Admin" },
+              { title: breadcrumbTitle },
             ]}
             style={{ margin: "16px 0" }}
           />
