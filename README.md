@@ -69,21 +69,26 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-
 # Page
+
 ### 1. Login
+
 ![alt text](data/image-27.png)
 
 ### 2. Register
+
 ![alt text](data/image-32.png)
 ![alt text](data/image-33.png)
 
 ### 3. Forgot Password
+
 ![alt text](data/image-30.png)
 ![alt text](data/image-31.png)
 
 # User
+
 ### 1. Beverage Page
+
 ![alt text](data/image-34.png)
 ![alt text](data/image-35.png)
 ![alt text](data/image-36.png)
@@ -92,37 +97,51 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ![alt text](data/image-39.png)
 
 ### 2. Home
+
 ![alt text](data/image-40.png)
 ![alt text](data/image-41.png)
 
+### 2.1. Chatbot
+
+![alt text](data/image-58.png)
+![alt text](data/image-59.png)
+
 ### 3. Product Detail
+
 ![alt text](data/image-42.png)
 ![alt text](data/image-44.png)
 ![alt text](data/image-45.png)
 ![alt text](data/image-43.png)
 
 ### 4. Cart Page
+
 ![alt text](data/image-46.png)
 ![alt text](data/image-47.png)
 
 ### 5. Account Page
+
 ![alt text](data/image-48.png)
 ![alt text](data/image-49.png)
 
 ### 6. Checkout Page
+
 ![alt text](data/image-52.png)
 ![alt text](data/image-53.png)
 ![alt text](data/image-55.png)
 ![alt text](data/image-54.png)
 
 ### 7. Paid Order
+
 ![alt text](data/image-50.png)
 
 ### 8. Cancelled Order
+
 ![alt text](data/image-51.png)
 
 # Admin
+
 ### 1. Dashboard
+
 ![alt text](data/image.png)
 ![alt text](data/image-2.png)
 ![alt text](data/image-3.png)
@@ -132,11 +151,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ![alt text](data/image-7.png)
 
 ### 2. Categories Management
+
 ![alt text](data/image-8.png)
-![alt text](data/image-9.png)
-![alt text](data/image-10.png)
+![alt text](data/image-56.png)
+![alt text](data/image-57.png)
 
 ### 3. Product Management
+
 ![alt text](data/image-11.png)
 ![alt text](data/image-12.png)
 ![alt text](data/image-13.png)
@@ -144,20 +165,24 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ![alt text](data/image-15.png)
 
 ### 4. Orders Management
+
 ![alt text](data/image-16.png)
 ![alt text](data/image-17.png)
 ![alt text](data/image-18.png)
 ![alt text](data/image-19.png)
 
 ### 5. User Management
+
 ![alt text](data/image-20.png)
 ![alt text](data/image-21.png)
 ![alt text](data/image-22.png)
 
 ### 6. Review Management
+
 ![alt text](data/image-23.png)
 ![alt text](data/image-24.png)
 
 ### 7. Toppings Management
+
 ![alt text](data/image-25.png)
 ![alt text](data/image-26.png)
