@@ -5,7 +5,7 @@ body {
 }
 
 .navbar {
-  max-width: calc(100% - 15px);
+  max-width: calc(100% - 6px);
   background: #ff5722;
   color: white;
   padding: 0;
@@ -14,7 +14,7 @@ body {
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-  height: 67px; /* chỉnh được */
+  height: 67px; /*chỉnh được*/
   display: flex;
   align-items: center;
 }

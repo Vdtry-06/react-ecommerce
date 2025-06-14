@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ApiService from "../../service/ApiService";
-import "../../static/style/adminPage.css"; // Sử dụng adminPage.css thay vì addCategory.css
+import "../../static/style/adminPage.css";
 
 const EditCategory = () => {
   const { categoryId } = useParams();
