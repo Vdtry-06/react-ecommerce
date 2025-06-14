@@ -69,6 +69,7 @@ const AdminHeader = () => {
         zIndex: 1001,
         height: "64px",
         lineHeight: "64px",
+        width: "calc(100% - 6px)",
       }}
     >
       <div style={{ display: "flex", alignItems: "center" }}>
