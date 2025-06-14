@@ -28,7 +28,6 @@ const EditProduct = () => {
     try {
       const response = await ApiService.Product.getProduct(id);
       const productData = response.data;
-      console.log("Fetched product data:", productData);
       if (productData.imageUrls && productData.imageUrls.length > 0) {
         setFileList(
           productData.imageUrls.map((url, index) => ({
@@ -83,10 +82,9 @@ const EditProduct = () => {
           description: productData.description || "",
           availableQuantity: productData.availableQuantity || "",
           price: productData.price || "",
-          categoryNames: productData.categories?.map((cat) => cat.name) || [],
-          toppingNames: productData.toppings?.map((top) => top.name) || [],
+          categoryNames: productData.categoryNames?.map((cat) => cat.name) || [],
+          toppingNames: productData.toppingNames?.map((top) => top.name) || [],
         });
-        console.log("Form values set:", form.getFieldsValue()); // Log để kiểm tra
       }).catch((error) => {
         message.error("Không thể tải lại thông tin sản phẩm");
         console.error("Error refetching product:", error);

@@ -27,7 +27,6 @@ export const updateUser = async (userId, request) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log("API updateUser response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in updateUser:", error);
@@ -40,7 +39,6 @@ export const getUser = async (userId) => {
     const response = await axios.get(`${ApiService.BASE_URL}/api/v1/auth/users/${userId}`, {
       headers: ApiService.getHeader(),
     });
-    console.log("API getUser response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in getUser:", error);
@@ -74,8 +72,6 @@ export const getUserInfoById = async (userId) => {
 
 export const sendMessage = async (message) => {
   try {
-    console.log("Sending message to chatbot:", message)
-    console.log("API URL:", `${ApiService.BASE_URL}/api/v1/chatbot/ask`)
 
     const response = await axios.post(
       `${ApiService.BASE_URL}/api/v1/chatbot/ask`,
@@ -86,8 +82,6 @@ export const sendMessage = async (message) => {
         },
       },
     )
-
-    console.log("Chatbot response:", response.data)
 
     if (typeof response.data === "string" && response.data.includes("<!DOCTYPE html")) {
       throw new Error("Unauthorized: HTML login page received")

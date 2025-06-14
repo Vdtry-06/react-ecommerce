@@ -26,7 +26,6 @@ const UserDetailPage = () => {
     setLoading(true)
     try {
       const response = await ApiService.User.getUserInfoById(id)
-      console.log("User info response:", response)
       setUser(response.data)
     } catch (error) {
       message.error(error.response?.data?.message || "Không thể tải thông tin người dùng")

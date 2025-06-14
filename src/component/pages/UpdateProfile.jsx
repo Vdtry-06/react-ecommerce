@@ -38,10 +38,6 @@ export default function UpdateProfile({ userInfo, onUpdate, onCancel }) {
         formData.append("dateOfBirth", values.dateOfBirth.format("YYYY-MM-DD"));
       if (imageFile) formData.append("file", imageFile);
 
-      console.log("Form values:", values);
-      for (const pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
 
       await onUpdate(userInfo.id, formData);
       showNotification("Cập nhật thông tin thành công", "success");

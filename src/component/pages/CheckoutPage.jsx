@@ -17,7 +17,6 @@ const CheckoutPage = () => {
     if (state) {
       const sourceState = state.checkoutState || state;
       setSelectedItems(sourceState.selectedItems || []);
-      console.log(sourceState.selectedItems);
       const calculatedTotal = sourceState.selectedItems.reduce((sum, item) => {
         const toppingTotal = item.toppingIds.reduce((toppingSum, toppingId) => {
           return toppingSum + (item.toppingPrices?.[toppingId] || 0);
@@ -84,8 +83,6 @@ const CheckoutPage = () => {
 
       const userInfo = await ApiService.User.getMyInfo();
       const userId = userInfo.data.id;
-      console.log(selectedItems);
-      console.log(totalPrice);
       const selectedProductIds = selectedItems.map((item) => item.id);
       const response = await ApiService.Payment.createVNPayPaymentForSelectedItems({
         userId,

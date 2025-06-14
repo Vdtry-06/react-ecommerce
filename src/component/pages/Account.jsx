@@ -43,13 +43,7 @@ const Account = () => {
 
   const handleUpdateProfile = async (userId, formData) => {
     try {
-      console.log("Sending update for user ID:", userId);
-      for (const pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-
       const updateResponse = await ApiService.User.updateUser(userId, formData);
-      console.log("Update response:", updateResponse);
 
       const userResponse = await ApiService.User.getMyInfo();
       setUserInfo(userResponse.data);
