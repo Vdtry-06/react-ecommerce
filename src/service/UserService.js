@@ -12,7 +12,6 @@ export const getMyInfo = async () => {
     if (typeof response.data === "string" && response.data.includes("<!DOCTYPE html")) {
       throw new Error("Unauthorized: HTML login page received");
     }
-    console.log("API getMyInfo response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error in getMyInfo:", error);
