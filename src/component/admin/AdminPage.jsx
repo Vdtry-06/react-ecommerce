@@ -54,10 +54,10 @@ const AdminPage = () => {
         <Sider
           width={250}
           style={{
-            background: "linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
+            background: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
             position: "fixed",
             height: "100%",
-            marginTop: -23,
+            marginTop: -26,
             overflowY: "auto",
             zIndex: 999,
             borderRight: "1px solid #e2e8f0",
@@ -82,6 +82,7 @@ const AdminPage = () => {
                 borderRadius: "8px",
                 height: "48px",
                 lineHeight: "48px",
+                color: "#fff",
               },
             }))}
             onClick={handleMenuClick}
@@ -92,7 +93,7 @@ const AdminPage = () => {
           style={{
             marginLeft: 250,
             padding: "0 24px 24px",
-            marginTop: -18,
+            marginTop: -21,
             background: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
             minHeight: "calc(100vh - 64px)",
           }}
