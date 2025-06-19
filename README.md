@@ -73,17 +73,29 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ### 1. Login
 
-![alt text](data/image-27.png)
+![alt text](data/image-69.png)
+![alt text](data/image-60.png)
 
-### 2. Register
+### 2.1. Register
 
-![alt text](data/image-32.png)
-![alt text](data/image-33.png)
+![alt text](data/image-68.png)
+![alt text](data/image-67.png)
+
+### 2.2. Verify
+
+![alt text](data/image-63.png)
+![alt text](data/image-64.png)
+
+### 2.3. Resend code
+
+![alt text](data/image-65.png)
+![alt text](data/image-66.png)
 
 ### 3. Forgot Password
 
-![alt text](data/image-30.png)
-![alt text](data/image-31.png)
+![alt text](data/image-70.png)
+![alt text](data/image-61.png)
+![alt text](data/image-71.png)
 
 # User
 
@@ -127,7 +139,12 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ![alt text](data/image-52.png)
 ![alt text](data/image-53.png)
+![alt text](data/image-79.png)
 ![alt text](data/image-55.png)
+![alt text](data/image-80.png)
+![alt text](data/image-72.png)
+![alt text](data/image-73.png)
+![alt text](data/image-74.png)
 ![alt text](data/image-54.png)
 
 ### 7. Paid Order
@@ -136,7 +153,14 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ### 8. Cancelled Order
 
+![alt text](data/image-75.png)
+![alt text](data/image-76.png)
 ![alt text](data/image-51.png)
+
+### 9. Cart expired
+
+![alt text](data/image-77.png)
+![alt text](data/image-78.png)
 
 # Admin
 
