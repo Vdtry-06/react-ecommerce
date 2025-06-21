@@ -20,19 +20,16 @@ const OAuthCallbackPage = () => {
       return
     }
 
-    // Store token in localStorage
     setToken(token)
     localStorage.setItem("isLoggedIn", "true")
     if (role) {
       localStorage.setItem("role", role)
     }
 
-    // If this page was opened in a popup, send message to parent
     if (window.opener && !window.opener.closed) {
       window.opener.postMessage({ token, role }, "*")
       window.close()
     } else {
-      // Otherwise redirect
       setStatus("Success! Redirecting...")
       setTimeout(() => {
         navigate("/")

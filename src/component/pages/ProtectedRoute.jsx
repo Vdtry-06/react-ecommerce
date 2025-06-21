@@ -7,10 +7,8 @@ export const ProtectedRoute = ({ element: Component }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null)
 
   useEffect(() => {
-    // Check authentication status
     setIsAuthenticated(ApiService.isAuthenticated())
 
-    // Listen for auth changes
     const handleAuthChange = () => {
       setIsAuthenticated(ApiService.isAuthenticated())
     }
@@ -23,7 +21,7 @@ export const ProtectedRoute = ({ element: Component }) => {
   }, [])
 
   if (isAuthenticated === null) {
-    return <div>Loading...</div> // Show loading while checking auth
+    return <div>Loading...</div>
   }
 
   return isAuthenticated ? Component : <Navigate to="/login" replace state={{ from: location }} />
@@ -34,10 +32,8 @@ export const AdminRoute = ({ element: Component }) => {
   const [isAdmin, setIsAdmin] = useState(null)
 
   useEffect(() => {
-    // Check admin status
     setIsAdmin(ApiService.isAdmin())
 
-    // Listen for auth changes
     const handleAuthChange = () => {
       setIsAdmin(ApiService.isAdmin())
     }
@@ -49,7 +45,7 @@ export const AdminRoute = ({ element: Component }) => {
     }
   }, [])
 
-  if (isAdmin === null) return <div>Loading...</div> // Wait for admin check
+  if (isAdmin === null) return <div>Loading...</div> 
 
   return isAdmin ? Component : <Navigate to="/" replace state={{ from: location }} />
 }
