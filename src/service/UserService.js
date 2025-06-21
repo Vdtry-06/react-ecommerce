@@ -54,7 +54,9 @@ export const getAllUsers = async () => {
 };
 
 export const deleteUser = async (userId) => {
-  const response = await axios.delete(`${ApiService.BASE_URL}/api/v1/auth/users/${userId}`);
+  const response = await axios.delete(`${ApiService.BASE_URL}/api/v1/auth/users/${userId}`, {
+    headers: ApiService.getHeader(),
+  });
   return response.data;
 };
 

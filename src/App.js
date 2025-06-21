@@ -36,7 +36,7 @@ import UserDetailPage from "./component/admin/UserDetailPage";
 import AdminReviewsPage from "./component/admin/AdminReviewsPage";
 import AdminOrdersPage from "./component/admin/AdminOrdersPage";
 import OrderDetailPage from "./component/admin/OrderDetailPage";
-import ToppingManagement from "./component/admin/ToppingManagement";
+import AdminToppingPage from "./component/admin/AdminToppingPage";
 import Chatbot from "./component/common/Chatbot";
 
 function Layout({ children }) {
@@ -92,7 +92,7 @@ function App() {
                   <Route path="users" element={<AdminUserPage />} />
                   <Route path="user-detail/:userId" element={<UserDetailPage />} />
                   <Route path="reviews" element={<AdminReviewsPage />} />
-                  <Route path="toppings" element={<ToppingManagement />} />
+                  <Route path="toppings" element={<AdminToppingPage />} />
                 </Route>
               </Routes>
             </div>

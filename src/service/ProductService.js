@@ -45,7 +45,7 @@ export const getAllProduct = async () => {
 };
 
 export const deleteProduct = async (id) => {
-  const response = await axios.delete(`${ApiService.BASE_URL}/api/v1/product/${id}`, {
+  const response = await axios.delete(`${ApiService.BASE_URL}/api/v1/product/delete/${id}`, {
     headers: ApiService.getHeader(),
   });
   return response;
