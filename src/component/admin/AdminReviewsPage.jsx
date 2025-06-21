@@ -1,5 +1,18 @@
-import { useEffect, useState } from "react"
-import { Table, Button, Space, Rate, message, Modal, Form, Input, Switch, Card, Typography, Statistic } from "antd"
+import { useEffect, useState } from "react";
+import {
+  Table,
+  Button,
+  Space,
+  Rate,
+  message,
+  Modal,
+  Form,
+  Input,
+  Switch,
+  Card,
+  Typography,
+  Statistic,
+} from "antd";
 import {
   StarOutlined,
   EditOutlined,
@@ -7,110 +20,126 @@ import {
   EyeOutlined,
   EyeInvisibleOutlined,
   CalendarOutlined,
-} from "@ant-design/icons"
-import ApiService from "../../service/ApiService"
+} from "@ant-design/icons";
+import ApiService from "../../service/ApiService";
 
-const { Title } = Typography
-const { TextArea } = Input
+const { Title } = Typography;
+const { TextArea } = Input;
 
 const AdminReviewsPage = () => {
-  const [reviews, setReviews] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [editingReview, setEditingReview] = useState(null)
-  const [form] = Form.useForm()
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [form] = Form.useForm();
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState(null);
 
   useEffect(() => {
-    fetchReviews()
-  }, [])
+    fetchReviews();
+  }, []);
 
   const fetchReviews = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await ApiService.Review.getAllReviews()
+      const response = await ApiService.Review.getAllReviews();
       const sortedReviews = (response.data || []).sort((a, b) => {
-        if (a.visible !== b.visible) return b.visible ? -1 : 1
-        return new Date(b.reviewDate) - new Date(a.reviewDate)
-      })
-      setReviews(sortedReviews)
+        if (a.visible !== b.visible) return b.visible ? -1 : 1;
+        return new Date(b.reviewDate) - new Date(a.reviewDate);
+      });
+      setReviews(sortedReviews);
     } catch (error) {
-      message.error("Không thể tải danh sách đánh giá")
-      console.error("Error fetching reviews:", error)
+      message.error("Không thể tải danh sách đánh giá");
+      console.error("Error fetching reviews:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleDelete = async (reviewId) => {
-    Modal.confirm({
-      title: "Xác nhận xóa đánh giá",
-      content: "Bạn có chắc chắn muốn xóa đánh giá này? Hành động này không thể hoàn tác.",
-      okText: "Xóa",
-      cancelText: "Hủy",
-      okType: "danger",
-      onOk: async () => {
-        try {
-          setLoading(true)
-          await ApiService.Review.deleteReview(reviewId)
-          message.success("Đánh giá đã được xóa thành công")
-          setReviews((prevReviews) => prevReviews.filter((review) => review.id !== reviewId))
-        } catch (error) {
-          message.error("Không thể xóa đánh giá")
-          console.error("Error deleting review:", error)
-        } finally {
-          setLoading(false)
-        }
-      },
-    })
-  }
+  const handleDelete = (reviewId) => {
+    setReviewToDelete(reviewId);
+    setIsDeleteModalVisible(true);
+  };
+
+  const handelDeleteOk = async () => {
+    setLoading(true);
+    try {
+      await ApiService.Review.deleteReview(reviewToDelete);
+      message.success("Đánh giá đã được xóa thành công");
+      setReviews((prevReviews) =>
+        prevReviews.filter((review) => review.id !== reviewToDelete)
+      );
+    } catch (error) {
+      message.error("Không thể xóa đánh giá");
+      console.error("Error deleting review:", error);
+    } finally {
+      setLoading(false);
+      setIsDeleteModalVisible(false);
+      setReviewToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalVisible(false);
+    setReviewToDelete(null);
+  };
 
   const handleToggleVisibility = async (reviewId, currentVisibility) => {
     try {
       setReviews((prevReviews) =>
-        prevReviews.map((review) => (review.id === reviewId ? { ...review, visible: !currentVisibility } : review)),
-      )
-      await ApiService.Review.toggleVisibility(reviewId)
-      message.success(`Đánh giá đã được ${currentVisibility ? "ẩn" : "hiển thị"} thành công`)
+        prevReviews.map((review) =>
+          review.id === reviewId
+            ? { ...review, visible: !currentVisibility }
+            : review
+        )
+      );
+      await ApiService.Review.toggleVisibility(reviewId);
+      message.success(
+        `Đánh giá đã được ${currentVisibility ? "ẩn" : "hiển thị"} thành công`
+      );
     } catch (error) {
-      message.error("Không thể thay đổi trạng thái hiển thị")
-      console.error("Error toggling visibility:", error)
-      fetchReviews()
+      message.error("Không thể thay đổi trạng thái hiển thị");
+      console.error("Error toggling visibility:", error);
+      fetchReviews();
     }
-  }
+  };
 
   const handleEdit = (record) => {
-    setEditingReview(record)
+    setEditingReview(record);
     form.setFieldsValue({
       ratingScore: record.ratingScore,
       comment: record.comment,
-    })
-  }
+    });
+  };
 
   const handleUpdate = async (values) => {
     try {
-      setLoading(true)
+      setLoading(true);
       await ApiService.Review.adminUpdateReview(editingReview.id, {
         ratingScore: values.ratingScore,
         comment: values.comment,
-      })
-      message.success("Đánh giá đã được cập nhật thành công")
-      setEditingReview(null)
-      form.resetFields()
-      fetchReviews()
+      });
+      message.success("Đánh giá đã được cập nhật thành công");
+      setEditingReview(null);
+      form.resetFields();
+      fetchReviews();
     } catch (error) {
-      message.error("Không thể cập nhật đánh giá")
-      console.error("Error updating review:", error)
+      message.error("Không thể cập nhật đánh giá");
+      console.error("Error updating review:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleCancel = () => {
-    setEditingReview(null)
-    form.resetFields()
-  }
+    setEditingReview(null);
+    form.resetFields();
+  };
 
-  const visibleReviews = reviews.filter((r) => r.visible).length
-  const averageRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.ratingScore, 0) / reviews.length : 0
+  const visibleReviews = reviews.filter((r) => r.visible).length;
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.ratingScore, 0) / reviews.length
+      : 0;
 
   const columns = [
     {
@@ -180,7 +209,9 @@ const AdminReviewsPage = () => {
       render: (rating) => (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Rate disabled value={rating} style={{ fontSize: "16px" }} />
-          <span style={{ fontWeight: "600", color: "#f59e0b" }}>({rating})</span>
+          <span style={{ fontWeight: "600", color: "#f59e0b" }}>
+            ({rating})
+          </span>
         </div>
       ),
     },
@@ -190,7 +221,9 @@ const AdminReviewsPage = () => {
       key: "comment",
       ellipsis: true,
       render: (comment) => (
-        <span style={{ color: "#64748b", fontSize: "14px" }}>{comment || "Không có bình luận"}</span>
+        <span style={{ color: "#64748b", fontSize: "14px" }}>
+          {comment || "Không có bình luận"}
+        </span>
       ),
     },
     {
@@ -200,7 +233,9 @@ const AdminReviewsPage = () => {
       render: (date) => (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <CalendarOutlined style={{ color: "#64748b" }} />
-          <span style={{ color: "#64748b", fontSize: "13px" }}>{new Date(date).toLocaleString("vi-VN")}</span>
+          <span style={{ color: "#64748b", fontSize: "13px" }}>
+            {new Date(date).toLocaleString("vi-VN")}
+          </span>
         </div>
       ),
       sorter: (a, b) => new Date(b.reviewDate) - new Date(a.reviewDate),
@@ -261,7 +296,7 @@ const AdminReviewsPage = () => {
         </Space>
       ),
     },
-  ]
+  ];
 
   return (
     <div style={{ padding: "24px" }}>
@@ -300,7 +335,6 @@ const AdminReviewsPage = () => {
         </Title>
       </div>
 
-      {/* Statistics Cards */}
       <div
         style={{
           display: "grid",
@@ -319,9 +353,19 @@ const AdminReviewsPage = () => {
           bodyStyle={{ padding: "24px" }}
         >
           <Statistic
-            title={<span style={{ color: "rgba(255,255,255,0.9)", fontSize: "16px" }}>Tổng đánh giá</span>}
+            title={
+              <span
+                style={{ color: "rgba(255,255,255,0.9)", fontSize: "16px" }}
+              >
+                Tổng đánh giá
+              </span>
+            }
             value={reviews.length}
-            valueStyle={{ color: "#ffffff", fontSize: "28px", fontWeight: "700" }}
+            valueStyle={{
+              color: "#ffffff",
+              fontSize: "28px",
+              fontWeight: "700",
+            }}
             prefix={<StarOutlined style={{ color: "#ffffff" }} />}
           />
         </Card>
@@ -336,9 +380,19 @@ const AdminReviewsPage = () => {
           bodyStyle={{ padding: "24px" }}
         >
           <Statistic
-            title={<span style={{ color: "rgba(255,255,255,0.9)", fontSize: "16px" }}>Đánh giá hiển thị</span>}
+            title={
+              <span
+                style={{ color: "rgba(255,255,255,0.9)", fontSize: "16px" }}
+              >
+                Đánh giá hiển thị
+              </span>
+            }
             value={visibleReviews}
-            valueStyle={{ color: "#ffffff", fontSize: "28px", fontWeight: "700" }}
+            valueStyle={{
+              color: "#ffffff",
+              fontSize: "28px",
+              fontWeight: "700",
+            }}
             prefix={<EyeOutlined style={{ color: "#ffffff" }} />}
           />
         </Card>
@@ -353,10 +407,26 @@ const AdminReviewsPage = () => {
           bodyStyle={{ padding: "24px" }}
         >
           <Statistic
-            title={<span style={{ color: "rgba(255,255,255,0.9)", fontSize: "16px" }}>Điểm trung bình</span>}
+            title={
+              <span
+                style={{ color: "rgba(255,255,255,0.9)", fontSize: "16px" }}
+              >
+                Điểm trung bình
+              </span>
+            }
             value={averageRating.toFixed(1)}
-            valueStyle={{ color: "#ffffff", fontSize: "28px", fontWeight: "700" }}
-            suffix={<span style={{ color: "rgba(255,255,255,0.8)", fontSize: "16px" }}>/5</span>}
+            valueStyle={{
+              color: "#ffffff",
+              fontSize: "28px",
+              fontWeight: "700",
+            }}
+            suffix={
+              <span
+                style={{ color: "rgba(255,255,255,0.8)", fontSize: "16px" }}
+              >
+                /5
+              </span>
+            }
           />
         </Card>
       </div>
@@ -380,15 +450,24 @@ const AdminReviewsPage = () => {
             showSizeChanger: true,
             pageSizeOptions: ["10", "20", "50"],
             showQuickJumper: true,
-            showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} đánh giá`,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} của ${total} đánh giá`,
           }}
           style={{ borderRadius: "16px", overflow: "hidden" }}
           rowClassName={(record) => (record.visible ? "" : "opacity-60")}
           locale={{
             emptyText: (
               <div style={{ padding: "40px", textAlign: "center" }}>
-                <StarOutlined style={{ fontSize: "48px", color: "#cbd5e1", marginBottom: "16px" }} />
-                <p style={{ color: "#64748b", fontSize: "16px", margin: 0 }}>Chưa có đánh giá nào từ khách hàng</p>
+                <StarOutlined
+                  style={{
+                    fontSize: "48px",
+                    color: "#cbd5e1",
+                    marginBottom: "16px",
+                  }}
+                />
+                <p style={{ color: "#64748b", fontSize: "16px", margin: 0 }}>
+                  Chưa có đánh giá nào từ khách hàng
+                </p>
               </div>
             ),
           }}
@@ -408,24 +487,52 @@ const AdminReviewsPage = () => {
         width={600}
         style={{ borderRadius: "16px" }}
       >
-        <Form form={form} onFinish={handleUpdate} layout="vertical" style={{ marginTop: "24px" }}>
+        <Form
+          form={form}
+          onFinish={handleUpdate}
+          layout="vertical"
+          style={{ marginTop: "24px" }}
+        >
           <Form.Item
             name="ratingScore"
-            label={<span style={{ fontWeight: "600", color: "#1e293b" }}>Điểm đánh giá</span>}
-            rules={[{ required: true, message: "Vui lòng chọn điểm đánh giá!" }]}
+            label={
+              <span style={{ fontWeight: "600", color: "#1e293b" }}>
+                Điểm đánh giá
+              </span>
+            }
+            rules={[
+              { required: true, message: "Vui lòng chọn điểm đánh giá!" },
+            ]}
           >
             <Rate style={{ fontSize: "24px" }} />
           </Form.Item>
           <Form.Item
             name="comment"
-            label={<span style={{ fontWeight: "600", color: "#1e293b" }}>Bình luận</span>}
+            label={
+              <span style={{ fontWeight: "600", color: "#1e293b" }}>
+                Bình luận
+              </span>
+            }
             rules={[{ required: true, message: "Vui lòng nhập bình luận!" }]}
           >
-            <TextArea rows={4} placeholder="Nhập bình luận..." style={{ borderRadius: "8px" }} />
+            <TextArea
+              rows={4}
+              placeholder="Nhập bình luận..."
+              style={{ borderRadius: "8px" }}
+            />
           </Form.Item>
           <Form.Item style={{ marginTop: "32px", marginBottom: 0 }}>
-            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-              <Button onClick={handleCancel} style={{ height: "40px", borderRadius: "8px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                onClick={handleCancel}
+                style={{ height: "40px", borderRadius: "8px" }}
+              >
                 Hủy bỏ
               </Button>
               <Button
@@ -446,8 +553,20 @@ const AdminReviewsPage = () => {
           </Form.Item>
         </Form>
       </Modal>
+      <Modal
+        title="Xác nhận xóa danh mục"
+        open={isDeleteModalVisible}
+        onOk={handelDeleteOk}
+        onCancel={handleDeleteCancel}
+        okText="Xóa"
+        cancelText="Hủy"
+        okButtonProps={{ danger: true }}
+      >
+        Bạn có chắc chắn muốn xóa đánh giá này? Hành động này không thể hoàn
+        tác.
+      </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default AdminReviewsPage
+export default AdminReviewsPage;
