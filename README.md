@@ -166,47 +166,55 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ### 1. Dashboard
 
-![alt text](data/image.png)
-![alt text](data/image-2.png)
-![alt text](data/image-3.png)
-![alt text](data/image-4.png)
-![alt text](data/image-5.png)
-![alt text](data/image-6.png)
-![alt text](data/image-7.png)
+![alt text](<data/Screenshot 2025-06-21 205910.png>)
+![alt text](<data/Screenshot 2025-06-21 210006.png>)
+![alt text](<data/Screenshot 2025-06-21 210020.png>)
+![alt text](<data/Screenshot 2025-06-21 210051.png>)
+![alt text](<data/Screenshot 2025-06-21 210109.png>)
+![alt text](<data/Screenshot 2025-06-21 210129.png>)
+![alt text](<data/Screenshot 2025-06-21 210147.png>)
 
 ### 2. Categories Management
 
-![alt text](data/image-8.png)
-![alt text](data/image-56.png)
-![alt text](data/image-57.png)
+![alt text](<data/Screenshot 2025-06-21 210208.png>)
+![alt text](<data/Screenshot 2025-06-21 210224.png>)
+![alt text](<data/Screenshot 2025-06-21 210240.png>)
+![alt text](<data/Screenshot 2025-06-21 210252.png>)
 
 ### 3. Product Management
 
-![alt text](data/image-11.png)
-![alt text](data/image-12.png)
-![alt text](data/image-13.png)
-![alt text](data/image-14.png)
-![alt text](data/image-15.png)
+![alt text](<data/Screenshot 2025-06-21 210314.png>)
+![alt text](<data/Screenshot 2025-06-21 210358.png>)
+![alt text](<data/Screenshot 2025-06-21 210432.png>)
+![alt text](<data/Screenshot 2025-06-21 210501.png>)
+![alt text](<data/Screenshot 2025-06-21 210532.png>)
+![alt text](<data/Screenshot 2025-06-21 210602.png>)
+![alt text](<data/Screenshot 2025-06-21 210628.png>)
+![alt text](<data/Screenshot 2025-06-21 210640.png>)
+![alt text](<data/Screenshot 2025-06-21 210709.png>)
+![alt text](<data/Screenshot 2025-06-21 210729.png>)
 
 ### 4. Orders Management
 
-![alt text](data/image-16.png)
-![alt text](data/image-17.png)
-![alt text](data/image-18.png)
-![alt text](data/image-19.png)
+![alt text](<data/Screenshot 2025-06-21 210743.png>)
+![alt text](<data/Screenshot 2025-06-21 210803.png>)
 
 ### 5. User Management
 
-![alt text](data/image-20.png)
-![alt text](data/image-21.png)
-![alt text](data/image-22.png)
+![alt text](<data/Screenshot 2025-06-21 210857.png>)
+![alt text](<data/Screenshot 2025-06-21 210955.png>)
+![alt text](<data/Screenshot 2025-06-21 211103.png>)
 
 ### 6. Review Management
 
-![alt text](data/image-23.png)
-![alt text](data/image-24.png)
+![alt text](<data/Screenshot 2025-06-21 211127.png>)
+![alt text](<data/Screenshot 2025-06-21 211142.png>)
+![alt text](<data/Screenshot 2025-06-21 211204.png>)
+![alt text](data/image-27.png)
 
 ### 7. Toppings Management
 
-![alt text](data/image-25.png)
-![alt text](data/image-26.png)
+![alt text](data/image-28.png)
+![alt text](data/image-29.png)
+![alt text](data/image-30.png)
+![alt text](data/image-31.png)
