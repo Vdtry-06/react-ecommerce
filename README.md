@@ -70,29 +70,37 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 # Page
+
 ### 1. Login
+
 ![alt text](data/image-69.png)
 ![alt text](data/image-60.png)
 
 ### 2.1. Register
+
 ![alt text](data/image-68.png)
 ![alt text](data/image-67.png)
 
 ### 2.2. Verify
+
 ![alt text](data/image-63.png)
 ![alt text](data/image-64.png)
 
 ### 2.3. Resend code
+
 ![alt text](data/image-65.png)
 ![alt text](data/image-66.png)
 
 ### 3. Forgot Password
+
 ![alt text](data/image-70.png)
 ![alt text](data/image-61.png)
 ![alt text](data/image-71.png)
 
 # User
+
 ### 1. Beverage Page
+
 ![alt text](data/image-34.png)
 ![alt text](data/image-35.png)
 ![alt text](data/image-36.png)
@@ -101,28 +109,34 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ![alt text](data/image-39.png)
 
 ### 2. Home
+
 ![alt text](data/image-40.png)
 ![alt text](data/image-41.png)
 
 ### 2.1. Chatbot
+
 ![alt text](data/image-58.png)
 ![alt text](data/image-59.png)
 
 ### 3. Product Detail
+
 ![alt text](data/image-42.png)
 ![alt text](data/image-44.png)
 ![alt text](data/image-45.png)
 ![alt text](data/image-43.png)
 
 ### 4. Cart Page
+
 ![alt text](data/image-46.png)
 ![alt text](data/image-47.png)
 
 ### 5. Account Page
+
 ![alt text](data/image-48.png)
 ![alt text](data/image-49.png)
 
 ### 6. Checkout Page
+
 ![alt text](data/image-52.png)
 ![alt text](data/image-53.png)
 ![alt text](data/image-79.png)
@@ -134,62 +148,72 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ![alt text](data/image-54.png)
 
 ### 7. Paid Order
+
 ![alt text](data/image-50.png)
 
 ### 8. Cancelled Order
+
 ![alt text](data/image-75.png)
 ![alt text](data/image-76.png)
 ![alt text](data/image-51.png)
 
 ### 9. Cart expired
+
 ![alt text](data/image-77.png)
 ![alt text](data/image-78.png)
 
 # Admin
+
 ### 1. Dashboard
-![alt text](<data\Screenshot 2025-06-21 205910.png>)
-![alt text](<data\Screenshot 2025-06-21 210006.png>)
-![alt text](<data\Screenshot 2025-06-21 210020.png>)
-![alt text](<data\Screenshot 2025-06-21 210051.png>)
-![alt text](<data\Screenshot 2025-06-21 210109.png>)
-![alt text](<data\Screenshot 2025-06-21 210129.png>)
-![alt text](<data\Screenshot 2025-06-21 210147.png>)
+
+![alt text](<data/Screenshot 2025-06-21 205910.png>)
+![alt text](<data/Screenshot 2025-06-21 210006.png>)
+![alt text](<data/Screenshot 2025-06-21 210020.png>)
+![alt text](<data/Screenshot 2025-06-21 210051.png>)
+![alt text](<data/Screenshot 2025-06-21 210109.png>)
+![alt text](<data/Screenshot 2025-06-21 210129.png>)
+![alt text](<data/Screenshot 2025-06-21 210147.png>)
 
 ### 2. Categories Management
-![alt text](<data\Screenshot 2025-06-21 210208.png>)
-![alt text](<data\Screenshot 2025-06-21 210224.png>)
-![alt text](<data\Screenshot 2025-06-21 210240.png>)
-![alt text](<data\Screenshot 2025-06-21 210252.png>)
+
+![alt text](<data/Screenshot 2025-06-21 210208.png>)
+![alt text](<data/Screenshot 2025-06-21 210224.png>)
+![alt text](<data/Screenshot 2025-06-21 210240.png>)
+![alt text](<data/Screenshot 2025-06-21 210252.png>)
 
 ### 3. Product Management
 
-![alt text](<data\Screenshot 2025-06-21 210314.png>)
-![alt text](<data\Screenshot 2025-06-21 210358.png>)
-![alt text](<data\Screenshot 2025-06-21 210432.png>)
-![alt text](<data\Screenshot 2025-06-21 210501.png>)
-![alt text](<data\Screenshot 2025-06-21 210532.png>)
-![alt text](<data\Screenshot 2025-06-21 210602.png>)
-![alt text](<data\Screenshot 2025-06-21 210628.png>)
-![alt text](<data\Screenshot 2025-06-21 210640.png>)
-![alt text](<data\Screenshot 2025-06-21 210709.png>)
-![alt text](<data\Screenshot 2025-06-21 210729.png>)
+![alt text](<data/Screenshot 2025-06-21 210314.png>)
+![alt text](<data/Screenshot 2025-06-21 210358.png>)
+![alt text](<data/Screenshot 2025-06-21 210432.png>)
+![alt text](<data/Screenshot 2025-06-21 210501.png>)
+![alt text](<data/Screenshot 2025-06-21 210532.png>)
+![alt text](<data/Screenshot 2025-06-21 210602.png>)
+![alt text](<data/Screenshot 2025-06-21 210628.png>)
+![alt text](<data/Screenshot 2025-06-21 210640.png>)
+![alt text](<data/Screenshot 2025-06-21 210709.png>)
+![alt text](<data/Screenshot 2025-06-21 210729.png>)
 
 ### 4. Orders Management
-![alt text](<data\Screenshot 2025-06-21 210743.png>)
-![alt text](<data\Screenshot 2025-06-21 210803.png>)
+
+![alt text](<data/Screenshot 2025-06-21 210743.png>)
+![alt text](<data/Screenshot 2025-06-21 210803.png>)
 
 ### 5. User Management
-![alt text](<data\Screenshot 2025-06-21 210857.png>)
-![alt text](<data\Screenshot 2025-06-21 210955.png>)
-![alt text](<data\Screenshot 2025-06-21 211103.png>)
+
+![alt text](<data/Screenshot 2025-06-21 210857.png>)
+![alt text](<data/Screenshot 2025-06-21 210955.png>)
+![alt text](<data/Screenshot 2025-06-21 211103.png>)
 
 ### 6. Review Management
-![alt text](<data\Screenshot 2025-06-21 211127.png>)
-![alt text](<data\Screenshot 2025-06-21 211142.png>)
-![alt text](<data\Screenshot 2025-06-21 211204.png>)
+
+![alt text](<data/Screenshot 2025-06-21 211127.png>)
+![alt text](<data/Screenshot 2025-06-21 211142.png>)
+![alt text](<data/Screenshot 2025-06-21 211204.png>)
 ![alt text](data/image-27.png)
 
 ### 7. Toppings Management
+
 ![alt text](data/image-28.png)
 ![alt text](data/image-29.png)
 ![alt text](data/image-30.png)
