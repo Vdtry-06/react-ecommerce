@@ -28,7 +28,6 @@ const Home = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  // Fetch categories once on mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -60,7 +59,6 @@ const Home = () => {
       } else {
         const response = await ApiService.Product.getAllProduct(currentPage, itemsPerPage);
         allProducts = response.data || [];
-        // Assume API returns total count for pagination
         const totalCount = response.headers?.["x-total-count"] || allProducts.length;
         setTotalPages(Math.ceil(totalCount / itemsPerPage));
       }
