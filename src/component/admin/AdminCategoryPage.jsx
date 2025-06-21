@@ -1,91 +1,123 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { Button, Table, Form, Input, Modal, message, Typography, Space, Card } from "antd"
-import { PlusOutlined, EditOutlined, DeleteOutlined, AppstoreOutlined } from "@ant-design/icons"
-import ApiService from "../../service/ApiService"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Table,
+  Form,
+  Input,
+  Modal,
+  message,
+  Typography,
+  Space,
+  Card,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  AppstoreOutlined,
+} from "@ant-design/icons";
+import ApiService from "../../service/ApiService";
 
-const { Title } = Typography
-const { TextArea } = Input
+const { Title } = Typography;
+const { TextArea } = Input;
 
 const AdminCategoryPage = () => {
-  const navigate = useNavigate()
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [editingCategory, setEditingCategory] = useState(null)
-  const [form] = Form.useForm()
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [form] = Form.useForm();
 
   useEffect(() => {
-    fetchCategories()
-  }, [])
+    fetchCategories();
+  }, []);
 
   const fetchCategories = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await ApiService.Category.getAllCategories()
-      setCategories(response.data || [])
+      const response = await ApiService.Category.getAllCategories();
+      setCategories(response.data || []);
     } catch (error) {
-      message.error("Không thể tải danh sách danh mục")
-      console.error("Error fetching category list:", error)
+      message.error("Không thể tải danh sách danh mục");
+      console.error("Error fetching category list:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async (values) => {
-    setLoading(true)
+    setLoading(true);
     try {
       if (editingCategory) {
-        const response = await ApiService.Category.updateCategory(editingCategory.id, values)
-        setCategories(categories.map((c) => (c.id === editingCategory.id ? response.data : c)))
-        message.success("Danh mục đã được cập nhật thành công")
+        const response = await ApiService.Category.updateCategory(
+          editingCategory.id,
+          values
+        );
+        setCategories(
+          categories.map((c) =>
+            c.id === editingCategory.id ? response.data : c
+          )
+        );
+        message.success("Danh mục đã được cập nhật thành công");
       } else {
-        const response = await ApiService.Category.addCategory(values)
-        setCategories([...categories, response.data])
-        message.success("Danh mục đã được thêm thành công")
+        const response = await ApiService.Category.addCategory(values);
+        setCategories([...categories, response.data]);
+        message.success("Danh mục đã được thêm thành công");
       }
-      setIsModalVisible(false)
-      form.resetFields()
-      setEditingCategory(null)
+      setIsModalVisible(false);
+      form.resetFields();
+      setEditingCategory(null);
     } catch (error) {
-      message.error(`Không thể ${editingCategory ? "cập nhật" : "thêm"} danh mục`)
-      console.error("Error saving category:", error)
+      message.error(
+        `Không thể ${editingCategory ? "cập nhật" : "thêm"} danh mục`
+      );
+      console.error("Error saving category:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDelete = async (categoryId) => {
-    Modal.confirm({
-      title: "Xác nhận xóa danh mục",
-      content: "Bạn có chắc chắn muốn xóa danh mục này? Hành động này không thể hoàn tác.",
-      okText: "Xóa",
-      cancelText: "Hủy",
-      okType: "danger",
-      onOk: async () => {
-        setLoading(true)
-        try {
-          await ApiService.Category.deleteCategory(categoryId)
-          setCategories(categories.filter((c) => c.id !== categoryId))
-          message.success("Danh mục đã được xóa thành công")
-        } catch (error) {
-          message.error("Không thể xóa: Danh mục này có thể đang được liên kết với sản phẩm.")
-          console.error("Error deleting category:", error)
-        } finally {
-          setLoading(false)
-        }
-      },
-    })
-  }
+    console.log("Deleting category with ID:", categoryId);
+    setCategoryToDelete(categoryId);
+    setIsDeleteModalVisible(true);
+  };
 
   const showModal = (category = null) => {
-    setEditingCategory(category)
+    setEditingCategory(category);
     if (category) {
-      form.setFieldsValue(category)
+      form.setFieldsValue(category);
     } else {
-      form.resetFields()
+      form.resetFields();
     }
-    setIsModalVisible(true)
+    setIsModalVisible(true);
+  };
+  
+
+  const handleDeleteOk = async () => {
+    console.log("Confirmed deletion for category ID:", categoryToDelete);
+    setLoading(true);
+    try {
+      await ApiService.Category.deleteCategory(categoryToDelete);
+      setCategories(categories.filter((c) => c.id !== categoryToDelete));
+      message.success("Danh mục đã được xóa thành công");
+    } catch (error) {
+      message.error("Không thể xóa: Danh mục này có thể đang được liên kết với sản phẩm.");
+      console.error("Error deleting category:", error);
+    } finally {
+      setLoading(false);
+      setIsDeleteModalVisible(false);
+      setCategoryToDelete(null);
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    console.log("Modal cancelled");
+    setIsDeleteModalVisible(false);
+    setCategoryToDelete(null);
   }
 
   const columns = [
@@ -114,47 +146,56 @@ const AdminCategoryPage = () => {
       dataIndex: "name",
       key: "name",
       fixed: "left",
-      render: (name) => <span style={{ fontWeight: "600", color: "#1e293b", fontSize: "14px" }}>{name}</span>,
+      render: (name) => (
+        <span style={{ fontWeight: "600", color: "#1e293b", fontSize: "14px" }}>
+          {name}
+        </span>
+      ),
     },
     {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
-      render: (text) => <span style={{ color: "#64748b" }}>{text || "Không có mô tả"}</span>,
+      render: (text) => (
+        <span style={{ color: "#64748b" }}>{text || "Không có mô tả"}</span>
+      ),
     },
     {
       title: "Thao tác",
       key: "actions",
       align: "center",
       fixed: "right",
-      render: (_, record) => (
-        <Space size="small">
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => showModal(record)}
-            style={{
-              color: "#3b82f6",
-              borderRadius: "6px",
-            }}
-          >
-            Sửa
-          </Button>
-          <Button
-            type="text"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record.id)}
-            style={{
-              borderRadius: "6px",
-            }}
-          >
-            Xóa
-          </Button>
-        </Space>
-      ),
+      render: (_, record) => {
+        console.log("Record:", record.id);
+        return (
+          <Space size="small">
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => showModal(record)}
+              style={{
+                color: "#3b82f6",
+                borderRadius: "6px",
+              }}
+            >
+              Sửa
+            </Button>
+            <Button
+              type="text"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => handleDelete(record.id)}
+              style={{
+                borderRadius: "6px",
+              }}
+            >
+              Xóa
+            </Button>
+          </Space>
+        );
+      },
     },
-  ]
+  ];
 
   return (
     <div style={{ padding: "24px" }}>
@@ -230,9 +271,12 @@ const AdminCategoryPage = () => {
             pageSize: 10,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} danh mục`,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} của ${total} danh mục`,
           }}
-          locale={{ emptyText: "Chưa có danh mục nào. Thêm danh mục để bắt đầu!" }}
+          locale={{
+            emptyText: "Chưa có danh mục nào. Thêm danh mục để bắt đầu!",
+          }}
           style={{ borderRadius: "16px", overflow: "hidden" }}
         />
       </Card>
@@ -241,7 +285,9 @@ const AdminCategoryPage = () => {
         title={
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <AppstoreOutlined style={{ color: "#3b82f6" }} />
-            <span>{editingCategory ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}</span>
+            <span>
+              {editingCategory ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}
+            </span>
           </div>
         }
         open={isModalVisible}
@@ -250,20 +296,50 @@ const AdminCategoryPage = () => {
         width={600}
         style={{ borderRadius: "16px" }}
       >
-        <Form form={form} onFinish={handleSubmit} layout="vertical" style={{ marginTop: "24px" }}>
+        <Form
+          form={form}
+          onFinish={handleSubmit}
+          layout="vertical"
+          style={{ marginTop: "24px" }}
+        >
           <Form.Item
             name="name"
-            label={<span style={{ fontWeight: "600", color: "#1e293b" }}>Tên danh mục</span>}
+            label={
+              <span style={{ fontWeight: "600", color: "#1e293b" }}>
+                Tên danh mục
+              </span>
+            }
             rules={[{ required: true, message: "Vui lòng nhập tên danh mục" }]}
           >
-            <Input placeholder="Nhập tên danh mục..." style={{ height: "48px", borderRadius: "8px" }} />
+            <Input
+              placeholder="Nhập tên danh mục..."
+              style={{ height: "48px", borderRadius: "8px" }}
+            />
           </Form.Item>
-          <Form.Item name="description" label={<span style={{ fontWeight: "600", color: "#1e293b" }}>Mô tả</span>}>
-            <TextArea rows={4} placeholder="Nhập mô tả danh mục..." style={{ borderRadius: "8px" }} />
+          <Form.Item
+            name="description"
+            label={
+              <span style={{ fontWeight: "600", color: "#1e293b" }}>Mô tả</span>
+            }
+          >
+            <TextArea
+              rows={4}
+              placeholder="Nhập mô tả danh mục..."
+              style={{ borderRadius: "8px" }}
+            />
           </Form.Item>
           <Form.Item style={{ marginTop: "32px", marginBottom: 0 }}>
-            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-              <Button onClick={() => setIsModalVisible(false)} style={{ height: "40px", borderRadius: "8px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                onClick={() => setIsModalVisible(false)}
+                style={{ height: "40px", borderRadius: "8px" }}
+              >
                 Hủy bỏ
               </Button>
               <Button
@@ -284,8 +360,20 @@ const AdminCategoryPage = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
-  )
-}
 
-export default AdminCategoryPage
+      <Modal
+        title="Xác nhận xóa danh mục"
+        open={isDeleteModalVisible}
+        onOk={handleDeleteOk}
+        onCancel={handleDeleteCancel}
+        okText="Xóa"
+        cancelText="Hủy"
+        okButtonProps={{ danger: true }}
+      >
+        Bạn có chắc chắn muốn xóa danh mục này? Hành động này không thể hoàn tác.
+      </Modal>
+    </div>
+  );
+};
+
+export default AdminCategoryPage;
