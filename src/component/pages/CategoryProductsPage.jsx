@@ -34,7 +34,6 @@ const CategoryProductsPage = () => {
         try {
             const categoryArray = Array.from(selectedCategories);
             const response = await ApiService.Product.FilterProductByCategories(categoryArray);
-            console.log(response);
             setProducts(response.data || []);
         } catch (error) {
             console.error("Error fetching products:", error);

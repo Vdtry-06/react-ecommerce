@@ -62,7 +62,7 @@ const ProductDetailsPages = () => {
         setUserId(userInfo.data.id);
       }
     } catch (error) {
-      console.log(error.message || error);
+      throw new Error("Không thể tải thông tin người dùng!");
     }
   };
 
@@ -105,7 +105,7 @@ const ProductDetailsPages = () => {
           setSelectedToppings(cartItem.toppingIds || []);
         }
       } catch (error) {
-        console.log(error.message || error);
+        throw new Error(error.response?.data?.message || error.message || "Không thể tải thông tin sản phẩm!");
       } finally {
         setLoading(false);
       }
@@ -161,7 +161,6 @@ const ProductDetailsPages = () => {
       const userId = userInfo.data.id;
       const cartItem = cart.find((item) => item.id === parseInt(productId));
 
-      console.log("Sending topping change:", { productId: parseInt(productId), toppingIds: newToppings }); // Debug
 
       if (cartItem) {
         await syncCartWithBackend(userId, "UPDATE_ITEM", {

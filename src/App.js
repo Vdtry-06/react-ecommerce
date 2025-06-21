@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ProtectedRoute, AdminRoute } from "./service/Guard";
 import Navbar from "./component/common/Navbar";
+import AdminHeader from "./component/admin/AdminHeader";
 import Footer from "./component/common/Footer";
 import { CartProvider } from "./component/context/CartContext";
 import FirstPage from "./component/pages/FirstPage";
@@ -35,17 +36,17 @@ import UserDetailPage from "./component/admin/UserDetailPage";
 import AdminReviewsPage from "./component/admin/AdminReviewsPage";
 import AdminOrdersPage from "./component/admin/AdminOrdersPage";
 import OrderDetailPage from "./component/admin/OrderDetailPage";
-import ToppingManagement from "./component/admin/ToppingManagement";
+import AdminToppingPage from "./component/admin/AdminToppingPage";
 import Chatbot from "./component/common/Chatbot";
 
 function Layout({ children }) {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
+
   return (
     <>
-      {/* {!isAdminPage && <Navbar />} */}
-      <Navbar />
-      <div className="main-content">{children}</div>
+      {isAdminPage ? <AdminHeader /> : <Navbar />}
+      <div className={`main-content ${isAdminPage ? "admin-content" : ""}`}>{children}</div>
       {!isAdminPage && <Footer />}
       {!isAdminPage && <Chatbot />}
     </>
@@ -63,7 +64,6 @@ function App() {
                 <Route exact path="/beverage" element={<FirstPage />} />
                 <Route path="/" element={<Home />} />
                 <Route path="/product/:productId" element={<ProductDetailsPages />} />
-                {/* <Route path="/categories" element={<CategoryListPage />} /> */}
                 <Route path="/category-products" element={<CategoryProductsPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
@@ -76,12 +76,10 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/update-profile" element={<UpdateProfile />} />
-
                 <Route path="/edit-address" element={<ProtectedRoute element={<AddressPage />} />} />
                 <Route path="/add-address" element={<ProtectedRoute element={<AddressPage />} />} />
-
-                <Route path="/admin" element={<AdminRoute element={<AdminPage />} />} >
-                  <Route path="dashboard" element={<AdminDashboard/>} />
+                <Route path="/admin" element={<AdminRoute element={<AdminPage />} />}>
+                  <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="dashboard/charts" element={<ChartView />} />
                   <Route path="categories" element={<AdminCategoryPage />} />
                   <Route path="add-category" element={<AddCategory />} />
@@ -94,8 +92,7 @@ function App() {
                   <Route path="users" element={<AdminUserPage />} />
                   <Route path="user-detail/:userId" element={<UserDetailPage />} />
                   <Route path="reviews" element={<AdminReviewsPage />} />
-                  <Route path="toppings" element={<ToppingManagement />} />
-                  {/* Thêm các route khác như orders, users, toppings nếu cần */}
+                  <Route path="toppings" element={<AdminToppingPage />} />
                 </Route>
               </Routes>
             </div>

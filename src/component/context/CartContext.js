@@ -39,7 +39,6 @@ export const CartProvider = ({ children }) => {
           const topping = item.toppings?.find((t) => t.id === toppingId);
           return sum + (topping?.price || 0);
         }, 0) || 0;
-        console.log(toppingPrice);
         return {
           id: parseInt(productId),
           qty: item.quantity,

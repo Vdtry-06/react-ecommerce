@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getToken, setToken, setRole, setIsLoggedIn } from "../../service/localStorage";
+import { getToken, setToken, setRole, setIsLoggedIn, getRole } from "../../service/localStorage";
 import { Form, Input, Button, Alert } from "antd";
 import "../../static/style/login.css";
 
@@ -13,8 +13,13 @@ const LoginPage = () => {
 
   useEffect(() => {
     const accessToken = getToken();
+    const role = getRole();
     if (accessToken) {
-      navigate("/beverage");
+      if (role?.toUpperCase() === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/beverage");
+      }
     }
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -30,7 +35,11 @@ const LoginPage = () => {
             setIsLoggedIn("true");
             setRole(data.data.nameRole);
             window.dispatchEvent(new Event("authChanged"));
-            navigate("/beverage");
+            if (data.data.nameRole?.toUpperCase() === "ADMIN") {
+              navigate("/admin/dashboard");
+            } else {
+              navigate("/beverage");
+            }
           } else {
             throw new Error("OAuth2 login failed");
           }
@@ -86,7 +95,11 @@ const LoginPage = () => {
       setIsLoggedIn("true");
       setRole(data.data.nameRole);
       window.dispatchEvent(new Event("authChanged"));
-      navigate("/beverage");
+      if (data.data.nameRole?.toUpperCase() === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/beverage");
+      }
     } catch (error) {
       setError(error.message || "Đã xảy ra lỗi khi đăng nhập");
     }
