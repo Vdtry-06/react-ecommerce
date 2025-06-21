@@ -7,10 +7,12 @@ import ApiService from "../../service/ApiService"
 const { Title } = Typography
 
 const AdminUserPage = () => {
-  const navigate = useNavigate()
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(false)
-
+  const navigate = useNavigate();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  
   useEffect(() => {
     fetchUsers()
   }, [])
@@ -29,27 +31,32 @@ const AdminUserPage = () => {
   }
 
   const handleDeleteUser = (userId) => {
-    Modal.confirm({
-      title: "Xác nhận xóa người dùng",
-      content: "Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.",
-      okText: "Xóa",
-      cancelText: "Hủy",
-      okType: "danger",
-      onOk: async () => {
-        setLoading(true)
-        try {
-          await ApiService.User.deleteUser(userId)
-          setUsers(users.filter((user) => user.id !== userId))
-          message.success("Người dùng đã được xóa thành công")
-        } catch (error) {
-          message.error(error.response?.data?.message || "Không thể xóa người dùng")
-          console.error("Error deleting user:", error)
-        } finally {
-          setLoading(false)
-        }
-      },
-    })
+    setUserToDelete(userId);
+    setIsDeleteModalVisible(true);
+
   }
+
+  const handelDeleteOk = async () => {
+    setLoading(true)
+    try {
+      await ApiService.User.deleteUser(userToDelete)
+      setUsers(users.filter((user) => user.id !== userToDelete))
+      message.success("Người dùng đã được xóa thành công")
+    } catch (error) {
+      message.error(error.response?.data?.message || "Không thể xóa người dùng")
+      console.error("Error deleting user:", error)
+    } finally {
+      setLoading(false)
+      setIsDeleteModalVisible(false);
+      setUserToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteModalVisible(false);
+    setUserToDelete(null);
+  }
+  
 
   const columns = [
     {
@@ -218,6 +225,17 @@ const AdminUserPage = () => {
           style={{ borderRadius: "16px", overflow: "hidden" }}
         />
       </Card>
+      <Modal
+        title="Xác nhận xóa người dùng"
+        open={isDeleteModalVisible}
+        onOk={handelDeleteOk}
+        onCancel={handleDeleteCancel}
+        okText="Xóa"
+        cancelText="Hủy"
+        okButtonProps={{ danger: true }}
+      >
+        Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.
+      </Modal>
     </div>
   )
 }
