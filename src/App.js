@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ProtectedRoute, AdminRoute } from "./service/Guard";
-import Navbar from "./components/common/Navbar";
+import Navbar from "./components/user/Navbar";
 import AdminHeader from "./components/admin/AdminHeader";
 import Footer from "./components/user/Footer";
 import { CartProvider } from "./pages/auth/context/CartContext";
@@ -22,7 +22,7 @@ import OrdersPage from "./pages/user/order/OrdersPage";
 import OrdersCancelledPage from "./pages/user/order/OrdersCancelledPage";
 import AddressPage from "./pages/user/account/AddressPage";
 
-import Chatbot from "./components/common/Chatbot";
+import Chatbot from "./components/user/Chatbot";
 import ForgotPasswordPage from "./pages/auth/forgot-password/ForgotPasswordPage";
 
 import AdminPage from "./components/admin/AdminPage";
