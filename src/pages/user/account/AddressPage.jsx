@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Form, Input, Button, Typography, Space } from "antd";
 import ApiService from "../../../service/ApiService";
 import "../../../static/style/address.css";
-import Notification from "../../common/Notification";
+import Notification from "../../../components/common/Notification";
 
 const { Title } = Typography;
 
@@ -50,8 +50,12 @@ const AddressPage = () => {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      await (isEditMode ? ApiService.Address.updateAddress(values) : ApiService.Address.addAddress(values));
-      const successMessage = isEditMode ? "Cập nhật địa chỉ thành công" : "Thêm địa chỉ thành công";
+      await (isEditMode
+        ? ApiService.Address.updateAddress(values)
+        : ApiService.Address.addAddress(values));
+      const successMessage = isEditMode
+        ? "Cập nhật địa chỉ thành công"
+        : "Thêm địa chỉ thành công";
       showNotification(successMessage, "success");
 
       setTimeout(() => {
@@ -59,8 +63,8 @@ const AddressPage = () => {
         navigate(returnUrl, {
           state: {
             checkoutState: location.state?.checkoutState,
-            ...(returnUrl === "/account" ? { activeTab: "2" } : {})
-          }
+            ...(returnUrl === "/account" ? { activeTab: "2" } : {}),
+          },
         });
       }, 2000);
     } catch (err) {
@@ -79,7 +83,9 @@ const AddressPage = () => {
           onClose={() => setNotification(null)}
         />
       )}
-      <Title level={2}>{isEditMode ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ"}</Title>
+      <Title level={2}>
+        {isEditMode ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ"}
+      </Title>
       <Form
         form={form}
         onFinish={handleSubmit}
@@ -140,7 +146,7 @@ const AddressPage = () => {
                 navigate(returnUrl, {
                   state: {
                     checkoutState: location.state?.checkoutState,
-                    ...(returnUrl === "/account" ? { activeTab: "2" } : {})
+                    ...(returnUrl === "/account" ? { activeTab: "2" } : {}),
                   },
                 });
               }}

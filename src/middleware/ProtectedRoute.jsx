@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Navigate, useLocation } from "react-router-dom"
-import ApiService from "../../service/ApiService"
+import ApiService from "../service/ApiService"
 
 export const ProtectedRoute = ({ element: Component }) => {
   const location = useLocation()

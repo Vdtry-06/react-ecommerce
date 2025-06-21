@@ -14,8 +14,8 @@ import {
   Row,
   Col,
 } from "antd";
-import ProductList from "../../common/ProductList";
-import Pagination from "../../common/Pagination";
+import ProductList from "../../../components/user/ProductList";
+import Pagination from "../../../components/common/Pagination";
 import ApiService from "../../../service/ApiService";
 import "../../../static/style/first-page.css";
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../auth/context/CartContext";
 import ApiService from "../../../service/ApiService";
 import {
   Row,
@@ -26,7 +26,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import ProductList from "../../common/ProductList";
+import ProductList from "../../../components/user/ProductList";
 import "../../../static/style/productDetailsPages.css";
 
 const { Title, Text, Paragraph } = Typography;
@@ -71,7 +71,9 @@ const ProductDetailsPages = () => {
       const response = await ApiService.Review.getReviewsByProductId(productId);
       setComments(response.data || []);
       if (userId) {
-        const userComment = response.data.find((comment) => comment.userId === userId);
+        const userComment = response.data.find(
+          (comment) => comment.userId === userId
+        );
         setHasCommented(!!userComment);
       }
     } catch (error) {
@@ -84,7 +86,11 @@ const ProductDetailsPages = () => {
       const response = await ApiService.Product.getAllProduct();
       setAllProducts(response.data || []);
     } catch (error) {
-      setError(error.response?.data?.message || error.message || "Lỗi khi tải sản phẩm!");
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Lỗi khi tải sản phẩm!"
+      );
     } finally {
       setLoading(false);
     }
@@ -105,7 +111,11 @@ const ProductDetailsPages = () => {
           setSelectedToppings(cartItem.toppingIds || []);
         }
       } catch (error) {
-        throw new Error(error.response?.data?.message || error.message || "Không thể tải thông tin sản phẩm!");
+        throw new Error(
+          error.response?.data?.message ||
+            error.message ||
+            "Không thể tải thông tin sản phẩm!"
+        );
       } finally {
         setLoading(false);
       }
@@ -134,9 +144,10 @@ const ProductDetailsPages = () => {
     if (!product) return 0;
     let total = product.price;
     if (selectedToppings.length > 0) {
-      const toppingPrices = product.toppings
-        ?.filter((topping) => selectedToppings.includes(topping.id))
-        ?.reduce((sum, topping) => sum + topping.price, 0) || 0;
+      const toppingPrices =
+        product.toppings
+          ?.filter((topping) => selectedToppings.includes(topping.id))
+          ?.reduce((sum, topping) => sum + topping.price, 0) || 0;
       total += toppingPrices;
     }
     return total;
@@ -147,7 +158,9 @@ const ProductDetailsPages = () => {
     try {
       setIsProcessing(true);
       if (!ApiService.isAuthenticated()) {
-        const confirmLogin = window.confirm("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng! Đến trang đăng nhập?");
+        const confirmLogin = window.confirm(
+          "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng! Đến trang đăng nhập?"
+        );
         if (confirmLogin) navigate("/login");
         return;
       }
@@ -160,7 +173,6 @@ const ProductDetailsPages = () => {
       const userInfo = await ApiService.User.getMyInfo();
       const userId = userInfo.data.id;
       const cartItem = cart.find((item) => item.id === parseInt(productId));
-
 
       if (cartItem) {
         await syncCartWithBackend(userId, "UPDATE_ITEM", {
@@ -177,14 +189,18 @@ const ProductDetailsPages = () => {
         });
         message.success("Sản phẩm và topping đã được thêm vào giỏ hàng!");
       } else {
-        await syncCartWithBackend(userId, "REMOVE_ITEM", { id: parseInt(productId) });
+        await syncCartWithBackend(userId, "REMOVE_ITEM", {
+          id: parseInt(productId),
+        });
         message.info("Sản phẩm đã được xóa khỏi giỏ hàng!");
       }
 
       window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
       console.error("Error in handleToppingChange:", error);
-      message.error(error.response?.data?.message || "Lỗi khi cập nhật toppings!");
+      message.error(
+        error.response?.data?.message || "Lỗi khi cập nhật toppings!"
+      );
       setSelectedToppings(selectedToppings);
     } finally {
       setIsProcessing(false);
@@ -196,7 +212,9 @@ const ProductDetailsPages = () => {
     try {
       setIsProcessing(true);
       if (!ApiService.isAuthenticated()) {
-        const confirmLogin = window.confirm("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng! Đến trang đăng nhập?");
+        const confirmLogin = window.confirm(
+          "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng! Đến trang đăng nhập?"
+        );
         if (confirmLogin) navigate("/login");
         return;
       }
@@ -223,7 +241,9 @@ const ProductDetailsPages = () => {
 
       window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
-      message.error(error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng!");
+      message.error(
+        error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng!"
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -264,16 +284,22 @@ const ProductDetailsPages = () => {
           qty: newQuantity,
           toppingIds: selectedToppings,
         });
-        message.success(increment ? "Số lượng đã được tăng!" : "Số lượng đã được giảm!");
+        message.success(
+          increment ? "Số lượng đã được tăng!" : "Số lượng đã được giảm!"
+        );
       } else {
-        await syncCartWithBackend(userId, "REMOVE_ITEM", { id: parseInt(productId) });
+        await syncCartWithBackend(userId, "REMOVE_ITEM", {
+          id: parseInt(productId),
+        });
         setSelectedToppings([]);
         message.info("Sản phẩm đã được xóa khỏi giỏ hàng!");
       }
 
       window.dispatchEvent(new Event("cartChanged"));
     } catch (error) {
-      message.error(increment ? "Lỗi khi tăng số lượng!" : "Lỗi khi giảm số lượng!");
+      message.error(
+        increment ? "Lỗi khi tăng số lượng!" : "Lỗi khi giảm số lượng!"
+      );
       fetchData();
     } finally {
       setIsProcessing(false);
@@ -301,10 +327,15 @@ const ProductDetailsPages = () => {
       const response = await ApiService.Review.addReview(request);
       message.success("Bình luận đã được gửi thành công!");
       form.resetFields();
-      setComments((prevComments) => [...prevComments, { ...response.data, visible: true }]);
+      setComments((prevComments) => [
+        ...prevComments,
+        { ...response.data, visible: true },
+      ]);
       setHasCommented(true);
     } catch (error) {
-      message.error(error.response?.data?.message || "Không thể gửi bình luận!");
+      message.error(
+        error.response?.data?.message || "Không thể gửi bình luận!"
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -320,12 +351,16 @@ const ProductDetailsPages = () => {
       const response = await ApiService.Review.updateReview(commentId, request);
       message.success("Bình luận đã được cập nhật thành công!");
       setComments((prevComments) =>
-        prevComments.map((c) => (c.id === commentId ? { ...response.data, visible: true } : c))
+        prevComments.map((c) =>
+          c.id === commentId ? { ...response.data, visible: true } : c
+        )
       );
       setEditingComment(null);
       form.resetFields();
     } catch (error) {
-      message.error(error.response?.data?.message || "Không thể cập nhật bình luận!");
+      message.error(
+        error.response?.data?.message || "Không thể cập nhật bình luận!"
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -336,12 +371,16 @@ const ProductDetailsPages = () => {
       setIsProcessing(true);
       await ApiService.Review.deleteReview(commentId);
       message.success("Bình luận đã được xóa thành công!");
-      setComments((prevComments) => prevComments.filter((c) => c.id !== commentId));
+      setComments((prevComments) =>
+        prevComments.filter((c) => c.id !== commentId)
+      );
       setHasCommented(false);
       setEditingComment(null);
       form.resetFields();
     } catch (error) {
-      message.error(error.response?.data?.message || "Không thể xóa bình luận!");
+      message.error(
+        error.response?.data?.message || "Không thể xóa bình luận!"
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -369,25 +408,47 @@ const ProductDetailsPages = () => {
     discount: product.discount || 5,
     description: product.description || "Không có mô tả",
     sku: product.id,
-    categories: product.categories?.map((cat) => cat.name).join(", ") || "Không có danh mục",
-    categoriesDescription: product.categories?.map((cat) => cat.description).join(", ") || "Không có mô tả danh mục",
-    toppings: product.toppings?.map((top) => top.name).join(", ") || "Không có toppings",
+    categories:
+      product.categories?.map((cat) => cat.name).join(", ") ||
+      "Không có danh mục",
+    categoriesDescription:
+      product.categories?.map((cat) => cat.description).join(", ") ||
+      "Không có mô tả danh mục",
+    toppings:
+      product.toppings?.map((top) => top.name).join(", ") ||
+      "Không có toppings",
     toppingsPrice: product.toppings?.map((top) => top.price).join(", ") || "",
   };
 
   return (
     <div>
-      <div className="product-details-container" style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+      <div
+        className="product-details-container"
+        style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}
+      >
         <div className="product-detail-top">
-          <div className="product-detail-layout" style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
-            <div className="product-images-container" style={{ flex: "1", minWidth: "300px" }}>
-              <div className="main-image-container" style={{ position: "relative", marginBottom: "20px" }}></div>
-              <div className="main-image" style={{ position: "relative", marginBottom: "10px" }}>
+          <div
+            className="product-detail-layout"
+            style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}
+          >
+            <div
+              className="product-images-container"
+              style={{ flex: "1", minWidth: "300px" }}
+            >
+              <div
+                className="main-image-container"
+                style={{ position: "relative", marginBottom: "20px" }}
+              ></div>
+              <div
+                className="main-image"
+                style={{ position: "relative", marginBottom: "10px" }}
+              >
                 <img
                   src={
                     hoveredImage !== null && product.imageUrls?.[hoveredImage]
                       ? product.imageUrls[hoveredImage]
-                      : product.imageUrls?.[selectedImage] || "/placeholder.svg?height=300&width=300"
+                      : product.imageUrls?.[selectedImage] ||
+                        "/placeholder.svg?height=300&width=300"
                   }
                   alt={displayProduct.name}
                   style={{ width: "100%", height: "auto", borderRadius: "8px" }}
@@ -408,7 +469,10 @@ const ProductDetailsPages = () => {
                   </div>
                 )}
               </div>
-              <div className="thumbnails" style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <div
+                className="thumbnails"
+                style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}
+              >
                 {product.imageUrls?.map((url, index) => (
                   <div
                     key={index}
@@ -427,37 +491,74 @@ const ProductDetailsPages = () => {
                     <img
                       src={url || "/placeholder.svg?height=60&width=60"}
                       alt={`Thumbnail ${index + 1}`}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "4px" }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                      }}
                     />
                   </div>
                 )) || (
                   <div className="thumbnail">
-                    <img src="/placeholder.svg?height=60&width=60" alt="No thumbnail" style={{ width: "60px", height: "60px" }} />
+                    <img
+                      src="/placeholder.svg?height=60&width=60"
+                      alt="No thumbnail"
+                      style={{ width: "60px", height: "60px" }}
+                    />
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="product-info" style={{ flex: "1", minWidth: "300px" }}>
-              <Rate disabled value={5} style={{ color: "#FFD700", fontSize: 16, marginBottom: "16px" }} />
+            <div
+              className="product-info"
+              style={{ flex: "1", minWidth: "300px" }}
+            >
+              <Rate
+                disabled
+                value={5}
+                style={{ color: "#FFD700", fontSize: 16, marginBottom: "16px" }}
+              />
 
-              <Title level={2} style={{ margin: "0 0 16px", fontWeight: "600", color: "#333" }}>
+              <Title
+                level={2}
+                style={{ margin: "0 0 16px", fontWeight: "600", color: "#333" }}
+              >
                 {displayProduct.name}
               </Title>
 
-              <Paragraph style={{ marginBottom: "24px", color: "#666", lineHeight: "1.6" }}>
+              <Paragraph
+                style={{
+                  marginBottom: "24px",
+                  color: "#666",
+                  lineHeight: "1.6",
+                }}
+              >
                 {displayProduct.description}
               </Paragraph>
 
               <div className="price" style={{ marginBottom: "20px" }}>
-                <Tag color="#f50" style={{ marginRight: "8px", fontSize: "14px" }}>
+                <Tag
+                  color="#f50"
+                  style={{ marginRight: "8px", fontSize: "14px" }}
+                >
                   -{displayProduct.discount}%
                 </Tag>
-                <span style={{ fontSize: "24px", fontWeight: "700", color: "#f50" }}>
+                <span
+                  style={{ fontSize: "24px", fontWeight: "700", color: "#f50" }}
+                >
                   {displayProduct.price.toFixed(2)} VNĐ
                 </span>
                 {displayProduct.originalPrice > 0 && (
-                  <span style={{ fontSize: "16px", color: "#999", textDecoration: "line-through", marginLeft: "10px" }}>
+                  <span
+                    style={{
+                      fontSize: "16px",
+                      color: "#999",
+                      textDecoration: "line-through",
+                      marginLeft: "10px",
+                    }}
+                  >
                     {displayProduct.originalPrice.toFixed(2)} VNĐ
                   </span>
                 )}
@@ -478,7 +579,9 @@ const ProductDetailsPages = () => {
                               disabled={isProcessing || isLoading}
                             />
                             <span className="topping-name">{topping.name}</span>
-                            <span className="topping-price">+{topping.price.toFixed(2)} VNĐ</span>
+                            <span className="topping-price">
+                              +{topping.price.toFixed(2)} VNĐ
+                            </span>
                           </label>
                         </li>
                       ))}
@@ -489,21 +592,44 @@ const ProductDetailsPages = () => {
               </div>
 
               {cartItem ? (
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    marginBottom: "20px",
+                  }}
+                >
                   <Button
                     onClick={() => updateQuantity(false)}
                     disabled={isProcessing || isLoading}
-                    style={{ background: "#ff5722", color: "#fff", border: "none", borderRadius: "4px" }}
+                    style={{
+                      background: "#ff5722",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                    }}
                   >
                     <span style={{ fontSize: "20px" }}>−</span>
                   </Button>
-                  <span style={{ fontSize: "16px", minWidth: "30px", textAlign: "center" }}>
+                  <span
+                    style={{
+                      fontSize: "16px",
+                      minWidth: "30px",
+                      textAlign: "center",
+                    }}
+                  >
                     {isProcessing || isLoading ? "..." : cartItem.qty}
                   </span>
                   <Button
                     onClick={() => updateQuantity(true)}
                     disabled={isProcessing || isLoading}
-                    style={{ background: "#ff5722", color: "#fff", border: "none", borderRadius: "4px" }}
+                    style={{
+                      background: "#ff5722",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                    }}
                   >
                     <span style={{ fontSize: "20px" }}>+</span>
                   </Button>
@@ -514,17 +640,35 @@ const ProductDetailsPages = () => {
                     type="primary"
                     size="large"
                     onClick={addToCart}
-                    disabled={isProcessing || isLoading || product.availableQuantity <= 0}
-                    style={{ background: "#007bff", borderColor: "#007bff", borderRadius: "4px" }}
+                    disabled={
+                      isProcessing ||
+                      isLoading ||
+                      product.availableQuantity <= 0
+                    }
+                    style={{
+                      background: "#007bff",
+                      borderColor: "#007bff",
+                      borderRadius: "4px",
+                    }}
                   >
-                    {isProcessing || isLoading ? "Đang xử lý..." : "Thêm vào giỏ hàng"}
+                    {isProcessing || isLoading
+                      ? "Đang xử lý..."
+                      : "Thêm vào giỏ hàng"}
                   </Button>
                   <Button
                     type="primary"
                     size="large"
                     onClick={buyNow}
-                    disabled={isProcessing || isLoading || product.availableQuantity <= 0}
-                    style={{ background: "#ff4500", borderColor: "#ff4500", borderRadius: "4px" }}
+                    disabled={
+                      isProcessing ||
+                      isLoading ||
+                      product.availableQuantity <= 0
+                    }
+                    style={{
+                      background: "#ff4500",
+                      borderColor: "#ff4500",
+                      borderRadius: "4px",
+                    }}
                   >
                     {isProcessing || isLoading ? "Đang xử lý..." : "Mua ngay"}
                   </Button>
@@ -533,12 +677,20 @@ const ProductDetailsPages = () => {
 
               <div className="meta" style={{ marginTop: "20px" }}>
                 <div style={{ marginBottom: "8px" }}>
-                  <Text strong style={{ color: "#333" }}>Danh mục:</Text>
-                  <span style={{ marginLeft: "8px", color: "#666" }}>{displayProduct.categories}</span>
+                  <Text strong style={{ color: "#333" }}>
+                    Danh mục:
+                  </Text>
+                  <span style={{ marginLeft: "8px", color: "#666" }}>
+                    {displayProduct.categories}
+                  </span>
                 </div>
                 <div style={{ marginBottom: "8px" }}>
-                  <Text strong style={{ color: "#333" }}>Mô tả:</Text>
-                  <span style={{ marginLeft: "8px", color: "#666" }}>{displayProduct.categoriesDescription}</span>
+                  <Text strong style={{ color: "#333" }}>
+                    Mô tả:
+                  </Text>
+                  <span style={{ marginLeft: "8px", color: "#666" }}>
+                    {displayProduct.categoriesDescription}
+                  </span>
                 </div>
               </div>
             </div>
@@ -555,17 +707,42 @@ const ProductDetailsPages = () => {
               <div className="comments">
                 {comments.length > 0 ? (
                   comments.map((comment) => (
-                    <div key={comment.id} style={{ display: "flex", gap: "15px", padding: "15px 0", borderBottom: "1px solid #eee" }}>
-                      <Avatar icon={<UserOutlined />} style={{ backgroundColor: "#007bff" }} />
+                    <div
+                      key={comment.id}
+                      style={{
+                        display: "flex",
+                        gap: "15px",
+                        padding: "15px 0",
+                        borderBottom: "1px solid #eee",
+                      }}
+                    >
+                      <Avatar
+                        icon={<UserOutlined />}
+                        style={{ backgroundColor: "#007bff" }}
+                      />
                       <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <strong style={{ fontSize: "16px", color: "#333" }}>{`Người dùng ${comment.userId}`}</strong>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <strong
+                            style={{ fontSize: "16px", color: "#333" }}
+                          >{`Người dùng ${comment.userId}`}</strong>
                           <span style={{ color: "#999", fontSize: "12px" }}>
                             {new Date(comment.reviewDate).toLocaleString()}
                           </span>
                         </div>
-                        <Rate disabled value={comment.ratingScore} style={{ margin: "5px 0" }} />
-                        <p style={{ color: "#666", lineHeight: "1.5" }}>{comment.comment}</p>
+                        <Rate
+                          disabled
+                          value={comment.ratingScore}
+                          style={{ margin: "5px 0" }}
+                        />
+                        <p style={{ color: "#666", lineHeight: "1.5" }}>
+                          {comment.comment}
+                        </p>
                         {userId === comment.userId && !editingComment && (
                           <Space>
                             <Button
@@ -597,7 +774,9 @@ const ProductDetailsPages = () => {
                     </div>
                   ))
                 ) : (
-                  <p style={{ color: "#999", fontStyle: "italic" }}>Chưa có bình luận nào.</p>
+                  <p style={{ color: "#999", fontStyle: "italic" }}>
+                    Chưa có bình luận nào.
+                  </p>
                 )}
               </div>
             </TabPane>
@@ -606,23 +785,41 @@ const ProductDetailsPages = () => {
                 <div style={{ maxWidth: "600px" }}>
                   <div style={{ marginBottom: "16px" }}>
                     <strong style={{ color: "#333" }}>Đánh giá:</strong>
-                    <Rate value={userRating} onChange={setUserRating} style={{ marginLeft: "8px" }} />
+                    <Rate
+                      value={userRating}
+                      onChange={setUserRating}
+                      style={{ marginLeft: "8px" }}
+                    />
                   </div>
-                  <Form form={form} onFinish={handleReviewSubmit} layout="vertical">
-                    <h3 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "16px" }}>
+                  <Form
+                    form={form}
+                    onFinish={handleReviewSubmit}
+                    layout="vertical"
+                  >
+                    <h3
+                      style={{
+                        fontSize: "18px",
+                        fontWeight: "600",
+                        marginBottom: "16px",
+                      }}
+                    >
                       Chia sẻ ý kiến của bạn:
                     </h3>
                     <Form.Item
                       name="rating"
                       label="Đánh giá"
-                      rules={[{ required: true, message: "Vui lòng chọn số sao!" }]}
+                      rules={[
+                        { required: true, message: "Vui lòng chọn số sao!" },
+                      ]}
                     >
                       <Rate onChange={setUserRating} value={userRating} />
                     </Form.Item>
                     <Form.Item
                       name="comment"
                       label="Bình luận"
-                      rules={[{ required: true, message: "Vui lòng nhập bình luận!" }]}
+                      rules={[
+                        { required: true, message: "Vui lòng nhập bình luận!" },
+                      ]}
                     >
                       <TextArea rows={6} placeholder="Viết bình luận..." />
                     </Form.Item>
@@ -631,7 +828,10 @@ const ProductDetailsPages = () => {
                         type="primary"
                         htmlType="submit"
                         loading={isProcessing}
-                        style={{ background: "#007bff", borderColor: "#007bff" }}
+                        style={{
+                          background: "#007bff",
+                          borderColor: "#007bff",
+                        }}
                       >
                         {isProcessing ? "Đang xử lý..." : "Gửi bình luận"}
                       </Button>
@@ -645,27 +845,43 @@ const ProductDetailsPages = () => {
                 <div style={{ maxWidth: "600px" }}>
                   <div style={{ marginBottom: "16px" }}>
                     <strong style={{ color: "#333" }}>Đánh giá:</strong>
-                    <Rate value={userRating} onChange={setUserRating} style={{ marginLeft: "8px" }} />
+                    <Rate
+                      value={userRating}
+                      onChange={setUserRating}
+                      style={{ marginLeft: "8px" }}
+                    />
                   </div>
                   <Form
                     form={form}
-                    onFinish={(values) => handleUpdateComment(editingComment.id, values)}
+                    onFinish={(values) =>
+                      handleUpdateComment(editingComment.id, values)
+                    }
                     layout="vertical"
                   >
-                    <h3 style={{ fontSize: "18px", fontWeight: "600", marginBottom: "16px" }}>
+                    <h3
+                      style={{
+                        fontSize: "18px",
+                        fontWeight: "600",
+                        marginBottom: "16px",
+                      }}
+                    >
                       Sửa bình luận:
                     </h3>
                     <Form.Item
                       name="rating"
                       label="Đánh giá"
-                      rules={[{ required: true, message: "Vui lòng chọn số sao!" }]}
+                      rules={[
+                        { required: true, message: "Vui lòng chọn số sao!" },
+                      ]}
                     >
                       <Rate onChange={setUserRating} value={userRating} />
                     </Form.Item>
                     <Form.Item
                       name="comment"
                       label="Bình luận"
-                      rules={[{ required: true, message: "Vui lòng nhập bình luận!" }]}
+                      rules={[
+                        { required: true, message: "Vui lòng nhập bình luận!" },
+                      ]}
                     >
                       <TextArea rows={6} placeholder="Viết bình luận..." />
                     </Form.Item>
@@ -674,7 +890,10 @@ const ProductDetailsPages = () => {
                         type="primary"
                         htmlType="submit"
                         loading={isProcessing}
-                        style={{ background: "#007bff", borderColor: "#007bff" }}
+                        style={{
+                          background: "#007bff",
+                          borderColor: "#007bff",
+                        }}
                       >
                         {isProcessing ? "Đang xử lý..." : "Cập nhật bình luận"}
                       </Button>

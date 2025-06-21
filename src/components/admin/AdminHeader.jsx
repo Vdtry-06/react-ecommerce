@@ -6,7 +6,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import ApiService from "../../../service/ApiService";
+import ApiService from "../../service/ApiService";
 
 const { Header } = Layout;
 const { Text } = Typography;

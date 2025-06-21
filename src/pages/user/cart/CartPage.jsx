@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../auth/context/CartContext";
 import "../../../static/style/cart.css";
-import Notification from "../../common/Notification";
+import Notification from "../../../components/common/Notification";
 import ApiService from "../../../service/ApiService";
 
 const CartPage = () => {
@@ -30,7 +30,10 @@ const CartPage = () => {
       await syncCartWithBackend(userId, "INCREMENT_ITEM", product);
       showNotification("Tăng số lượng thành công", "success");
     } catch (error) {
-      showNotification(error.response?.data?.message || "Lỗi khi tăng số lượng!", "error");
+      showNotification(
+        error.response?.data?.message || "Lỗi khi tăng số lượng!",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -46,7 +49,10 @@ const CartPage = () => {
       await syncCartWithBackend(userId, "DECREMENT_ITEM", product);
       showNotification("Giảm số lượng thành công", "success");
     } catch (error) {
-      showNotification(error.response?.data?.message || "Lỗi khi giảm số lượng!", "error");
+      showNotification(
+        error.response?.data?.message || "Lỗi khi giảm số lượng!",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -76,11 +82,13 @@ const CartPage = () => {
       return;
     }
 
-    const selectedCartItems = cart.filter((item) => selectedItems.has(item.id)).map((item) => ({
-      ...item,
-      toppingNames,
-      toppingPrices,
-    }));
+    const selectedCartItems = cart
+      .filter((item) => selectedItems.has(item.id))
+      .map((item) => ({
+        ...item,
+        toppingNames,
+        toppingPrices,
+      }));
     navigate("/checkout", {
       state: {
         selectedItems: selectedCartItems,
@@ -194,7 +202,11 @@ const CartPage = () => {
           <div className="empty-cart">
             <div className="empty-cart-icon">🛒</div>
             <p>{notification?.message || "Giỏ hàng của bạn đang trống"}</p>
-            <button className="continue-shopping" onClick={() => navigate("/")} disabled={isLoading}>
+            <button
+              className="continue-shopping"
+              onClick={() => navigate("/")}
+              disabled={isLoading}
+            >
               Tiếp tục mua sắm
             </button>
           </div>
@@ -205,7 +217,9 @@ const CartPage = () => {
                 <label className="select-all">
                   <input
                     type="checkbox"
-                    checked={selectedItems.size === cart.length && cart.length > 0}
+                    checked={
+                      selectedItems.size === cart.length && cart.length > 0
+                    }
                     onChange={selectAll}
                     disabled={isLoading}
                   />
@@ -224,21 +238,31 @@ const CartPage = () => {
                         id={`select-${item.id}`}
                         disabled={isLoading}
                       />
-                      <label htmlFor={`select-${item.id}`} className="checkbox-custom">
-                        {selectedItems.has(item.id) && <span className="checkmark">✓</span>}
+                      <label
+                        htmlFor={`select-${item.id}`}
+                        className="checkbox-custom"
+                      >
+                        {selectedItems.has(item.id) && (
+                          <span className="checkmark">✓</span>
+                        )}
                       </label>
                     </div>
 
                     <div className="item-image">
                       <img
-                        src={item.productImageUrl || "/placeholder.svg?height=100&width=100"}
+                        src={
+                          item.productImageUrl ||
+                          "/placeholder.svg?height=100&width=100"
+                        }
                         alt={item.productName}
                       />
                     </div>
 
                     <div className="item-details">
                       <h2>{item.productName}</h2>
-                      <p className="item-description">{item.description || "Không có mô tả"}</p>
+                      <p className="item-description">
+                        {item.description || "Không có mô tả"}
+                      </p>
                       <p className="item-description">Giá: {item.price}</p>
                       {item.toppingIds && item.toppingIds.length > 0 && (
                         <div className="toppings-list">
@@ -247,10 +271,12 @@ const CartPage = () => {
                             {item.toppingIds.map((toppingId) => (
                               <li key={toppingId} className="topping-item">
                                 <span className="topping-name">
-                                  {toppingNames[toppingId] || `Topping ${toppingId}`}
+                                  {toppingNames[toppingId] ||
+                                    `Topping ${toppingId}`}
                                 </span>
                                 <span className="topping-price">
-                                  {(toppingPrices[toppingId]?.toFixed(2) || 0)} VNĐ
+                                  {toppingPrices[toppingId]?.toFixed(2) || 0}{" "}
+                                  VNĐ
                                 </span>
                               </li>
                             ))}
@@ -279,7 +305,9 @@ const CartPage = () => {
                         </div>
 
                         <div className="item-price">
-                          <span className="price-value">{calculateItemTotal(item).toFixed(2)} VNĐ</span>
+                          <span className="price-value">
+                            {calculateItemTotal(item).toFixed(2)} VNĐ
+                          </span>
                         </div>
                       </div>
                     </div>

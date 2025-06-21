@@ -1,4 +1,4 @@
-import { useCart } from "../context/CartContext";
+import { useCart } from "../../pages/auth/context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import "../../static/style/productList.css";
@@ -19,7 +19,9 @@ const ProductList = ({ products }) => {
   const addToCart = async (product) => {
     if (!ApiService.isAuthenticated()) {
       showNotification(
-        "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!", "warning");
+        "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!",
+        "warning"
+      );
       // navigate("/login");
       return;
     }
@@ -35,7 +37,9 @@ const ProductList = ({ products }) => {
     } catch (error) {
       console.error("Error adding to cart:", error);
       showNotification(
-        error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng!", "error");
+        error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng!",
+        "error"
+      );
     } finally {
       setProcessingItem(null);
     }
@@ -43,8 +47,7 @@ const ProductList = ({ products }) => {
 
   const incrementItem = async (product) => {
     if (!ApiService.isAuthenticated()) {
-      showNotification(
-        "Vui lòng đăng nhập để cập nhật giỏ hàng!", "warning");
+      showNotification("Vui lòng đăng nhập để cập nhật giỏ hàng!", "warning");
       // navigate("/login");
       return;
     }
@@ -62,7 +65,9 @@ const ProductList = ({ products }) => {
     } catch (error) {
       console.error("Error incrementing item:", error);
       showNotification(
-        error.response?.data?.message || "Lỗi khi tăng số lượng!", "error");
+        error.response?.data?.message || "Lỗi khi tăng số lượng!",
+        "error"
+      );
     } finally {
       setProcessingItem(null);
     }
@@ -70,8 +75,7 @@ const ProductList = ({ products }) => {
 
   const decrementItem = async (product) => {
     if (!ApiService.isAuthenticated()) {
-      showNotification(
-        "Vui lòng đăng nhập để cập nhật giỏ hàng!", "warning");
+      showNotification("Vui lòng đăng nhập để cập nhật giỏ hàng!", "warning");
       // navigate("/login");
       return;
     }
@@ -87,13 +91,17 @@ const ProductList = ({ products }) => {
           toppingIds: cartItem.toppingIds,
         });
       } else if (cartItem) {
-        await syncCartWithBackend(userInfo.data.id, "REMOVE_ITEM", { id: product.id });
+        await syncCartWithBackend(userInfo.data.id, "REMOVE_ITEM", {
+          id: product.id,
+        });
       }
       showNotification("Số lượng sản phẩm đã được giảm!", "success");
     } catch (error) {
       console.error("Error decrementing item:", error);
       showNotification(
-        error.response?.data?.message || "Lỗi khi giảm số lượng!", "error");
+        error.response?.data?.message || "Lỗi khi giảm số lượng!",
+        "error"
+      );
     } finally {
       setProcessingItem(null);
     }
@@ -116,7 +124,10 @@ const ProductList = ({ products }) => {
           <div className="product-item" key={product.id}>
             <Link to={`/product/${product.id}`}>
               <img
-                src={product.imageUrls?.[0] || "/placeholder.svg?height=200&width=200"}
+                src={
+                  product.imageUrls?.[0] ||
+                  "/placeholder.svg?height=200&width=200"
+                }
                 alt={product.name}
                 className="product-image"
               />
@@ -132,16 +143,27 @@ const ProductList = ({ products }) => {
             <div className="product-actions">
               {cartItem ? (
                 <div className="quantity-controls">
-                  <button onClick={() => decrementItem(product)} disabled={isProcessing || isLoading}>
+                  <button
+                    onClick={() => decrementItem(product)}
+                    disabled={isProcessing || isLoading}
+                  >
                     -
                   </button>
-                  <span>{isProcessing || isLoading ? "..." : cartItem.qty}</span>
-                  <button onClick={() => incrementItem(product)} disabled={isProcessing || isLoading}>
+                  <span>
+                    {isProcessing || isLoading ? "..." : cartItem.qty}
+                  </span>
+                  <button
+                    onClick={() => incrementItem(product)}
+                    disabled={isProcessing || isLoading}
+                  >
                     +
                   </button>
                 </div>
               ) : (
-                <button onClick={() => addToCart(product)} disabled={isProcessing || isLoading}>
+                <button
+                  onClick={() => addToCart(product)}
+                  disabled={isProcessing || isLoading}
+                >
                   {isProcessing || isLoading ? "Đang thêm..." : "Thêm vào giỏ"}
                 </button>
               )}

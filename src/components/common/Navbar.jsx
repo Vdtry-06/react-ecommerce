@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import ApiService from "../../service/ApiService";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../../pages/auth/context/CartContext";
 import "../../static/style/navbar.css";
 
 import homeImage from "../../static/images/home.png";
-import categoryImage from "../../static/images/application.png";
 import accountImage from "../../static/images/account.png";
 import adminImage from "../../static/images/admin.png";
 import cartImage from "../../static/images/cart.png";

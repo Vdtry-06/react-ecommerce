@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, useEffect, useState } from "react";
-import ApiService from "../../service/ApiService";
+import ApiService from "../../../service/ApiService";
 
 const CartContext = createContext();
 
@@ -33,23 +33,26 @@ export const CartProvider = ({ children }) => {
     try {
       setIsLoading(true);
       const cartResponse = await ApiService.Cart.getCart(userId);
-      const cartItems = Object.entries(cartResponse.data || {}).map(async ([productId, item]) => {
-        const basePrice = item.price || 0;
-        const toppingPrice = item.toppingIds?.reduce((sum, toppingId) => {
-          const topping = item.toppings?.find((t) => t.id === toppingId);
-          return sum + (topping?.price || 0);
-        }, 0) || 0;
-        return {
-          id: parseInt(productId),
-          qty: item.quantity,
-          selected: item.selected || false,
-          toppingIds: item.toppingIds || [],
-          productName: item.productName || `Product ${productId}`,
-          price: basePrice + toppingPrice,
-          productImageUrl: item.productImageUrl || "",
-          description: item.description || "Không có mô tả",
-        };
-      });
+      const cartItems = Object.entries(cartResponse.data || {}).map(
+        async ([productId, item]) => {
+          const basePrice = item.price || 0;
+          const toppingPrice =
+            item.toppingIds?.reduce((sum, toppingId) => {
+              const topping = item.toppings?.find((t) => t.id === toppingId);
+              return sum + (topping?.price || 0);
+            }, 0) || 0;
+          return {
+            id: parseInt(productId),
+            qty: item.quantity,
+            selected: item.selected || false,
+            toppingIds: item.toppingIds || [],
+            productName: item.productName || `Product ${productId}`,
+            price: basePrice + toppingPrice,
+            productImageUrl: item.productImageUrl || "",
+            description: item.description || "Không có mô tả",
+          };
+        }
+      );
       const resolvedCartItems = await Promise.all(cartItems);
       dispatch({ type: "SET_CART", payload: resolvedCartItems });
     } catch (error) {

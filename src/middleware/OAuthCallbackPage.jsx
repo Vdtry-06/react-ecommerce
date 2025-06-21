@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { setToken } from "../../service/localStorage"
+import { setToken } from "../service/localStorage"
 import "../../static/style/oauth-callback.css"
 
 const OAuthCallbackPage = () => {

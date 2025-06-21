@@ -8,14 +8,22 @@ import * as ToppingService from "./ToppingService";
 import * as UserService from "./UserService";
 import * as ReviewService from "./ReviewService";
 import * as CartService from "./CartService";
-import { getToken, removeToken, getRole, removeRole, removeIsLoggedIn } from "./localStorage";
+import {
+  getToken,
+  removeToken,
+  getRole,
+  removeRole,
+  removeIsLoggedIn,
+} from "./localStorage";
 
 export default class ApiService {
   static BASE_URL = "http://localhost:8080";
 
   static getHeader() {
     const token = getToken();
-    return token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : {};
+    return token
+      ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+      : {};
   }
 
   static logout() {
@@ -41,9 +49,13 @@ export default class ApiService {
           typeof response.data === "string" &&
           response.data.includes("<!DOCTYPE html")
         ) {
-          console.warn("Unauthorized: HTML login page received, logging out...");
+          console.warn(
+            "Unauthorized: HTML login page received, logging out..."
+          );
           this.logout();
-          return Promise.reject(new Error("Unauthorized: HTML login page received"));
+          return Promise.reject(
+            new Error("Unauthorized: HTML login page received")
+          );
         }
         return response;
       },

@@ -3,10 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Card, Button, Spin, Empty, Tabs } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ApiService from "../../../service/ApiService";
-import UpdateProfile from "../account/UpdateProfile";
+import UpdateProfile from "./UpdateProfile";
 import "../../../static/style/profile.css";
 import "../../../static/style/account.css";
-import Notification from "../../common/Notification";
+import Notification from "../../../components/common/Notification";
 
 const { TabPane } = Tabs;
 
@@ -36,7 +36,11 @@ const Account = () => {
       setUserInfo(response.data);
       showNotification("Tải thông tin người dùng thành công", "success");
     } catch (error) {
-      setError(error.response?.data?.message || error.message || "Unable to fetch user info");
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Unable to fetch user info"
+      );
       showNotification("Không thể tải thông tin người dùng", "error");
     }
   };
@@ -52,7 +56,12 @@ const Account = () => {
       return updateResponse;
     } catch (error) {
       console.error("Error updating profile:", error);
-      showNotification(error.response?.data?.message || error.message || "Cập nhật thông tin thất bại", "error");
+      showNotification(
+        error.response?.data?.message ||
+          error.message ||
+          "Cập nhật thông tin thất bại",
+        "error"
+      );
       throw error;
     } finally {
       setIsEditing(false);
@@ -60,7 +69,9 @@ const Account = () => {
   };
 
   const handleAddressClick = () => {
-    navigate(userInfo.address ? "/edit-address" : "/add-address", { state: { returnUrl: "/account" } });
+    navigate(userInfo.address ? "/edit-address" : "/add-address", {
+      state: { returnUrl: "/account" },
+    });
   };
 
   if (!userInfo && !error) {
@@ -73,14 +84,24 @@ const Account = () => {
 
   const renderPersonalInfo = () => {
     if (isEditing) {
-      return <UpdateProfile userInfo={userInfo} onUpdate={handleUpdateProfile} onCancel={() => setIsEditing(false)} />;
+      return (
+        <UpdateProfile
+          userInfo={userInfo}
+          onUpdate={handleUpdateProfile}
+          onCancel={() => setIsEditing(false)}
+        />
+      );
     }
 
     return (
       <Card
         title="Thông tin cá nhân"
         extra={
-          <Button icon={<EditOutlined />} type="link" onClick={() => setIsEditing(true)}>
+          <Button
+            icon={<EditOutlined />}
+            type="link"
+            onClick={() => setIsEditing(true)}
+          >
             Sửa
           </Button>
         }
@@ -163,7 +184,11 @@ const Account = () => {
       <div className="account-header">
         <div className="header-content">
           <div className="profile-image-wrapper">
-            <img src={userInfo.imageUrl || "/placeholder.svg"} alt={userInfo.username} className="profile-image" />
+            <img
+              src={userInfo.imageUrl || "/placeholder.svg"}
+              alt={userInfo.username}
+              className="profile-image"
+            />
           </div>
           <div className="user-intro">
             <h1>Xin chào, {userInfo.username}</h1>

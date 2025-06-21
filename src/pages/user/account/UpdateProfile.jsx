@@ -3,7 +3,7 @@ import { Form, Input, Button, Card, DatePicker, Upload } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import "../../../static/style/profile.css";
-import Notification from "../../common/Notification";
+import Notification from "../../../components/common/Notification";
 
 const { Title } = Form;
 
@@ -38,7 +38,6 @@ export default function UpdateProfile({ userInfo, onUpdate, onCancel }) {
         formData.append("dateOfBirth", values.dateOfBirth.format("YYYY-MM-DD"));
       if (imageFile) formData.append("file", imageFile);
 
-
       await onUpdate(userInfo.id, formData);
       showNotification("Cập nhật thông tin thành công", "success");
 
@@ -47,7 +46,12 @@ export default function UpdateProfile({ userInfo, onUpdate, onCancel }) {
       }, 2000);
     } catch (error) {
       console.error("Update error:", error);
-      showNotification(error.response?.data?.message || error.message || "Cập nhật thông tin thất bại", "error");
+      showNotification(
+        error.response?.data?.message ||
+          error.message ||
+          "Cập nhật thông tin thất bại",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -103,7 +107,9 @@ export default function UpdateProfile({ userInfo, onUpdate, onCancel }) {
         initialValues={{
           firstName: userInfo.firstName || "",
           lastName: userInfo.lastName || "",
-          dateOfBirth: userInfo.dateOfBirth ? dayjs(userInfo.dateOfBirth) : null,
+          dateOfBirth: userInfo.dateOfBirth
+            ? dayjs(userInfo.dateOfBirth)
+            : null,
           email: userInfo.email || "",
         }}
       >
@@ -117,7 +123,11 @@ export default function UpdateProfile({ userInfo, onUpdate, onCancel }) {
             onChange={handleChange}
           >
             {imageUrl ? (
-              <img src={imageUrl || "/placeholder.svg"} alt="avatar" className="avatar-image" />
+              <img
+                src={imageUrl || "/placeholder.svg"}
+                alt="avatar"
+                className="avatar-image"
+              />
             ) : (
               uploadButton
             )}
@@ -125,16 +135,28 @@ export default function UpdateProfile({ userInfo, onUpdate, onCancel }) {
         </div>
 
         <div className="form-row">
-          <Form.Item name="firstName" label="Tên" rules={[{ required: true, message: "Vui lòng nhập tên!" }]}>
+          <Form.Item
+            name="firstName"
+            label="Tên"
+            rules={[{ required: true, message: "Vui lòng nhập tên!" }]}
+          >
             <Input placeholder="Nhập tên" />
           </Form.Item>
-          <Form.Item name="lastName" label="Họ" rules={[{ required: true, message: "Vui lòng nhập họ!" }]}>
+          <Form.Item
+            name="lastName"
+            label="Họ"
+            rules={[{ required: true, message: "Vui lòng nhập họ!" }]}
+          >
             <Input placeholder="Nhập họ" />
           </Form.Item>
         </div>
 
         <Form.Item name="dateOfBirth" label="Ngày sinh">
-          <DatePicker className="full-width" format="YYYY-MM-DD" placeholder="Chọn ngày sinh" />
+          <DatePicker
+            className="full-width"
+            format="YYYY-MM-DD"
+            placeholder="Chọn ngày sinh"
+          />
         </Form.Item>
 
         <Form.Item name="email" label="Email">
