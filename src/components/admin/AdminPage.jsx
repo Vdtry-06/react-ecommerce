@@ -10,6 +10,7 @@ import {
   StarOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
+import "../../static/style/adminPage.css";
 
 const { Content, Sider } = Layout;
 

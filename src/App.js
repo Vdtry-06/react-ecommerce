@@ -29,8 +29,6 @@ import AdminPage from "./components/admin/AdminPage";
 import AdminDashboard from "./pages/admin/dashboard/Dashboard";
 import ChartView from "./pages/admin/dashboard/ChartView";
 import AdminCategoryPage from "./pages/admin/category/AdminCategoryPage";
-import AddCategory from "./pages/admin/category/AddCategory";
-import EditCategory from "./pages/admin/category/EditCategory";
 import AdminProductPage from "./pages/admin/product/AdminProductPage";
 import AddProduct from "./pages/admin/product/AddProduct";
 import EditProduct from "./pages/admin/product/EditProductPage";
@@ -114,11 +112,6 @@ function App() {
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="dashboard/charts" element={<ChartView />} />
                   <Route path="categories" element={<AdminCategoryPage />} />
-                  <Route path="add-category" element={<AddCategory />} />
-                  <Route
-                    path="edit-category/:categoryId"
-                    element={<EditCategory />}
-                  />
                   <Route path="products" element={<AdminProductPage />} />
                   <Route path="add-product" element={<AddProduct />} />
                   <Route
