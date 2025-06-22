@@ -15,7 +15,6 @@ import RequestVerificationCode from "./pages/auth/register/RequestVerificationCo
 import VerifyAccount from "./pages/auth/login/VerifyAccount";
 import Account from "./pages/user/account/Account";
 import UpdateProfile from "./pages/user/account/UpdateProfile";
-import CategoryProductsPage from "./pages/user/home/CategoryProductsPage";
 import CartPage from "./pages/user/cart/CartPage";
 import CheckoutPage from "./pages/user/checkout/CheckoutPage";
 import OrdersPage from "./pages/user/order/OrdersPage";
@@ -68,10 +67,6 @@ function App() {
                 <Route
                   path="/product/:productId"
                   element={<ProductDetailsPages />}
-                />
-                <Route
-                  path="/category-products"
-                  element={<CategoryProductsPage />}
                 />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />

@@ -87,7 +87,7 @@ html, body {
 
 .banner-image {
   max-height: 220px;
-  max-width: 30%;
+  max-width: 70%;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
