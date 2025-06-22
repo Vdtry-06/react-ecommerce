@@ -186,31 +186,28 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ![alt text](<data/Screenshot 2025-06-21 210314.png>)
 ![alt text](<data/Screenshot 2025-06-21 210358.png>)
 ![alt text](<data/Screenshot 2025-06-21 210432.png>)
-![alt text](<data/Screenshot 2025-06-21 210501.png>)
-![alt text](<data/Screenshot 2025-06-21 210532.png>)
-![alt text](<data/Screenshot 2025-06-21 210602.png>)
-![alt text](<data/Screenshot 2025-06-21 210628.png>)
-![alt text](<data/Screenshot 2025-06-21 210640.png>)
-![alt text](<data/Screenshot 2025-06-21 210709.png>)
-![alt text](<data/Screenshot 2025-06-21 210729.png>)
+![alt text](data/image.png)
+![alt text](data/image-1.png)
+![alt text](data/image-2.png)
+![alt text](data/image-3.png)
+![alt text](data/image-4.png)
 
 ### 4. Orders Management
 
 ![alt text](<data/Screenshot 2025-06-21 210743.png>)
-![alt text](<data/Screenshot 2025-06-21 210803.png>)
+![alt text](data/image-5.png)
 
 ### 5. User Management
 
 ![alt text](<data/Screenshot 2025-06-21 210857.png>)
-![alt text](<data/Screenshot 2025-06-21 210955.png>)
-![alt text](<data/Screenshot 2025-06-21 211103.png>)
+![alt text](data/image-6.png)
+![alt text](data/image-7.png)
 
 ### 6. Review Management
 
 ![alt text](<data/Screenshot 2025-06-21 211127.png>)
 ![alt text](<data/Screenshot 2025-06-21 211142.png>)
-![alt text](<data/Screenshot 2025-06-21 211204.png>)
-![alt text](data/image-27.png)
+![alt text](data/image-8.png)
 
 ### 7. Toppings Management
 
