@@ -112,6 +112,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ![alt text](data/image-40.png)
 ![alt text](data/image-41.png)
+![alt text](data/image-9.png)
 
 ### 2.1. Chatbot
 
