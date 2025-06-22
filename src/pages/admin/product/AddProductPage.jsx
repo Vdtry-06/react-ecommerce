@@ -1,13 +1,12 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Card, Button, Typography } from "antd";
-import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, ShoppingOutlined } from "@ant-design/icons";
 import ProductForm from "../../../components/admin/product/ProductForm";
 
 const { Title, Text } = Typography;
 
-const EditProduct = () => {
+const AddProduct = () => {
   const navigate = useNavigate();
-  const { productId } = useParams();
 
   return (
     <div>
@@ -44,7 +43,7 @@ const EditProduct = () => {
               <div
                 style={{
                   background:
-                    "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                   borderRadius: "12px",
                   padding: "12px",
                   display: "flex",
@@ -52,22 +51,26 @@ const EditProduct = () => {
                   justifyContent: "center",
                 }}
               >
-                <EditOutlined style={{ color: "white", fontSize: "24px" }} />
+                <ShoppingOutlined
+                  style={{ color: "white", fontSize: "24px" }}
+                />
               </div>
               <div>
                 <Title level={2} style={{ margin: 0, color: "#1a202c" }}>
-                  Chỉnh sửa sản phẩm
+                  Thêm sản phẩm mới
                 </Title>
-                <Text type="secondary">Cập nhật thông tin sản phẩm</Text>
+                <Text type="secondary">
+                  Tạo sản phẩm mới cho cửa hàng của bạn
+                </Text>
               </div>
             </div>
           </div>
         </div>
       </Card>
 
-      <ProductForm mode="edit" navigate={navigate} productId={productId} />
+      <ProductForm mode="add" navigate={navigate} />
     </div>
   );
 };
 
-export default EditProduct;
+export default AddProduct;
