@@ -101,7 +101,7 @@ const AdminPage = () => {
     <Layout style={{ minHeight: "100vh" }}>
       <Layout>
         <Sider
-          width={250}
+          width={230}
           style={{
             background: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
             position: "fixed",
@@ -140,7 +140,7 @@ const AdminPage = () => {
         </Sider>
         <Layout
           style={{
-            marginLeft: 250,
+            marginLeft: 230,
             padding: "0 24px 24px",
             marginTop: -21,
             background: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
