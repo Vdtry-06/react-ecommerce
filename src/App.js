@@ -25,7 +25,7 @@ import AddressPage from "./pages/user/account/AddressPage";
 import Chatbot from "./components/user/Chatbot";
 import ForgotPasswordPage from "./pages/auth/forgot-password/ForgotPasswordPage";
 
-import AdminPage from "./pages/admin/admin/AdminPage";
+import AdminPage from "./pages/admin/home/AdminPage";
 import AdminDashboard from "./pages/admin/dashboard/Dashboard";
 import ChartView from "./pages/admin/dashboard/ChartView";
 import AdminCategoryPage from "./pages/admin/category/AdminCategoryPage";
