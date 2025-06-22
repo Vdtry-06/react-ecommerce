@@ -27,6 +27,11 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import ProductList from "../../../components/user/ProductList";
+import ProductImages from "../../../components/user/product-detail/ProductImages";
+import ProductInfo from "../../../components/user/product-detail/ProductInfo";
+import ProductTabs from "../../../components/user/product-detail/ProductTabs";
+import ProductDetailInfo from "../../../components/user/product-detail/ProductDetailInfo";
+import RelatedProducts from "../../../components/user/product-detail/RelatedProducts";
 import "../../../static/style/productDetailsPages.css";
 
 const { Title, Text, Paragraph } = Typography;
@@ -398,8 +403,6 @@ const ProductDetailsPages = () => {
     return <div className="error-container">Không tìm thấy sản phẩm</div>;
   }
 
-  const cartItem = cart.find((item) => item.id === parseInt(productId));
-
   const displayProduct = {
     ...product,
     name: product.name,
@@ -431,538 +434,50 @@ const ProductDetailsPages = () => {
             className="product-detail-layout"
             style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}
           >
-            <div
-              className="product-images-container"
-              style={{ flex: "1", minWidth: "300px" }}
-            >
-              <div
-                className="main-image-container"
-                style={{ position: "relative", marginBottom: "20px" }}
-              ></div>
-              <div
-                className="main-image"
-                style={{ position: "relative", marginBottom: "10px" }}
-              >
-                <img
-                  src={
-                    hoveredImage !== null && product.imageUrls?.[hoveredImage]
-                      ? product.imageUrls[hoveredImage]
-                      : product.imageUrls?.[selectedImage] ||
-                        "/placeholder.svg?height=300&width=300"
-                  }
-                  alt={displayProduct.name}
-                  style={{ width: "100%", height: "auto", borderRadius: "8px" }}
-                />
-                {displayProduct.discount > 0 && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "10px",
-                      left: "10px",
-                      background: "#f50",
-                      color: "white",
-                      padding: "5px 10px",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    -{displayProduct.discount}%
-                  </div>
-                )}
-              </div>
-              <div
-                className="thumbnails"
-                style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}
-              >
-                {product.imageUrls?.map((url, index) => (
-                  <div
-                    key={index}
-                    className={`thumbnail ${selectedImage === index ? "active" : ""}`}
-                    onClick={() => setSelectedImage(index)}
-                    onMouseEnter={() => setHoveredImage(index)}
-                    onMouseLeave={() => setHoveredImage(null)}
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      border: `2px solid ${selectedImage === index ? "#1890ff" : "#ddd"}`,
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <img
-                      src={url || "/placeholder.svg?height=60&width=60"}
-                      alt={`Thumbnail ${index + 1}`}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        borderRadius: "4px",
-                      }}
-                    />
-                  </div>
-                )) || (
-                  <div className="thumbnail">
-                    <img
-                      src="/placeholder.svg?height=60&width=60"
-                      alt="No thumbnail"
-                      style={{ width: "60px", height: "60px" }}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div
-              className="product-info"
-              style={{ flex: "1", minWidth: "300px" }}
-            >
-              <Rate
-                disabled
-                value={5}
-                style={{ color: "#FFD700", fontSize: 16, marginBottom: "16px" }}
-              />
-
-              <Title
-                level={2}
-                style={{ margin: "0 0 16px", fontWeight: "600", color: "#333" }}
-              >
-                {displayProduct.name}
-              </Title>
-
-              <Paragraph
-                style={{
-                  marginBottom: "24px",
-                  color: "#666",
-                  lineHeight: "1.6",
-                }}
-              >
-                {displayProduct.description}
-              </Paragraph>
-
-              <div className="price" style={{ marginBottom: "20px" }}>
-                <Tag
-                  color="#f50"
-                  style={{ marginRight: "8px", fontSize: "14px" }}
-                >
-                  -{displayProduct.discount}%
-                </Tag>
-                <span
-                  style={{ fontSize: "24px", fontWeight: "700", color: "#f50" }}
-                >
-                  {displayProduct.price.toFixed(2)} VNĐ
-                </span>
-                {displayProduct.originalPrice > 0 && (
-                  <span
-                    style={{
-                      fontSize: "16px",
-                      color: "#999",
-                      textDecoration: "line-through",
-                      marginLeft: "10px",
-                    }}
-                  >
-                    {displayProduct.originalPrice.toFixed(2)} VNĐ
-                  </span>
-                )}
-              </div>
-
-              <div className="toppings-list">
-                <h3 className="toppings-title">Chọn Toppings:</h3>
-                {product.toppings?.length > 0 ? (
-                  <ul className="topping-items">
-                    {product.toppings
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                      .map((topping) => (
-                        <li key={topping.id} className="topping-item">
-                          <label className="topping-label">
-                            <Checkbox
-                              checked={selectedToppings.includes(topping.id)}
-                              onChange={() => handleToppingChange(topping.id)}
-                              disabled={isProcessing || isLoading}
-                            />
-                            <span className="topping-name">{topping.name}</span>
-                            <span className="topping-price">
-                              +{topping.price.toFixed(2)} VNĐ
-                            </span>
-                          </label>
-                        </li>
-                      ))}
-                  </ul>
-                ) : (
-                  <p className="no-toppings">Không có topping nào.</p>
-                )}
-              </div>
-
-              {cartItem ? (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <Button
-                    onClick={() => updateQuantity(false)}
-                    disabled={isProcessing || isLoading}
-                    style={{
-                      background: "#ff5722",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    <span style={{ fontSize: "20px" }}>−</span>
-                  </Button>
-                  <span
-                    style={{
-                      fontSize: "16px",
-                      minWidth: "30px",
-                      textAlign: "center",
-                    }}
-                  >
-                    {isProcessing || isLoading ? "..." : cartItem.qty}
-                  </span>
-                  <Button
-                    onClick={() => updateQuantity(true)}
-                    disabled={isProcessing || isLoading}
-                    style={{
-                      background: "#ff5722",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    <span style={{ fontSize: "20px" }}>+</span>
-                  </Button>
-                </div>
-              ) : (
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <Button
-                    type="primary"
-                    size="large"
-                    onClick={addToCart}
-                    disabled={
-                      isProcessing ||
-                      isLoading ||
-                      product.availableQuantity <= 0
-                    }
-                    style={{
-                      background: "#007bff",
-                      borderColor: "#007bff",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    {isProcessing || isLoading
-                      ? "Đang xử lý..."
-                      : "Thêm vào giỏ hàng"}
-                  </Button>
-                  <Button
-                    type="primary"
-                    size="large"
-                    onClick={buyNow}
-                    disabled={
-                      isProcessing ||
-                      isLoading ||
-                      product.availableQuantity <= 0
-                    }
-                    style={{
-                      background: "#ff4500",
-                      borderColor: "#ff4500",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    {isProcessing || isLoading ? "Đang xử lý..." : "Mua ngay"}
-                  </Button>
-                </div>
-              )}
-
-              <div className="meta" style={{ marginTop: "20px" }}>
-                <div style={{ marginBottom: "8px" }}>
-                  <Text strong style={{ color: "#333" }}>
-                    Danh mục:
-                  </Text>
-                  <span style={{ marginLeft: "8px", color: "#666" }}>
-                    {displayProduct.categories}
-                  </span>
-                </div>
-                <div style={{ marginBottom: "8px" }}>
-                  <Text strong style={{ color: "#333" }}>
-                    Mô tả:
-                  </Text>
-                  <span style={{ marginLeft: "8px", color: "#666" }}>
-                    {displayProduct.categoriesDescription}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <ProductImages
+              product={product}
+              selectedImage={selectedImage}
+              hoveredImage={hoveredImage}
+              setSelectedImage={setSelectedImage}
+              setHoveredImage={setHoveredImage}
+            />
+            <ProductInfo
+              product={product} // Pass original product for toppings
+              displayProduct={displayProduct} // Pass displayProduct for other fields
+              cartItem={cart.find((item) => item.id === parseInt(productId))}
+              selectedToppings={selectedToppings}
+              isProcessing={isProcessing}
+              isLoading={isLoading}
+              handleToppingChange={handleToppingChange}
+              addToCart={addToCart}
+              buyNow={buyNow}
+              updateQuantity={updateQuantity}
+              toggleWishlist={toggleWishlist}
+              productId={productId}
+              wishlist={wishlist}
+            />
           </div>
         </div>
 
-        <div style={{ marginTop: "40px" }}>
-          <Tabs activeKey={activeTab} onChange={setActiveTab} type="card">
-            <TabPane tab="MÔ TẢ" key="description">
-              <Title level={4}>TRẢI NGHIỆM ẨM THỰC ĐỈNH CAO</Title>
-              <Paragraph>{displayProduct.description}</Paragraph>
-            </TabPane>
-            <TabPane tab={`BÌNH LUẬN (${comments.length})`} key="comment">
-              <div className="comments">
-                {comments.length > 0 ? (
-                  comments.map((comment) => (
-                    <div
-                      key={comment.id}
-                      style={{
-                        display: "flex",
-                        gap: "15px",
-                        padding: "15px 0",
-                        borderBottom: "1px solid #eee",
-                      }}
-                    >
-                      <Avatar
-                        icon={<UserOutlined />}
-                        style={{ backgroundColor: "#007bff" }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <strong
-                            style={{ fontSize: "16px", color: "#333" }}
-                          >{`Người dùng ${comment.userId}`}</strong>
-                          <span style={{ color: "#999", fontSize: "12px" }}>
-                            {new Date(comment.reviewDate).toLocaleString()}
-                          </span>
-                        </div>
-                        <Rate
-                          disabled
-                          value={comment.ratingScore}
-                          style={{ margin: "5px 0" }}
-                        />
-                        <p style={{ color: "#666", lineHeight: "1.5" }}>
-                          {comment.comment}
-                        </p>
-                        {userId === comment.userId && !editingComment && (
-                          <Space>
-                            <Button
-                              icon={<EditOutlined />}
-                              onClick={() => {
-                                setEditingComment(comment);
-                                form.setFieldsValue({
-                                  rating: comment.ratingScore,
-                                  comment: comment.comment,
-                                });
-                                setActiveTab("edit-comment");
-                              }}
-                            >
-                              Sửa
-                            </Button>
-                            <Popconfirm
-                              title="Bạn có chắc muốn xóa bình luận này?"
-                              onConfirm={() => handleDeleteComment(comment.id)}
-                              okText="Có"
-                              cancelText="Không"
-                            >
-                              <Button icon={<DeleteOutlined />} danger>
-                                Xóa
-                              </Button>
-                            </Popconfirm>
-                          </Space>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p style={{ color: "#999", fontStyle: "italic" }}>
-                    Chưa có bình luận nào.
-                  </p>
-                )}
-              </div>
-            </TabPane>
-            {!hasCommented && (
-              <TabPane tab="ĐĂNG BÌNH LUẬN" key="post-comment">
-                <div style={{ maxWidth: "600px" }}>
-                  <div style={{ marginBottom: "16px" }}>
-                    <strong style={{ color: "#333" }}>Đánh giá:</strong>
-                    <Rate
-                      value={userRating}
-                      onChange={setUserRating}
-                      style={{ marginLeft: "8px" }}
-                    />
-                  </div>
-                  <Form
-                    form={form}
-                    onFinish={handleReviewSubmit}
-                    layout="vertical"
-                  >
-                    <h3
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "600",
-                        marginBottom: "16px",
-                      }}
-                    >
-                      Chia sẻ ý kiến của bạn:
-                    </h3>
-                    <Form.Item
-                      name="rating"
-                      label="Đánh giá"
-                      rules={[
-                        { required: true, message: "Vui lòng chọn số sao!" },
-                      ]}
-                    >
-                      <Rate onChange={setUserRating} value={userRating} />
-                    </Form.Item>
-                    <Form.Item
-                      name="comment"
-                      label="Bình luận"
-                      rules={[
-                        { required: true, message: "Vui lòng nhập bình luận!" },
-                      ]}
-                    >
-                      <TextArea rows={6} placeholder="Viết bình luận..." />
-                    </Form.Item>
-                    <Form.Item>
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        loading={isProcessing}
-                        style={{
-                          background: "#007bff",
-                          borderColor: "#007bff",
-                        }}
-                      >
-                        {isProcessing ? "Đang xử lý..." : "Gửi bình luận"}
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                </div>
-              </TabPane>
-            )}
-            {editingComment && (
-              <TabPane tab="SỬA BÌNH LUẬN" key="edit-comment">
-                <div style={{ maxWidth: "600px" }}>
-                  <div style={{ marginBottom: "16px" }}>
-                    <strong style={{ color: "#333" }}>Đánh giá:</strong>
-                    <Rate
-                      value={userRating}
-                      onChange={setUserRating}
-                      style={{ marginLeft: "8px" }}
-                    />
-                  </div>
-                  <Form
-                    form={form}
-                    onFinish={(values) =>
-                      handleUpdateComment(editingComment.id, values)
-                    }
-                    layout="vertical"
-                  >
-                    <h3
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "600",
-                        marginBottom: "16px",
-                      }}
-                    >
-                      Sửa bình luận:
-                    </h3>
-                    <Form.Item
-                      name="rating"
-                      label="Đánh giá"
-                      rules={[
-                        { required: true, message: "Vui lòng chọn số sao!" },
-                      ]}
-                    >
-                      <Rate onChange={setUserRating} value={userRating} />
-                    </Form.Item>
-                    <Form.Item
-                      name="comment"
-                      label="Bình luận"
-                      rules={[
-                        { required: true, message: "Vui lòng nhập bình luận!" },
-                      ]}
-                    >
-                      <TextArea rows={6} placeholder="Viết bình luận..." />
-                    </Form.Item>
-                    <Form.Item>
-                      <Button
-                        type="primary"
-                        htmlType="submit"
-                        loading={isProcessing}
-                        style={{
-                          background: "#007bff",
-                          borderColor: "#007bff",
-                        }}
-                      >
-                        {isProcessing ? "Đang xử lý..." : "Cập nhật bình luận"}
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setEditingComment(null);
-                          form.resetFields();
-                          setActiveTab("comment");
-                        }}
-                        style={{ marginLeft: "10px" }}
-                      >
-                        Hủy
-                      </Button>
-                    </Form.Item>
-                  </Form>
-                </div>
-              </TabPane>
-            )}
-          </Tabs>
-        </div>
-
-        <div style={{ marginTop: "40px" }}>
-          <Title level={3}>THÔNG TIN CHI TIẾT</Title>
-          <Row gutter={[16, 16]}>
-            <Col xs={24} md={12}>
-              <List
-                itemLayout="horizontal"
-                dataSource={product.categories || []}
-                renderItem={(category) => (
-                  <List.Item>
-                    <Space>
-                      <CheckOutlined style={{ color: "#006241" }} />
-                      <strong>{category.name}</strong>
-                    </Space>
-                  </List.Item>
-                )}
-              />
-            </Col>
-            <Col xs={24} md={12}>
-              <List
-                itemLayout="horizontal"
-                dataSource={product.categories || []}
-                renderItem={(category) => (
-                  <List.Item>
-                    <Space>
-                      <CheckOutlined style={{ color: "#006241" }} />
-                      <span>{category.description || "N/A"}</span>
-                    </Space>
-                  </List.Item>
-                )}
-              />
-            </Col>
-          </Row>
-        </div>
-
-        <div style={{ marginTop: "40px" }}>
-          <Title level={2}>SẢN PHẨM LIÊN QUAN</Title>
-          <div>
-            {loading ? (
-              <Text>Đang tải...</Text>
-            ) : error ? (
-              <Text type="error">{error}</Text>
-            ) : allProducts.length === 0 ? (
-              <Text>Không có sản phẩm nào.</Text>
-            ) : (
-              <ProductList products={allProducts.slice(0, 4)} gap="16px" />
-            )}
-          </div>
-        </div>
+        <ProductTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          comments={comments}
+          userId={userId}
+          editingComment={editingComment}
+          setEditingComment={setEditingComment}
+          form={form}
+          userRating={userRating}
+          setUserRating={setUserRating}
+          hasCommented={hasCommented}
+          isProcessing={isProcessing}
+          handleReviewSubmit={handleReviewSubmit}
+          handleUpdateComment={handleUpdateComment}
+          handleDeleteComment={handleDeleteComment}
+          product={displayProduct}
+        />
+        <ProductDetailInfo product={product} />
+        <RelatedProducts allProducts={allProducts} loading={loading} error={error} />
       </div>
     </div>
   );
