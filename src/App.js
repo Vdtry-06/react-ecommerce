@@ -30,7 +30,7 @@ import AdminDashboard from "./pages/admin/dashboard/Dashboard";
 import ChartView from "./pages/admin/dashboard/ChartView";
 import AdminCategoryPage from "./pages/admin/category/AdminCategoryPage";
 import AdminProductPage from "./pages/admin/product/AdminProductPage";
-import AddProduct from "./pages/admin/product/AddProduct";
+import AddProduct from "./pages/admin/product/AddProductPage";
 import EditProduct from "./pages/admin/product/EditProductPage";
 import AdminOrdersPage from "./pages/admin/order/AdminOrdersPage";
 import OrderDetailPage from "./pages/admin/order/OrderDetailPage";
