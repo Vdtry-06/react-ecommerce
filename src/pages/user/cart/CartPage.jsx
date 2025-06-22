@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../../auth/context/CartContext";
-import "../../../static/style/cart.css";
-import Notification from "../../../components/common/Notification";
 import ApiService from "../../../service/ApiService";
+import CartHeader from "../../../components/user/cart/CartHeader";
+import CartNotification from "../../../components/user/cart/CartNotification";
+import CartItems from "../../../components/user/cart/CartItems";
+import CartSummary from "../../../components/user/cart/CartSummary";
+import "../../../static/style/cart.css";
 
 const CartPage = () => {
   const { cart, syncCartWithBackend, isLoading } = useCart();
@@ -180,19 +183,8 @@ const CartPage = () => {
   return (
     <div className="cart-container">
       <div className="cart-page">
-        <div className="cart-header">
-          <h1>Giỏ hàng của bạn</h1>
-          <span className="cart-icon">🛒</span>
-        </div>
-
-        {notification && (
-          <Notification
-            message={notification.message}
-            type={notification.type}
-            onClose={() => setNotification(null)}
-          />
-        )}
-
+        <CartHeader />
+        <CartNotification notification={notification} onClose={() => setNotification(null)} />
         {isLoading ? (
           <div className="loading-container">
             <div className="loading-spinner"></div>
@@ -212,153 +204,25 @@ const CartPage = () => {
           </div>
         ) : (
           <div className="cart-content">
-            <div className="cart-items-container">
-              <div className="select-all-container">
-                <label className="select-all">
-                  <input
-                    type="checkbox"
-                    checked={
-                      selectedItems.size === cart.length && cart.length > 0
-                    }
-                    onChange={selectAll}
-                    disabled={isLoading}
-                  />
-                  <span>Chọn tất cả ({cart.length} sản phẩm)</span>
-                </label>
-              </div>
-
-              <ul className="cart-items">
-                {cart.map((item) => (
-                  <li key={item.id} className="cart-item">
-                    <div className="item-select">
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.has(item.id)}
-                        onChange={() => toggleSelectItem(item.id)}
-                        id={`select-${item.id}`}
-                        disabled={isLoading}
-                      />
-                      <label
-                        htmlFor={`select-${item.id}`}
-                        className="checkbox-custom"
-                      >
-                        {selectedItems.has(item.id) && (
-                          <span className="checkmark">✓</span>
-                        )}
-                      </label>
-                    </div>
-
-                    <div className="item-image">
-                      <img
-                        src={
-                          item.productImageUrl ||
-                          "/placeholder.svg?height=100&width=100"
-                        }
-                        alt={item.productName}
-                      />
-                    </div>
-
-                    <div className="item-details">
-                      <h2>{item.productName}</h2>
-                      <p className="item-description">
-                        {item.description || "Không có mô tả"}
-                      </p>
-                      <p className="item-description">Giá: {item.price}</p>
-                      {item.toppingIds && item.toppingIds.length > 0 && (
-                        <div className="toppings-list">
-                          <h3 className="toppings-title">Toppings</h3>
-                          <ul className="topping-items">
-                            {item.toppingIds.map((toppingId) => (
-                              <li key={toppingId} className="topping-item">
-                                <span className="topping-name">
-                                  {toppingNames[toppingId] ||
-                                    `Topping ${toppingId}`}
-                                </span>
-                                <span className="topping-price">
-                                  {toppingPrices[toppingId]?.toFixed(2) || 0}{" "}
-                                  VNĐ
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      <div className="item-actions">
-                        <div className="quantity-controls">
-                          <button
-                            onClick={() => decrementItem(item)}
-                            className="quantity-btn"
-                            aria-label="Giảm số lượng"
-                            disabled={isLoading}
-                          >
-                            <span className="quantity-icon">−</span>
-                          </button>
-                          <span className="quantity">{item.qty}</span>
-                          <button
-                            onClick={() => incrementItem(item)}
-                            className="quantity-btn"
-                            aria-label="Tăng số lượng"
-                            disabled={isLoading}
-                          >
-                            <span className="quantity-icon">+</span>
-                          </button>
-                        </div>
-
-                        <div className="item-price">
-                          <span className="price-value">
-                            {calculateItemTotal(item).toFixed(2)} VNĐ
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="cart-summary">
-              <div className="summary-header">
-                <h2>Tổng đơn hàng</h2>
-              </div>
-
-              <div className="summary-details">
-                <div className="summary-row">
-                  <span>Số lượng sản phẩm đã chọn:</span>
-                  <span>{selectedItems.size}</span>
-                </div>
-
-                <div className="summary-row subtotal">
-                  <span>Tạm tính:</span>
-                  <span>{totalPrice.toFixed(2)} VNĐ</span>
-                </div>
-
-                <div className="summary-row shipping">
-                  <span>Phí vận chuyển:</span>
-                  <span>Miễn phí</span>
-                </div>
-
-                <div className="summary-row total">
-                  <span>Tổng cộng:</span>
-                  <span>{totalPrice.toFixed(2)} VNĐ</span>
-                </div>
-              </div>
-
-              <button
-                className={`checkout-button ${selectedItems.size === 0 || isLoading ? "disabled" : ""}`}
-                onClick={handleBuy}
-                disabled={selectedItems.size === 0 || isLoading}
-              >
-                Mua Hàng
-              </button>
-
-              <button
-                className="continue-shopping"
-                onClick={() => navigate("/")}
-                disabled={isLoading}
-              >
-                Tiếp tục mua sắm
-              </button>
-            </div>
+            <CartItems
+              cart={cart}
+              selectedItems={selectedItems}
+              toggleSelectItem={toggleSelectItem}
+              incrementItem={incrementItem}
+              decrementItem={decrementItem}
+              calculateItemTotal={calculateItemTotal}
+              toppingPrices={toppingPrices}
+              toppingNames={toppingNames}
+              isLoading={isLoading}
+              selectAll={selectAll}
+            />
+            <CartSummary
+              selectedItems={selectedItems}
+              totalPrice={totalPrice}
+              handleBuy={handleBuy}
+              isLoading={isLoading}
+              navigate={navigate}
+            />
           </div>
         )}
       </div>
