@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography } from 'antd';
-import ProductList from "../../../components/user/ProductList";
+import ProductList from "../../../components/common/ProductList";
 const { Title, Text } = Typography;
 const RelatedProducts = ({ allProducts, loading, error }) => {
   return (

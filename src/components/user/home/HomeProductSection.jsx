@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { Row, Col, Typography } from "antd";
-import ProductList from "../../../components/user/ProductList";
+import ProductList from "../../../components/common/ProductList";
 import Pagination from "../../../components/common/Pagination";
 import ApiService from "../../../service/ApiService";
 import HomeCategoryFilter from "./HomeCategoryFilter";

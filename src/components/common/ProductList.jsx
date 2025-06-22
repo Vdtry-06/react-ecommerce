@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ApiService from "../../service/ApiService";
 import "../../static/style/productList.css";
 import { useState } from "react";
-import Notification from "../common/Notification";
+import Notification from "./Notification";
 
 const ProductList = ({ products }) => {
   const { cart, syncCartWithBackend, isLoading } = useCart();

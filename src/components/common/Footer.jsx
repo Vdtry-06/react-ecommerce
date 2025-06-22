@@ -8,7 +8,6 @@ const Footer = () => {
     <footer className="footer">
       <div className="container">
         <div className="footer-grid">
-          {/* Brand Section */}
           <div className="footer-brand">
             <h2 className="footer-brand-title">Beverage</h2>
             <p className="footer-social-text">KẾT NỐI VỚI CHÚNG TÔI</p>
@@ -28,7 +27,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Company Info Section */}
           <div>
             <h3 className="footer-section-title">CÔNG TY</h3>
             <ul className="footer-list">
@@ -39,7 +37,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* About Us Section */}
           <div>
             <h3 className="footer-section-title">VỀ CHÚNG TÔI</h3>
             <ul className="footer-list">
@@ -61,7 +58,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Customer Service Section */}
           <div>
             <h3 className="footer-section-title">DỊCH VỤ KHÁCH HÀNG</h3>
             <ul className="footer-list">

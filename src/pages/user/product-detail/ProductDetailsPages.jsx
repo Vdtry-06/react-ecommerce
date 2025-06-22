@@ -26,7 +26,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import ProductList from "../../../components/user/ProductList";
+import ProductList from "../../../components/common/ProductList";
 import ProductImages from "../../../components/user/product-detail/ProductImages";
 import ProductInfo from "../../../components/user/product-detail/ProductInfo";
 import ProductTabs from "../../../components/user/product-detail/ProductTabs";
