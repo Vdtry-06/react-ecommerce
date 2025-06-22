@@ -67,7 +67,7 @@ const AdminHeader = () => {
         left: 0,
         right: 0,
         zIndex: 1001,
-        height: "64px",
+        height: "55px",
         lineHeight: "64px",
         width: "calc(100% - 6px)",
       }}

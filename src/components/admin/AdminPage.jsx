@@ -1,6 +1,6 @@
-import React from "react"
-import { useNavigate, useLocation, Outlet } from "react-router-dom"
-import { Breadcrumb, Layout, Menu, theme } from "antd"
+import React from "react";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { Breadcrumb, Layout, Menu, theme } from "antd";
 import {
   DashboardOutlined,
   AppstoreOutlined,
@@ -9,44 +9,93 @@ import {
   UserOutlined,
   StarOutlined,
   PlusCircleOutlined,
-} from "@ant-design/icons"
+} from "@ant-design/icons";
 
-const { Content, Sider } = Layout
+const { Content, Sider } = Layout;
 
 const AdminPage = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
     token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken()
+  } = theme.useToken();
 
   const menuItems = [
-    { key: "dashboard", label: "Dashboard", icon: DashboardOutlined, path: "/admin/dashboard" },
-    { key: "categories", label: "Categories", icon: AppstoreOutlined, path: "/admin/categories" },
-    { key: "products", label: "Products", icon: ShoppingOutlined, path: "/admin/products" },
-    { key: "orders", label: "Orders", icon: ShoppingCartOutlined, path: "/admin/orders" },
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      icon: DashboardOutlined,
+      path: "/admin/dashboard",
+    },
+    {
+      key: "categories",
+      label: "Categories",
+      icon: AppstoreOutlined,
+      path: "/admin/categories",
+    },
+    {
+      key: "products",
+      label: "Products",
+      icon: ShoppingOutlined,
+      path: "/admin/products",
+    },
+    {
+      key: "orders",
+      label: "Orders",
+      icon: ShoppingCartOutlined,
+      path: "/admin/orders",
+    },
     { key: "users", label: "Users", icon: UserOutlined, path: "/admin/users" },
-    { key: "reviews", label: "Reviews", icon: StarOutlined, path: "/admin/reviews" },
-    { key: "toppings", label: "Toppings", icon: PlusCircleOutlined, path: "/admin/toppings" },
-  ]
+    {
+      key: "reviews",
+      label: "Reviews",
+      icon: StarOutlined,
+      path: "/admin/reviews",
+    },
+    {
+      key: "toppings",
+      label: "Toppings",
+      icon: PlusCircleOutlined,
+      path: "/admin/toppings",
+    },
+  ];
 
-  let activeSection = "dashboard"
-  let breadcrumbTitle = "Dashboard"
+  let activeSection = "dashboard";
+  let breadcrumbTitle = "Dashboard";
   if (location.pathname === "/admin/dashboard/charts") {
-    activeSection = "dashboard"
-    breadcrumbTitle = "Charts"
+    activeSection = "dashboard";
+    breadcrumbTitle = "Charts";
+  } else if (
+    location.pathname.startsWith("/admin/products") ||
+    location.pathname === "/admin/add-product" ||
+    location.pathname.startsWith("/admin/edit-product") ||
+    location.pathname === "/admin/edit-product"
+  ) {
+    activeSection = "products";
+    breadcrumbTitle = "Products";
+  } else if (location.pathname.startsWith("/admin/orders")) {
+    activeSection = "orders";
+    breadcrumbTitle = "Orders";
+  } else if (
+    location.pathname.startsWith("/admin/user") ||
+    location.pathname === "/admin/user-detail"
+  ) {
+    activeSection = "users";
+    breadcrumbTitle = "Users";
   } else {
-    const matchedItem = menuItems.find((item) => location.pathname === item.path)
+    const matchedItem = menuItems.find(
+      (item) => location.pathname === item.path
+    );
     if (matchedItem) {
-      activeSection = matchedItem.key
-      breadcrumbTitle = matchedItem.label
+      activeSection = matchedItem.key;
+      breadcrumbTitle = matchedItem.label;
     }
   }
 
   const handleMenuClick = ({ key }) => {
-    const item = menuItems.find((i) => i.key === key)
-    if (item) navigate(item.path)
-  }
+    const item = menuItems.find((i) => i.key === key);
+    if (item) navigate(item.path);
+  };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -99,7 +148,10 @@ const AdminPage = () => {
           }}
         >
           <Breadcrumb
-            items={[{ title: "Home", href: "/admin" }, { title: breadcrumbTitle }]}
+            items={[
+              { title: "Home", href: "/admin" },
+              { title: breadcrumbTitle },
+            ]}
             style={{
               margin: "16px 0",
               padding: "8px 16px",
@@ -124,7 +176,7 @@ const AdminPage = () => {
         </Layout>
       </Layout>
     </Layout>
-  )
-}
+  );
+};
 
-export default AdminPage
+export default AdminPage;
