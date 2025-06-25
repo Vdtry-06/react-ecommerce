@@ -146,7 +146,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ![alt text](data/image-72.png)
 ![alt text](data/image-73.png)
 ![alt text](data/image-74.png)
-![alt text](data/image-54.png)
 
 ### 7. Paid Order
 
