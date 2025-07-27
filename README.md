@@ -69,6 +69,14 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
+# Step :
+## build image:
+- docker build -t react-frontend .
+## run container:
+- docker run -d -p 3000:80 react-frontend:latest
+## down container:
+- docker stop <container_ID>
+
 # Page
 
 ### 1. Login
